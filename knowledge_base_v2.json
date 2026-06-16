@@ -1,0 +1,2537 @@
+{
+  "_meta": {
+    "nama_proyek": "PadiDoc — Sistem Pakar Diagnosa Hama & Penyakit Padi",
+    "metode": "Forward Chaining + Certainty Factor (CF Lengkap termasuk nilai negatif)",
+    "versi": "3.0.0",
+    "perubahan_v2": "Semua gejala kini memiliki nilai CF untuk setiap penyakit. Nilai negatif menandakan gejala TIDAK mendukung diagnosis penyakit tersebut, sehingga akan menurunkan confidence score secara aktif.",
+    "perubahan_v3": "Penambahan 3 penyakit/hama baru: P11 Ganjur, P12 Ulat Grayak, P13 Kerdil Rumput. Penambahan 7 gejala baru (G28–G34) untuk mendukung diagnosis ketiga penyakit/hama tersebut. Seluruh penyakit/hama lama (P01–P10) diperbarui dengan nilai CF untuk gejala baru (G28–G34).",
+    "sumber": [
+      "JURIKOM Vol.9 No.1 2022",
+      "Kementan RI — Masalah Lapang Hama Penyakit Padi",
+      "BBPOPT Jatisari — bbpopt.id",
+      "Jurnal INTENSIF Vol.2 No.1 2018",
+      "IPB Digitani",
+      "Skala CF: Shortliffe & Buchanan (1975)"
+    ],
+    "skala_cf": {
+      "1.0": "Definitely (Pasti)",
+      "0.8": "Almost certainty (Hampir pasti)",
+      "0.6": "Probably (Mungkin)",
+      "0.4": "Maybe (Barang kali)",
+      "0.2": "Unknown+ (Sedikit mendukung)",
+      "-0.2": "Unknown- (Sedikit tidak mendukung)",
+      "-0.4": "Maybe not (Barang kali tidak)",
+      "-0.6": "Probably not (Mungkin tidak)",
+      "-0.8": "Almost certainty not (Hampir pasti tidak)",
+      "-1.0": "Definitely not (Pasti tidak)"
+    }
+  },
+  "gejala": [
+    {
+      "id": "G01",
+      "label": "Daun menguning merata dan cepat",
+      "kelompok": "A"
+    },
+    {
+      "id": "G02",
+      "label": "Daun menguning dari tepi (hawar)",
+      "kelompok": "A"
+    },
+    {
+      "id": "G03",
+      "label": "Daun coklat dan kering seperti terbakar",
+      "kelompok": "A"
+    },
+    {
+      "id": "G04",
+      "label": "Bercak coklat oval/bulat di daun",
+      "kelompok": "A"
+    },
+    {
+      "id": "G05",
+      "label": "Bercak belah ketupat, tengah abu-abu",
+      "kelompok": "A"
+    },
+    {
+      "id": "G06",
+      "label": "Daun kuning-oranye, terpelintir",
+      "kelompok": "A"
+    },
+    {
+      "id": "G07",
+      "label": "Daun bawah tampak berlumpur/busuk",
+      "kelompok": "A"
+    },
+    {
+      "id": "G08",
+      "label": "Daun berlubang atau habis dimakan",
+      "kelompok": "A"
+    },
+    {
+      "id": "G09",
+      "label": "Pucuk/anakan muda mati (sundep/beluk)",
+      "kelompok": "B"
+    },
+    {
+      "id": "G10",
+      "label": "Batang mudah dicabut dari tanah",
+      "kelompok": "B"
+    },
+    {
+      "id": "G11",
+      "label": "Batang ada bekas gerek / lubang kecil",
+      "kelompok": "B"
+    },
+    {
+      "id": "G12",
+      "label": "Tanaman kerdil, lebih pendek dari normal",
+      "kelompok": "B"
+    },
+    {
+      "id": "G13",
+      "label": "Banyak anakan mati dalam satu rumpun",
+      "kelompok": "B"
+    },
+    {
+      "id": "G14",
+      "label": "Malai coklat & kering sebelum waktunya",
+      "kelompok": "C"
+    },
+    {
+      "id": "G15",
+      "label": "Banyak gabah hampa / tidak berisi",
+      "kelompok": "C"
+    },
+    {
+      "id": "G16",
+      "label": "Leher malai berwarna hitam dan patah",
+      "kelompok": "C"
+    },
+    {
+      "id": "G17",
+      "label": "Beras bercak hitam/coklat saat dilihat",
+      "kelompok": "C"
+    },
+    {
+      "id": "G18",
+      "label": "Bulir padi berbau busuk atau berlendir",
+      "kelompok": "C"
+    },
+    {
+      "id": "G19",
+      "label": "Serangga kecil coklat di pangkal batang",
+      "kelompok": "D"
+    },
+    {
+      "id": "G20",
+      "label": "Serangga berbau menyengat di sekitar malai",
+      "kelompok": "D"
+    },
+    {
+      "id": "G21",
+      "label": "Ada keong / hewan bercangkang di sawah",
+      "kelompok": "D"
+    },
+    {
+      "id": "G22",
+      "label": "Tanaman dimakan dari pangkal, rumpun rebah",
+      "kelompok": "D"
+    },
+    {
+      "id": "G23",
+      "label": "Kelompok telur merah muda di batang/daun",
+      "kelompok": "D"
+    },
+    {
+      "id": "G24",
+      "label": "Serangan mulai dari tengah petak lalu meluas",
+      "kelompok": "D"
+    },
+    {
+      "id": "G25",
+      "label": "Cuaca musim hujan / kelembaban tinggi",
+      "kelompok": "E"
+    },
+    {
+      "id": "G26",
+      "label": "Pemupukan nitrogen (urea) berlebihan",
+      "kelompok": "E"
+    },
+    {
+      "id": "G27",
+      "label": "Fase generatif (lebih dari 45 HST)",
+      "kelompok": "E"
+    },
+    {
+      "id": "G28",
+      "label": "Daun tumbuh abnormal berbentuk pipa memanjang menyerupai daun bawang",
+      "kelompok": "B"
+    },
+    {
+      "id": "G29",
+      "label": "Pucuk vegetatif tidak keluar malai, terbentuk struktur tubular putih",
+      "kelompok": "C"
+    },
+    {
+      "id": "G30",
+      "label": "Helaian daun terpotong-potong dari ujung hingga gundul/compang-camping dalam satu malam",
+      "kelompok": "A"
+    },
+    {
+      "id": "G31",
+      "label": "Ditemukan kelompok ulat berwarna gelap di sekitar tanah atau pangkal rumpun saat pagi/malam",
+      "kelompok": "D"
+    },
+    {
+      "id": "G32",
+      "label": "Jumlah anakan sangat banyak dan rapat menyerupai rumput, seluruhnya kurus dan kerdil",
+      "kelompok": "B"
+    },
+    {
+      "id": "G33",
+      "label": "Tepi helai daun tampak bergerigi, melintir, atau memiliki bintik-bintik hijau tua",
+      "kelompok": "A"
+    },
+    {
+      "id": "G34",
+      "label": "Terlihat banyak populasi wereng coklat beterbangan di lahan sawah",
+      "kelompok": "D"
+    }
+  ],
+  "penyakit": [
+    {
+      "id": "P01",
+      "nama": "Wereng Batang Coklat (WBC)",
+      "jenis": "hama",
+      "aturan": [
+        {
+          "gejala_id": "G01",
+          "cf": 0.6,
+          "ket": "Daun menguning akibat kehilangan cairan sel"
+        },
+        {
+          "gejala_id": "G02",
+          "cf": -0.8,
+          "ket": "Hawar dari tepi bukan ciri WBC — mengarah HDB"
+        },
+        {
+          "gejala_id": "G03",
+          "cf": 0.7,
+          "ket": "Hopperburn — tanaman mengering seperti terbakar"
+        },
+        {
+          "gejala_id": "G04",
+          "cf": -0.8,
+          "ket": "Bercak oval bukan ciri WBC — mengarah Brown Spot"
+        },
+        {
+          "gejala_id": "G05",
+          "cf": -0.8,
+          "ket": "Bercak belah ketupat bukan ciri WBC — mengarah Blast"
+        },
+        {
+          "gejala_id": "G06",
+          "cf": -0.8,
+          "ket": "Daun kuning-oranye terpelintir bukan ciri WBC — mengarah Tungro"
+        },
+        {
+          "gejala_id": "G07",
+          "cf": -0.8,
+          "ket": "Pelepah berlumpur bukan ciri WBC — mengarah Sheath Blight"
+        },
+        {
+          "gejala_id": "G08",
+          "cf": -0.6,
+          "ket": "WBC menghisap, bukan memakan daun"
+        },
+        {
+          "gejala_id": "G09",
+          "cf": -0.6,
+          "ket": "Sundep/beluk bukan ciri WBC — mengarah Penggerek"
+        },
+        {
+          "gejala_id": "G10",
+          "cf": 0.5,
+          "ket": "Batang melemah karena cairan terhisap habis"
+        },
+        {
+          "gejala_id": "G11",
+          "cf": -0.8,
+          "ket": "Lubang gerek bukan ciri WBC — mengarah Penggerek Batang"
+        },
+        {
+          "gejala_id": "G12",
+          "cf": -0.6,
+          "ket": "Kerdil bukan ciri khas WBC — mengarah Tungro"
+        },
+        {
+          "gejala_id": "G13",
+          "cf": 0.6,
+          "ket": "Rumpun mati masal pada serangan berat"
+        },
+        {
+          "gejala_id": "G14",
+          "cf": -0.4,
+          "ket": "Malai kering bisa terjadi tapi bukan ciri khas"
+        },
+        {
+          "gejala_id": "G15",
+          "cf": -0.4,
+          "ket": "Gabah hampa bisa terjadi tapi bukan ciri utama"
+        },
+        {
+          "gejala_id": "G16",
+          "cf": -0.8,
+          "ket": "Leher malai hitam bukan ciri WBC — mengarah Blast leher"
+        },
+        {
+          "gejala_id": "G17",
+          "cf": -0.8,
+          "ket": "Beras bercak bukan ciri WBC — mengarah Walang Sangit/Brown Spot"
+        },
+        {
+          "gejala_id": "G18",
+          "cf": -0.8,
+          "ket": "Bau busuk bulir bukan ciri WBC — mengarah Walang Sangit"
+        },
+        {
+          "gejala_id": "G19",
+          "cf": 0.9,
+          "ket": "Serangga coklat di pangkal — ciri khas utama WBC"
+        },
+        {
+          "gejala_id": "G20",
+          "cf": -0.8,
+          "ket": "Bau menyengat bukan ciri WBC — mengarah Walang Sangit"
+        },
+        {
+          "gejala_id": "G21",
+          "cf": -0.8,
+          "ket": "Keong bukan ciri WBC — mengarah Keong Mas"
+        },
+        {
+          "gejala_id": "G22",
+          "cf": -0.6,
+          "ket": "Tanaman dimakan pangkal bukan ciri WBC"
+        },
+        {
+          "gejala_id": "G23",
+          "cf": -0.8,
+          "ket": "Telur merah muda bukan ciri WBC — mengarah Keong Mas"
+        },
+        {
+          "gejala_id": "G24",
+          "cf": 0.7,
+          "ket": "Pola serangan melingkar dari tengah petak (spot)"
+        },
+        {
+          "gejala_id": "G25",
+          "cf": -0.2,
+          "ket": "Kelembaban tinggi netral untuk WBC"
+        },
+        {
+          "gejala_id": "G26",
+          "cf": 0.4,
+          "ket": "Pupuk N berlebih memicu ledakan populasi WBC"
+        },
+        {
+          "gejala_id": "G27",
+          "cf": -0.2,
+          "ket": "WBC tidak spesifik fase generatif"
+        },
+        {
+          "gejala_id": "G28",
+          "cf": -0.8,
+          "ket": "Daun pipa bukan ciri WBC — mengarah Ganjur"
+        },
+        {
+          "gejala_id": "G29",
+          "cf": -0.8,
+          "ket": "Tubular putih bukan ciri WBC — mengarah Ganjur"
+        },
+        {
+          "gejala_id": "G30",
+          "cf": -0.8,
+          "ket": "Daun gundul semalam bukan ciri WBC — mengarah Ulat Grayak"
+        },
+        {
+          "gejala_id": "G31",
+          "cf": -0.8,
+          "ket": "Ulat grayak bukan ciri WBC"
+        },
+        {
+          "gejala_id": "G32",
+          "cf": -0.8,
+          "ket": "Anakan rimbun kerdil bukan ciri WBC — mengarah Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G33",
+          "cf": -0.6,
+          "ket": "Daun bergerigi/melintir tidak spesifik WBC"
+        },
+        {
+          "gejala_id": "G34",
+          "cf": 0.5,
+          "ket": "Populasi wereng coklat beterbangan mendukung WBC sebagai vektor/serangga terkait"
+        }
+      ]
+    },
+    {
+      "id": "P02",
+      "nama": "Penggerek Batang Padi",
+      "jenis": "hama",
+      "aturan": [
+        {
+          "gejala_id": "G01",
+          "cf": -0.4,
+          "ket": "Menguning bisa terjadi tapi bukan ciri khas"
+        },
+        {
+          "gejala_id": "G02",
+          "cf": -0.8,
+          "ket": "Hawar dari tepi bukan ciri Penggerek"
+        },
+        {
+          "gejala_id": "G03",
+          "cf": -0.4,
+          "ket": "Kering bisa terjadi tapi tidak spesifik"
+        },
+        {
+          "gejala_id": "G04",
+          "cf": -0.8,
+          "ket": "Bercak oval bukan ciri Penggerek — mengarah Brown Spot"
+        },
+        {
+          "gejala_id": "G05",
+          "cf": -0.8,
+          "ket": "Bercak belah ketupat bukan ciri Penggerek — mengarah Blast"
+        },
+        {
+          "gejala_id": "G06",
+          "cf": -0.8,
+          "ket": "Daun oranye terpelintir bukan ciri Penggerek — mengarah Tungro"
+        },
+        {
+          "gejala_id": "G07",
+          "cf": -0.8,
+          "ket": "Pelepah berlumpur bukan ciri Penggerek — mengarah Sheath Blight"
+        },
+        {
+          "gejala_id": "G08",
+          "cf": -0.6,
+          "ket": "Penggerek tidak memakan daun"
+        },
+        {
+          "gejala_id": "G09",
+          "cf": 0.9,
+          "ket": "Sundep/beluk — gejala khas penggerek batang"
+        },
+        {
+          "gejala_id": "G10",
+          "cf": 0.7,
+          "ket": "Batang mudah dicabut karena jaringan dalam rusak"
+        },
+        {
+          "gejala_id": "G11",
+          "cf": 0.9,
+          "ket": "Bekas lubang gerek di batang — ciri definitif"
+        },
+        {
+          "gejala_id": "G12",
+          "cf": -0.6,
+          "ket": "Kerdil bukan ciri Penggerek — mengarah Tungro"
+        },
+        {
+          "gejala_id": "G13",
+          "cf": -0.4,
+          "ket": "Anakan mati bisa ada tapi tidak semasif Sheath Blight"
+        },
+        {
+          "gejala_id": "G14",
+          "cf": 0.7,
+          "ket": "Malai putih/coklat kering akibat beluk"
+        },
+        {
+          "gejala_id": "G15",
+          "cf": 0.6,
+          "ket": "Gabah hampa akibat jaringan pengangkut rusak"
+        },
+        {
+          "gejala_id": "G16",
+          "cf": -0.6,
+          "ket": "Leher hitam patah bukan ciri Penggerek — mengarah Blast"
+        },
+        {
+          "gejala_id": "G17",
+          "cf": -0.8,
+          "ket": "Beras bercak bukan ciri Penggerek"
+        },
+        {
+          "gejala_id": "G18",
+          "cf": -0.8,
+          "ket": "Bau busuk bulir bukan ciri Penggerek"
+        },
+        {
+          "gejala_id": "G19",
+          "cf": -0.6,
+          "ket": "Serangga coklat di pangkal bukan ciri Penggerek — mengarah WBC"
+        },
+        {
+          "gejala_id": "G20",
+          "cf": -0.8,
+          "ket": "Bau menyengat bukan ciri Penggerek"
+        },
+        {
+          "gejala_id": "G21",
+          "cf": -0.8,
+          "ket": "Keong bukan ciri Penggerek"
+        },
+        {
+          "gejala_id": "G22",
+          "cf": -0.6,
+          "ket": "Dimakan dari pangkal bukan ciri Penggerek"
+        },
+        {
+          "gejala_id": "G23",
+          "cf": -0.8,
+          "ket": "Telur merah muda bukan ciri Penggerek"
+        },
+        {
+          "gejala_id": "G24",
+          "cf": -0.4,
+          "ket": "Pola spot bukan ciri spesifik Penggerek"
+        },
+        {
+          "gejala_id": "G25",
+          "cf": -0.2,
+          "ket": "Kelembaban netral untuk Penggerek"
+        },
+        {
+          "gejala_id": "G26",
+          "cf": -0.2,
+          "ket": "Pupuk N tidak spesifik untuk Penggerek"
+        },
+        {
+          "gejala_id": "G27",
+          "cf": 0.5,
+          "ket": "Beluk terjadi saat fase generatif"
+        },
+        {
+          "gejala_id": "G28",
+          "cf": -0.8,
+          "ket": "Daun pipa bukan ciri Penggerek — mengarah Ganjur"
+        },
+        {
+          "gejala_id": "G29",
+          "cf": -0.8,
+          "ket": "Tubular putih bukan ciri Penggerek — mengarah Ganjur"
+        },
+        {
+          "gejala_id": "G30",
+          "cf": -0.8,
+          "ket": "Daun gundul semalam bukan ciri Penggerek — mengarah Ulat Grayak"
+        },
+        {
+          "gejala_id": "G31",
+          "cf": -0.8,
+          "ket": "Ulat grayak bukan ciri Penggerek"
+        },
+        {
+          "gejala_id": "G32",
+          "cf": -0.8,
+          "ket": "Anakan rimbun kerdil bukan ciri Penggerek"
+        },
+        {
+          "gejala_id": "G33",
+          "cf": -0.6,
+          "ket": "Daun bergerigi bukan ciri Penggerek"
+        },
+        {
+          "gejala_id": "G34",
+          "cf": -0.4,
+          "ket": "Wereng beterbangan tidak spesifik Penggerek"
+        }
+      ]
+    },
+    {
+      "id": "P03",
+      "nama": "Walang Sangit",
+      "jenis": "hama",
+      "aturan": [
+        {
+          "gejala_id": "G01",
+          "cf": -0.6,
+          "ket": "Menguning merata bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G02",
+          "cf": -0.8,
+          "ket": "Hawar dari tepi bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G03",
+          "cf": -0.6,
+          "ket": "Kering terbakar bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G04",
+          "cf": -0.8,
+          "ket": "Bercak oval bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G05",
+          "cf": -0.8,
+          "ket": "Bercak belah ketupat bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G06",
+          "cf": -0.8,
+          "ket": "Daun oranye terpelintir bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G07",
+          "cf": -0.8,
+          "ket": "Pelepah berlumpur bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G08",
+          "cf": -0.6,
+          "ket": "Walang sangit tidak memakan daun"
+        },
+        {
+          "gejala_id": "G09",
+          "cf": -0.8,
+          "ket": "Sundep bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G10",
+          "cf": -0.8,
+          "ket": "Batang mudah dicabut bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G11",
+          "cf": -0.8,
+          "ket": "Lubang gerek bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G12",
+          "cf": -0.8,
+          "ket": "Kerdil bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G13",
+          "cf": -0.8,
+          "ket": "Anakan mati massal bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G14",
+          "cf": -0.4,
+          "ket": "Malai kering jarang pada Walang Sangit"
+        },
+        {
+          "gejala_id": "G15",
+          "cf": 0.7,
+          "ket": "Gabah hampa akibat cairan bulir terhisap"
+        },
+        {
+          "gejala_id": "G16",
+          "cf": -0.8,
+          "ket": "Leher hitam patah bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G17",
+          "cf": 0.8,
+          "ket": "Beras berbecak coklat/hitam — ciri khas serangan"
+        },
+        {
+          "gejala_id": "G18",
+          "cf": 0.6,
+          "ket": "Bau busuk pada bulir yang terserang berat"
+        },
+        {
+          "gejala_id": "G19",
+          "cf": -0.8,
+          "ket": "Serangga coklat di pangkal bukan Walang Sangit"
+        },
+        {
+          "gejala_id": "G20",
+          "cf": 0.95,
+          "ket": "Bau menyengat khas walang sangit — ciri definitif"
+        },
+        {
+          "gejala_id": "G21",
+          "cf": -0.8,
+          "ket": "Keong bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G22",
+          "cf": -0.8,
+          "ket": "Dimakan dari pangkal bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G23",
+          "cf": -0.8,
+          "ket": "Telur merah muda bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G24",
+          "cf": -0.4,
+          "ket": "Pola spot tidak spesifik untuk Walang Sangit"
+        },
+        {
+          "gejala_id": "G25",
+          "cf": -0.2,
+          "ket": "Kelembaban netral untuk Walang Sangit"
+        },
+        {
+          "gejala_id": "G26",
+          "cf": -0.4,
+          "ket": "Pupuk N tidak mempengaruhi Walang Sangit"
+        },
+        {
+          "gejala_id": "G27",
+          "cf": 0.8,
+          "ket": "Aktif menyerang saat fase generatif — malai berisi"
+        },
+        {
+          "gejala_id": "G28",
+          "cf": -0.8,
+          "ket": "Daun pipa bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G29",
+          "cf": -0.8,
+          "ket": "Tubular putih bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G30",
+          "cf": -0.8,
+          "ket": "Daun gundul semalam bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G31",
+          "cf": -0.8,
+          "ket": "Ulat grayak bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G32",
+          "cf": -0.8,
+          "ket": "Anakan rimbun kerdil bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G33",
+          "cf": -0.6,
+          "ket": "Daun bergerigi bukan ciri Walang Sangit"
+        },
+        {
+          "gejala_id": "G34",
+          "cf": -0.4,
+          "ket": "Wereng beterbangan tidak spesifik Walang Sangit"
+        }
+      ]
+    },
+    {
+      "id": "P04",
+      "nama": "Keong Mas",
+      "jenis": "hama",
+      "aturan": [
+        {
+          "gejala_id": "G01",
+          "cf": -0.6,
+          "ket": "Menguning merata bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G02",
+          "cf": -0.8,
+          "ket": "Hawar dari tepi bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G03",
+          "cf": -0.8,
+          "ket": "Kering terbakar bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G04",
+          "cf": -0.8,
+          "ket": "Bercak oval bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G05",
+          "cf": -0.8,
+          "ket": "Bercak belah ketupat bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G06",
+          "cf": -0.8,
+          "ket": "Daun oranye terpelintir bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G07",
+          "cf": -0.8,
+          "ket": "Pelepah berlumpur bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G08",
+          "cf": 0.6,
+          "ket": "Daun muda dimakan sampai habis"
+        },
+        {
+          "gejala_id": "G09",
+          "cf": -0.6,
+          "ket": "Sundep bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G10",
+          "cf": -0.6,
+          "ket": "Batang mudah dicabut bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G11",
+          "cf": -0.8,
+          "ket": "Lubang gerek bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G12",
+          "cf": -0.6,
+          "ket": "Kerdil bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G13",
+          "cf": -0.4,
+          "ket": "Anakan hilang ada tapi berbeda mekanisme"
+        },
+        {
+          "gejala_id": "G14",
+          "cf": -0.8,
+          "ket": "Malai kering bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G15",
+          "cf": -0.6,
+          "ket": "Gabah hampa bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G16",
+          "cf": -0.8,
+          "ket": "Leher malai hitam bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G17",
+          "cf": -0.8,
+          "ket": "Beras bercak bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G18",
+          "cf": -0.8,
+          "ket": "Bau busuk bulir bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G19",
+          "cf": -0.8,
+          "ket": "Serangga coklat di pangkal bukan Keong Mas"
+        },
+        {
+          "gejala_id": "G20",
+          "cf": -0.8,
+          "ket": "Bau menyengat bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G21",
+          "cf": 0.95,
+          "ket": "Keberadaan keong di sawah — identifikasi langsung"
+        },
+        {
+          "gejala_id": "G22",
+          "cf": 0.8,
+          "ket": "Batang muda dipotong dari pangkal, rumpun hilang"
+        },
+        {
+          "gejala_id": "G23",
+          "cf": 0.9,
+          "ket": "Telur merah muda di batang/daun — ciri khas keong mas"
+        },
+        {
+          "gejala_id": "G24",
+          "cf": 0.5,
+          "ket": "Serangan mengikuti aliran air dari hulu ke hilir"
+        },
+        {
+          "gejala_id": "G25",
+          "cf": -0.2,
+          "ket": "Kelembaban netral untuk Keong Mas"
+        },
+        {
+          "gejala_id": "G26",
+          "cf": -0.4,
+          "ket": "Pupuk N tidak mempengaruhi Keong Mas"
+        },
+        {
+          "gejala_id": "G27",
+          "cf": -0.8,
+          "ket": "Keong Mas aktif fase vegetatif awal, bukan generatif"
+        },
+        {
+          "gejala_id": "G28",
+          "cf": -0.8,
+          "ket": "Daun pipa bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G29",
+          "cf": -0.8,
+          "ket": "Tubular putih bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G30",
+          "cf": -0.8,
+          "ket": "Daun gundul semalam bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G31",
+          "cf": -0.8,
+          "ket": "Ulat grayak bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G32",
+          "cf": -0.8,
+          "ket": "Anakan rimbun kerdil bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G33",
+          "cf": -0.6,
+          "ket": "Daun bergerigi bukan ciri Keong Mas"
+        },
+        {
+          "gejala_id": "G34",
+          "cf": -0.4,
+          "ket": "Wereng beterbangan tidak spesifik Keong Mas"
+        }
+      ]
+    },
+    {
+      "id": "P05",
+      "nama": "Tikus Sawah",
+      "jenis": "hama",
+      "aturan": [
+        {
+          "gejala_id": "G01",
+          "cf": -0.4,
+          "ket": "Menguning bisa terjadi pasca serangan tapi tidak spesifik"
+        },
+        {
+          "gejala_id": "G02",
+          "cf": -0.8,
+          "ket": "Hawar dari tepi bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G03",
+          "cf": -0.6,
+          "ket": "Kering terbakar bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G04",
+          "cf": -0.8,
+          "ket": "Bercak oval bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G05",
+          "cf": -0.8,
+          "ket": "Bercak belah ketupat bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G06",
+          "cf": -0.8,
+          "ket": "Daun oranye terpelintir bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G07",
+          "cf": -0.8,
+          "ket": "Pelepah berlumpur bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G08",
+          "cf": -0.4,
+          "ket": "Tikus memotong, bukan memakan daun"
+        },
+        {
+          "gejala_id": "G09",
+          "cf": -0.6,
+          "ket": "Sundep bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G10",
+          "cf": -0.6,
+          "ket": "Batang dicabut bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G11",
+          "cf": -0.8,
+          "ket": "Lubang gerek bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G12",
+          "cf": -0.8,
+          "ket": "Kerdil bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G13",
+          "cf": 0.7,
+          "ket": "Rumpun banyak yang hilang/rebah bersamaan"
+        },
+        {
+          "gejala_id": "G14",
+          "cf": -0.4,
+          "ket": "Malai kering jarang pada Tikus"
+        },
+        {
+          "gejala_id": "G15",
+          "cf": 0.5,
+          "ket": "Gabah rontok/hilang dimakan tikus fase generatif"
+        },
+        {
+          "gejala_id": "G16",
+          "cf": -0.8,
+          "ket": "Leher hitam bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G17",
+          "cf": -0.8,
+          "ket": "Beras bercak bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G18",
+          "cf": -0.8,
+          "ket": "Bau busuk bulir bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G19",
+          "cf": -0.8,
+          "ket": "Serangga coklat di pangkal bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G20",
+          "cf": -0.8,
+          "ket": "Bau menyengat bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G21",
+          "cf": -0.8,
+          "ket": "Keong bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G22",
+          "cf": 0.8,
+          "ket": "Tanaman dimakan dari pangkal, batang putus bersih"
+        },
+        {
+          "gejala_id": "G23",
+          "cf": -0.8,
+          "ket": "Telur merah muda bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G24",
+          "cf": 0.9,
+          "ket": "Pola serangan mulai tengah petak — ciri khas tikus"
+        },
+        {
+          "gejala_id": "G25",
+          "cf": -0.2,
+          "ket": "Kelembaban netral untuk Tikus"
+        },
+        {
+          "gejala_id": "G26",
+          "cf": -0.4,
+          "ket": "Pupuk N tidak mempengaruhi Tikus"
+        },
+        {
+          "gejala_id": "G27",
+          "cf": -0.2,
+          "ket": "Tikus tidak spesifik fase generatif"
+        },
+        {
+          "gejala_id": "G28",
+          "cf": -0.8,
+          "ket": "Daun pipa bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G29",
+          "cf": -0.8,
+          "ket": "Tubular putih bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G30",
+          "cf": -0.8,
+          "ket": "Daun gundul semalam bukan ciri Tikus (berbeda mekanisme)"
+        },
+        {
+          "gejala_id": "G31",
+          "cf": -0.8,
+          "ket": "Ulat grayak bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G32",
+          "cf": -0.8,
+          "ket": "Anakan rimbun kerdil bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G33",
+          "cf": -0.6,
+          "ket": "Daun bergerigi bukan ciri Tikus"
+        },
+        {
+          "gejala_id": "G34",
+          "cf": -0.4,
+          "ket": "Wereng beterbangan tidak spesifik Tikus"
+        }
+      ]
+    },
+    {
+      "id": "P06",
+      "nama": "Blast (Blas)",
+      "jenis": "penyakit",
+      "aturan": [
+        {
+          "gejala_id": "G01",
+          "cf": -0.4,
+          "ket": "Menguning bisa terjadi tapi tidak spesifik untuk Blast"
+        },
+        {
+          "gejala_id": "G02",
+          "cf": -0.8,
+          "ket": "Hawar dari tepi bukan ciri Blast — mengarah HDB"
+        },
+        {
+          "gejala_id": "G03",
+          "cf": -0.4,
+          "ket": "Kering bisa terjadi tapi tidak khas Blast"
+        },
+        {
+          "gejala_id": "G04",
+          "cf": 0.3,
+          "ket": "Bercak daun bisa mirip, nilai CF rendah karena kurang spesifik"
+        },
+        {
+          "gejala_id": "G05",
+          "cf": 0.9,
+          "ket": "Bercak belah ketupat abu-abu — patognomonis Blast daun"
+        },
+        {
+          "gejala_id": "G06",
+          "cf": -0.8,
+          "ket": "Daun oranye terpelintir bukan ciri Blast — mengarah Tungro"
+        },
+        {
+          "gejala_id": "G07",
+          "cf": -0.8,
+          "ket": "Pelepah berlumpur bukan ciri Blast — mengarah Sheath Blight"
+        },
+        {
+          "gejala_id": "G08",
+          "cf": -0.8,
+          "ket": "Blast tidak memakan daun"
+        },
+        {
+          "gejala_id": "G09",
+          "cf": -0.6,
+          "ket": "Sundep bukan ciri Blast"
+        },
+        {
+          "gejala_id": "G10",
+          "cf": -0.8,
+          "ket": "Batang mudah dicabut bukan ciri Blast"
+        },
+        {
+          "gejala_id": "G11",
+          "cf": -0.8,
+          "ket": "Lubang gerek bukan ciri Blast"
+        },
+        {
+          "gejala_id": "G12",
+          "cf": -0.6,
+          "ket": "Kerdil bukan ciri Blast"
+        },
+        {
+          "gejala_id": "G13",
+          "cf": -0.4,
+          "ket": "Anakan mati bisa ada tapi tidak spesifik"
+        },
+        {
+          "gejala_id": "G14",
+          "cf": -0.4,
+          "ket": "Malai kering bisa ada tapi tidak spesifik"
+        },
+        {
+          "gejala_id": "G15",
+          "cf": 0.7,
+          "ket": "Gabah hampa akibat Blast leher memutus suplai nutrisi"
+        },
+        {
+          "gejala_id": "G16",
+          "cf": 0.9,
+          "ket": "Leher malai hitam dan patah — Blast leher, fatal"
+        },
+        {
+          "gejala_id": "G17",
+          "cf": -0.8,
+          "ket": "Beras bercak bukan ciri Blast"
+        },
+        {
+          "gejala_id": "G18",
+          "cf": -0.8,
+          "ket": "Bau busuk bulir bukan ciri Blast"
+        },
+        {
+          "gejala_id": "G19",
+          "cf": -0.8,
+          "ket": "Serangga coklat di pangkal bukan ciri Blast"
+        },
+        {
+          "gejala_id": "G20",
+          "cf": -0.8,
+          "ket": "Bau menyengat bukan ciri Blast"
+        },
+        {
+          "gejala_id": "G21",
+          "cf": -0.8,
+          "ket": "Keong bukan ciri Blast"
+        },
+        {
+          "gejala_id": "G22",
+          "cf": -0.8,
+          "ket": "Dimakan dari pangkal bukan ciri Blast"
+        },
+        {
+          "gejala_id": "G23",
+          "cf": -0.8,
+          "ket": "Telur merah muda bukan ciri Blast"
+        },
+        {
+          "gejala_id": "G24",
+          "cf": -0.4,
+          "ket": "Pola spot tidak spesifik untuk Blast"
+        },
+        {
+          "gejala_id": "G25",
+          "cf": 0.6,
+          "ket": "Kelembaban tinggi mendukung sporulasi jamur Blast"
+        },
+        {
+          "gejala_id": "G26",
+          "cf": 0.5,
+          "ket": "Pupuk N berlebih membuat jaringan lunak, mudah terinfeksi"
+        },
+        {
+          "gejala_id": "G27",
+          "cf": -0.2,
+          "ket": "Blast tidak spesifik fase generatif"
+        },
+        {
+          "gejala_id": "G28",
+          "cf": -0.8,
+          "ket": "Daun pipa bukan ciri Blast"
+        },
+        {
+          "gejala_id": "G29",
+          "cf": -0.8,
+          "ket": "Tubular putih bukan ciri Blast"
+        },
+        {
+          "gejala_id": "G30",
+          "cf": -0.8,
+          "ket": "Daun gundul semalam bukan ciri Blast"
+        },
+        {
+          "gejala_id": "G31",
+          "cf": -0.8,
+          "ket": "Ulat grayak bukan ciri Blast"
+        },
+        {
+          "gejala_id": "G32",
+          "cf": -0.8,
+          "ket": "Anakan rimbun kerdil bukan ciri Blast"
+        },
+        {
+          "gejala_id": "G33",
+          "cf": -0.6,
+          "ket": "Daun bergerigi bukan ciri Blast"
+        },
+        {
+          "gejala_id": "G34",
+          "cf": -0.4,
+          "ket": "Wereng beterbangan tidak spesifik Blast"
+        }
+      ]
+    },
+    {
+      "id": "P07",
+      "nama": "Hawar Daun Bakteri (HDB / Kresek)",
+      "jenis": "penyakit",
+      "aturan": [
+        {
+          "gejala_id": "G01",
+          "cf": 0.5,
+          "ket": "Menguning merata pada serangan berat (kresek)"
+        },
+        {
+          "gejala_id": "G02",
+          "cf": 0.9,
+          "ket": "Hawar dari tepi daun — gejala khas HDB"
+        },
+        {
+          "gejala_id": "G03",
+          "cf": 0.7,
+          "ket": "Daun coklat kering dimulai dari tepi dan ujung"
+        },
+        {
+          "gejala_id": "G04",
+          "cf": -0.8,
+          "ket": "Bercak oval bukan ciri HDB — mengarah Brown Spot"
+        },
+        {
+          "gejala_id": "G05",
+          "cf": -0.8,
+          "ket": "Bercak belah ketupat bukan ciri HDB — mengarah Blast"
+        },
+        {
+          "gejala_id": "G06",
+          "cf": -0.8,
+          "ket": "Daun oranye terpelintir bukan ciri HDB — mengarah Tungro"
+        },
+        {
+          "gejala_id": "G07",
+          "cf": -0.6,
+          "ket": "Pelepah berlumpur bukan ciri khas HDB"
+        },
+        {
+          "gejala_id": "G08",
+          "cf": -0.8,
+          "ket": "HDB tidak memakan daun"
+        },
+        {
+          "gejala_id": "G09",
+          "cf": -0.6,
+          "ket": "Sundep bukan ciri HDB"
+        },
+        {
+          "gejala_id": "G10",
+          "cf": -0.8,
+          "ket": "Batang mudah dicabut bukan ciri HDB"
+        },
+        {
+          "gejala_id": "G11",
+          "cf": -0.8,
+          "ket": "Lubang gerek bukan ciri HDB"
+        },
+        {
+          "gejala_id": "G12",
+          "cf": -0.6,
+          "ket": "Kerdil bukan ciri HDB"
+        },
+        {
+          "gejala_id": "G13",
+          "cf": 0.7,
+          "ket": "Kresek — semua anakan mati pada serangan berat"
+        },
+        {
+          "gejala_id": "G14",
+          "cf": -0.4,
+          "ket": "Malai kering bisa ada tapi tidak spesifik"
+        },
+        {
+          "gejala_id": "G15",
+          "cf": -0.4,
+          "ket": "Gabah hampa bisa ada tapi tidak spesifik"
+        },
+        {
+          "gejala_id": "G16",
+          "cf": -0.8,
+          "ket": "Leher malai hitam bukan ciri HDB — mengarah Blast"
+        },
+        {
+          "gejala_id": "G17",
+          "cf": -0.8,
+          "ket": "Beras bercak bukan ciri HDB"
+        },
+        {
+          "gejala_id": "G18",
+          "cf": -0.8,
+          "ket": "Bau busuk bulir bukan ciri HDB"
+        },
+        {
+          "gejala_id": "G19",
+          "cf": -0.8,
+          "ket": "Serangga coklat bukan ciri HDB"
+        },
+        {
+          "gejala_id": "G20",
+          "cf": -0.8,
+          "ket": "Bau menyengat bukan ciri HDB"
+        },
+        {
+          "gejala_id": "G21",
+          "cf": -0.8,
+          "ket": "Keong bukan ciri HDB"
+        },
+        {
+          "gejala_id": "G22",
+          "cf": -0.8,
+          "ket": "Dimakan dari pangkal bukan ciri HDB"
+        },
+        {
+          "gejala_id": "G23",
+          "cf": -0.8,
+          "ket": "Telur merah muda bukan ciri HDB"
+        },
+        {
+          "gejala_id": "G24",
+          "cf": -0.4,
+          "ket": "Pola spot tidak spesifik HDB"
+        },
+        {
+          "gejala_id": "G25",
+          "cf": 0.5,
+          "ket": "Banjir/hujan lebat menyebarkan bakteri ke petak lain"
+        },
+        {
+          "gejala_id": "G26",
+          "cf": 0.5,
+          "ket": "Pupuk N tinggi mempercepat penyebaran bakteri"
+        },
+        {
+          "gejala_id": "G27",
+          "cf": -0.2,
+          "ket": "HDB tidak spesifik fase generatif"
+        },
+        {
+          "gejala_id": "G28",
+          "cf": -0.8,
+          "ket": "Daun pipa bukan ciri HDB"
+        },
+        {
+          "gejala_id": "G29",
+          "cf": -0.8,
+          "ket": "Tubular putih bukan ciri HDB"
+        },
+        {
+          "gejala_id": "G30",
+          "cf": -0.8,
+          "ket": "Daun gundul semalam bukan ciri HDB"
+        },
+        {
+          "gejala_id": "G31",
+          "cf": -0.8,
+          "ket": "Ulat grayak bukan ciri HDB"
+        },
+        {
+          "gejala_id": "G32",
+          "cf": -0.8,
+          "ket": "Anakan rimbun kerdil bukan ciri HDB"
+        },
+        {
+          "gejala_id": "G33",
+          "cf": -0.6,
+          "ket": "Daun bergerigi bukan ciri HDB"
+        },
+        {
+          "gejala_id": "G34",
+          "cf": -0.4,
+          "ket": "Wereng beterbangan tidak spesifik HDB"
+        }
+      ]
+    },
+    {
+      "id": "P08",
+      "nama": "Tungro",
+      "jenis": "penyakit",
+      "aturan": [
+        {
+          "gejala_id": "G01",
+          "cf": 0.4,
+          "ket": "Menguning umum, CF rendah karena tidak spesifik"
+        },
+        {
+          "gejala_id": "G02",
+          "cf": -0.8,
+          "ket": "Hawar dari tepi bukan ciri Tungro — mengarah HDB"
+        },
+        {
+          "gejala_id": "G03",
+          "cf": -0.6,
+          "ket": "Kering terbakar bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G04",
+          "cf": -0.8,
+          "ket": "Bercak oval bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G05",
+          "cf": -0.8,
+          "ket": "Bercak belah ketupat bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G06",
+          "cf": 0.95,
+          "ket": "Daun kuning-oranye terpelintir — patognomonis Tungro"
+        },
+        {
+          "gejala_id": "G07",
+          "cf": -0.8,
+          "ket": "Pelepah berlumpur bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G08",
+          "cf": -0.8,
+          "ket": "Tungro tidak memakan daun"
+        },
+        {
+          "gejala_id": "G09",
+          "cf": -0.6,
+          "ket": "Sundep bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G10",
+          "cf": -0.8,
+          "ket": "Batang mudah dicabut bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G11",
+          "cf": -0.8,
+          "ket": "Lubang gerek bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G12",
+          "cf": 0.8,
+          "ket": "Tanaman kerdil jauh di bawah normal — ciri khas Tungro"
+        },
+        {
+          "gejala_id": "G13",
+          "cf": -0.4,
+          "ket": "Anakan mati bisa ada tapi tidak spesifik"
+        },
+        {
+          "gejala_id": "G14",
+          "cf": -0.4,
+          "ket": "Malai kering jarang pada Tungro"
+        },
+        {
+          "gejala_id": "G15",
+          "cf": 0.6,
+          "ket": "Gabah hampa/steril pada serangan berat"
+        },
+        {
+          "gejala_id": "G16",
+          "cf": -0.8,
+          "ket": "Leher malai hitam bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G17",
+          "cf": -0.8,
+          "ket": "Beras bercak bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G18",
+          "cf": -0.8,
+          "ket": "Bau busuk bulir bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G19",
+          "cf": 0.5,
+          "ket": "Wereng hijau sebagai vektor bisa terlihat di pertanaman"
+        },
+        {
+          "gejala_id": "G20",
+          "cf": -0.8,
+          "ket": "Bau menyengat bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G21",
+          "cf": -0.8,
+          "ket": "Keong bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G22",
+          "cf": -0.8,
+          "ket": "Dimakan dari pangkal bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G23",
+          "cf": -0.8,
+          "ket": "Telur merah muda bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G24",
+          "cf": -0.4,
+          "ket": "Pola spot tidak spesifik Tungro"
+        },
+        {
+          "gejala_id": "G25",
+          "cf": -0.2,
+          "ket": "Kelembaban tidak spesifik untuk Tungro"
+        },
+        {
+          "gejala_id": "G26",
+          "cf": -0.4,
+          "ket": "Pupuk N tidak mempengaruhi Tungro (penyakit virus)"
+        },
+        {
+          "gejala_id": "G27",
+          "cf": -0.6,
+          "ket": "Tungro terutama menyerang fase vegetatif, bukan generatif"
+        },
+        {
+          "gejala_id": "G28",
+          "cf": -0.8,
+          "ket": "Daun pipa bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G29",
+          "cf": -0.8,
+          "ket": "Tubular putih bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G30",
+          "cf": -0.8,
+          "ket": "Daun gundul semalam bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G31",
+          "cf": -0.8,
+          "ket": "Ulat grayak bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G32",
+          "cf": -0.8,
+          "ket": "Anakan rimbun kerdil bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G33",
+          "cf": -0.6,
+          "ket": "Daun bergerigi bukan ciri Tungro"
+        },
+        {
+          "gejala_id": "G34",
+          "cf": -0.4,
+          "ket": "Wereng coklat beterbangan bisa jadi vektor co-infeksi tapi tidak spesifik Tungro (vektornya wereng hijau)"
+        }
+      ]
+    },
+    {
+      "id": "P09",
+      "nama": "Bercak Coklat (Brown Spot)",
+      "jenis": "penyakit",
+      "aturan": [
+        {
+          "gejala_id": "G01",
+          "cf": -0.4,
+          "ket": "Menguning bisa ada tapi tidak spesifik Brown Spot"
+        },
+        {
+          "gejala_id": "G02",
+          "cf": -0.8,
+          "ket": "Hawar dari tepi bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G03",
+          "cf": -0.6,
+          "ket": "Kering terbakar bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G04",
+          "cf": 0.9,
+          "ket": "Bercak oval/bulat coklat di daun — ciri utama Brown Spot"
+        },
+        {
+          "gejala_id": "G05",
+          "cf": -0.6,
+          "ket": "Bercak belah ketupat bukan ciri Brown Spot — mengarah Blast"
+        },
+        {
+          "gejala_id": "G06",
+          "cf": -0.8,
+          "ket": "Daun oranye terpelintir bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G07",
+          "cf": -0.8,
+          "ket": "Pelepah berlumpur bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G08",
+          "cf": -0.8,
+          "ket": "Brown Spot tidak memakan daun"
+        },
+        {
+          "gejala_id": "G09",
+          "cf": -0.8,
+          "ket": "Sundep bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G10",
+          "cf": -0.8,
+          "ket": "Batang mudah dicabut bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G11",
+          "cf": -0.8,
+          "ket": "Lubang gerek bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G12",
+          "cf": -0.6,
+          "ket": "Kerdil bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G13",
+          "cf": -0.6,
+          "ket": "Anakan mati massal bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G14",
+          "cf": -0.4,
+          "ket": "Malai kering jarang pada Brown Spot"
+        },
+        {
+          "gejala_id": "G15",
+          "cf": 0.4,
+          "ket": "Gabah hampa ringan pada serangan berat"
+        },
+        {
+          "gejala_id": "G16",
+          "cf": -0.8,
+          "ket": "Leher malai hitam bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G17",
+          "cf": 0.8,
+          "ket": "Beras bercak hitam/coklat — ciri khas pada biji"
+        },
+        {
+          "gejala_id": "G18",
+          "cf": -0.6,
+          "ket": "Bau busuk bulir bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G19",
+          "cf": -0.8,
+          "ket": "Serangga coklat bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G20",
+          "cf": -0.8,
+          "ket": "Bau menyengat bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G21",
+          "cf": -0.8,
+          "ket": "Keong bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G22",
+          "cf": -0.8,
+          "ket": "Dimakan dari pangkal bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G23",
+          "cf": -0.8,
+          "ket": "Telur merah muda bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G24",
+          "cf": -0.4,
+          "ket": "Pola spot tidak spesifik Brown Spot"
+        },
+        {
+          "gejala_id": "G25",
+          "cf": 0.4,
+          "ket": "Kelembaban tinggi mempercepat infeksi"
+        },
+        {
+          "gejala_id": "G26",
+          "cf": -0.2,
+          "ket": "Pupuk N kurang relevan — Brown Spot lebih terkait defisiensi hara"
+        },
+        {
+          "gejala_id": "G27",
+          "cf": -0.2,
+          "ket": "Brown Spot tidak spesifik fase"
+        },
+        {
+          "gejala_id": "G28",
+          "cf": -0.8,
+          "ket": "Daun pipa bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G29",
+          "cf": -0.8,
+          "ket": "Tubular putih bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G30",
+          "cf": -0.8,
+          "ket": "Daun gundul semalam bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G31",
+          "cf": -0.8,
+          "ket": "Ulat grayak bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G32",
+          "cf": -0.8,
+          "ket": "Anakan rimbun kerdil bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G33",
+          "cf": -0.6,
+          "ket": "Daun bergerigi bukan ciri Brown Spot"
+        },
+        {
+          "gejala_id": "G34",
+          "cf": -0.4,
+          "ket": "Wereng beterbangan tidak spesifik Brown Spot"
+        }
+      ]
+    },
+    {
+      "id": "P10",
+      "nama": "Busuk Batang / Hawar Pelepah (Sheath Blight)",
+      "jenis": "penyakit",
+      "aturan": [
+        {
+          "gejala_id": "G01",
+          "cf": -0.4,
+          "ket": "Menguning bisa terjadi tapi tidak spesifik"
+        },
+        {
+          "gejala_id": "G02",
+          "cf": -0.6,
+          "ket": "Hawar dari tepi bukan ciri khas Sheath Blight"
+        },
+        {
+          "gejala_id": "G03",
+          "cf": 0.4,
+          "ket": "Batang mengering pada serangan berat"
+        },
+        {
+          "gejala_id": "G04",
+          "cf": -0.8,
+          "ket": "Bercak oval bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G05",
+          "cf": -0.8,
+          "ket": "Bercak belah ketupat bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G06",
+          "cf": -0.8,
+          "ket": "Daun oranye terpelintir bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G07",
+          "cf": 0.9,
+          "ket": "Pelepah berlumpur/bercak abu-hijau — lesi Sheath Blight"
+        },
+        {
+          "gejala_id": "G08",
+          "cf": -0.8,
+          "ket": "Sheath Blight tidak memakan daun"
+        },
+        {
+          "gejala_id": "G09",
+          "cf": -0.6,
+          "ket": "Sundep bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G10",
+          "cf": -0.6,
+          "ket": "Batang mudah dicabut bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G11",
+          "cf": -0.8,
+          "ket": "Lubang gerek bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G12",
+          "cf": -0.6,
+          "ket": "Kerdil bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G13",
+          "cf": 0.8,
+          "ket": "Banyak anakan mati dalam satu rumpun"
+        },
+        {
+          "gejala_id": "G14",
+          "cf": -0.4,
+          "ket": "Malai kering bisa ada tapi tidak spesifik"
+        },
+        {
+          "gejala_id": "G15",
+          "cf": 0.4,
+          "ket": "Gabah hampa bila infeksi mencapai batang utama"
+        },
+        {
+          "gejala_id": "G16",
+          "cf": -0.8,
+          "ket": "Leher malai hitam bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G17",
+          "cf": -0.8,
+          "ket": "Beras bercak bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G18",
+          "cf": -0.6,
+          "ket": "Bau busuk bulir bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G19",
+          "cf": -0.8,
+          "ket": "Serangga coklat bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G20",
+          "cf": -0.8,
+          "ket": "Bau menyengat bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G21",
+          "cf": -0.8,
+          "ket": "Keong bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G22",
+          "cf": -0.8,
+          "ket": "Dimakan dari pangkal bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G23",
+          "cf": -0.8,
+          "ket": "Telur merah muda bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G24",
+          "cf": -0.4,
+          "ket": "Pola spot tidak spesifik Sheath Blight"
+        },
+        {
+          "gejala_id": "G25",
+          "cf": 0.7,
+          "ket": "Kelembaban tinggi adalah syarat utama perkembangan jamur"
+        },
+        {
+          "gejala_id": "G26",
+          "cf": 0.6,
+          "ket": "Pupuk N berlebih mempercepat penyebaran Sheath Blight"
+        },
+        {
+          "gejala_id": "G27",
+          "cf": -0.2,
+          "ket": "Sheath Blight tidak spesifik fase generatif"
+        },
+        {
+          "gejala_id": "G28",
+          "cf": -0.8,
+          "ket": "Daun pipa bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G29",
+          "cf": -0.8,
+          "ket": "Tubular putih bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G30",
+          "cf": -0.8,
+          "ket": "Daun gundul semalam bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G31",
+          "cf": -0.8,
+          "ket": "Ulat grayak bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G32",
+          "cf": -0.8,
+          "ket": "Anakan rimbun kerdil bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G33",
+          "cf": -0.6,
+          "ket": "Daun bergerigi bukan ciri Sheath Blight"
+        },
+        {
+          "gejala_id": "G34",
+          "cf": -0.4,
+          "ket": "Wereng beterbangan tidak spesifik Sheath Blight"
+        }
+      ]
+    },
+    {
+      "id": "P11",
+      "nama": "Ganjur",
+      "jenis": "hama",
+      "organisme": "Orseolia oryzae",
+      "fase_rentan": [
+        "Vegetatif"
+      ],
+      "sumber": [
+        "BBPOPT",
+        "Kementan RI"
+      ],
+      "aturan": [
+        {
+          "gejala_id": "G01",
+          "cf": -0.4,
+          "ket": "Menguning bisa ada pasca serangan tapi tidak spesifik Ganjur"
+        },
+        {
+          "gejala_id": "G02",
+          "cf": -0.8,
+          "ket": "Hawar dari tepi bukan ciri Ganjur"
+        },
+        {
+          "gejala_id": "G03",
+          "cf": -0.8,
+          "ket": "Kering terbakar bukan ciri Ganjur"
+        },
+        {
+          "gejala_id": "G04",
+          "cf": -0.8,
+          "ket": "Bercak oval bukan ciri Ganjur"
+        },
+        {
+          "gejala_id": "G05",
+          "cf": -0.8,
+          "ket": "Bercak belah ketupat bukan ciri Ganjur"
+        },
+        {
+          "gejala_id": "G06",
+          "cf": -0.8,
+          "ket": "Daun oranye terpelintir bukan ciri Ganjur"
+        },
+        {
+          "gejala_id": "G07",
+          "cf": -0.8,
+          "ket": "Pelepah berlumpur bukan ciri Ganjur"
+        },
+        {
+          "gejala_id": "G08",
+          "cf": -0.8,
+          "ket": "Ganjur tidak memakan daun secara langsung"
+        },
+        {
+          "gejala_id": "G09",
+          "cf": 0.4,
+          "ket": "Pucuk muda gagal berkembang bisa terjadi pada serangan Ganjur berat"
+        },
+        {
+          "gejala_id": "G10",
+          "cf": -0.8,
+          "ket": "Batang mudah dicabut bukan ciri Ganjur"
+        },
+        {
+          "gejala_id": "G11",
+          "cf": -0.8,
+          "ket": "Lubang gerek bukan ciri Ganjur"
+        },
+        {
+          "gejala_id": "G12",
+          "cf": 0.5,
+          "ket": "Pertumbuhan tanaman terhambat / kerdil akibat serangan Ganjur"
+        },
+        {
+          "gejala_id": "G13",
+          "cf": -0.6,
+          "ket": "Anakan mati massal bukan ciri khas Ganjur"
+        },
+        {
+          "gejala_id": "G14",
+          "cf": -0.8,
+          "ket": "Malai kering bukan ciri Ganjur"
+        },
+        {
+          "gejala_id": "G15",
+          "cf": -0.6,
+          "ket": "Gabah hampa bukan ciri utama Ganjur"
+        },
+        {
+          "gejala_id": "G16",
+          "cf": -0.8,
+          "ket": "Leher malai hitam bukan ciri Ganjur"
+        },
+        {
+          "gejala_id": "G17",
+          "cf": -0.8,
+          "ket": "Beras bercak bukan ciri Ganjur"
+        },
+        {
+          "gejala_id": "G18",
+          "cf": -0.8,
+          "ket": "Bau busuk bulir bukan ciri Ganjur"
+        },
+        {
+          "gejala_id": "G19",
+          "cf": -0.8,
+          "ket": "Serangga coklat di pangkal bukan Ganjur"
+        },
+        {
+          "gejala_id": "G20",
+          "cf": -0.8,
+          "ket": "Bau menyengat bukan ciri Ganjur"
+        },
+        {
+          "gejala_id": "G21",
+          "cf": -0.8,
+          "ket": "Keong bukan ciri Ganjur"
+        },
+        {
+          "gejala_id": "G22",
+          "cf": -0.8,
+          "ket": "Dimakan dari pangkal bukan ciri Ganjur"
+        },
+        {
+          "gejala_id": "G23",
+          "cf": -0.8,
+          "ket": "Telur merah muda bukan ciri Ganjur"
+        },
+        {
+          "gejala_id": "G24",
+          "cf": -0.4,
+          "ket": "Pola spot tidak spesifik Ganjur"
+        },
+        {
+          "gejala_id": "G25",
+          "cf": -0.2,
+          "ket": "Kelembaban netral untuk Ganjur"
+        },
+        {
+          "gejala_id": "G26",
+          "cf": -0.2,
+          "ket": "Pupuk N tidak spesifik Ganjur"
+        },
+        {
+          "gejala_id": "G27",
+          "cf": -0.6,
+          "ket": "Ganjur menyerang fase vegetatif, bukan generatif"
+        },
+        {
+          "gejala_id": "G28",
+          "cf": 0.95,
+          "ket": "Daun tumbuh abnormal berbentuk pipa/daun bawang — gejala definitif Ganjur"
+        },
+        {
+          "gejala_id": "G29",
+          "cf": 0.85,
+          "ket": "Pucuk vegetatif berbentuk tubular putih, tidak keluar malai — sangat khas Ganjur"
+        },
+        {
+          "gejala_id": "G30",
+          "cf": -0.8,
+          "ket": "Daun gundul semalam bukan ciri Ganjur — mengarah Ulat Grayak"
+        },
+        {
+          "gejala_id": "G31",
+          "cf": -0.8,
+          "ket": "Ulat grayak bukan ciri Ganjur"
+        },
+        {
+          "gejala_id": "G32",
+          "cf": -0.8,
+          "ket": "Anakan rimbun kerdil bukan ciri Ganjur — mengarah Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G33",
+          "cf": -0.6,
+          "ket": "Daun bergerigi bukan ciri Ganjur"
+        },
+        {
+          "gejala_id": "G34",
+          "cf": -0.4,
+          "ket": "Wereng beterbangan tidak spesifik Ganjur"
+        }
+      ]
+    },
+    {
+      "id": "P12",
+      "nama": "Ulat Grayak",
+      "jenis": "hama",
+      "organisme": "Spodoptera mauritia",
+      "fase_rentan": [
+        "Vegetatif",
+        "Generatif"
+      ],
+      "sumber": [
+        "BBPOPT",
+        "Kementan RI"
+      ],
+      "aturan": [
+        {
+          "gejala_id": "G01",
+          "cf": -0.4,
+          "ket": "Menguning bukan ciri khas Ulat Grayak"
+        },
+        {
+          "gejala_id": "G02",
+          "cf": -0.8,
+          "ket": "Hawar dari tepi bukan ciri Ulat Grayak"
+        },
+        {
+          "gejala_id": "G03",
+          "cf": -0.6,
+          "ket": "Kering terbakar bukan ciri Ulat Grayak"
+        },
+        {
+          "gejala_id": "G04",
+          "cf": -0.8,
+          "ket": "Bercak oval bukan ciri Ulat Grayak"
+        },
+        {
+          "gejala_id": "G05",
+          "cf": -0.8,
+          "ket": "Bercak belah ketupat bukan ciri Ulat Grayak"
+        },
+        {
+          "gejala_id": "G06",
+          "cf": -0.8,
+          "ket": "Daun oranye terpelintir bukan ciri Ulat Grayak"
+        },
+        {
+          "gejala_id": "G07",
+          "cf": -0.8,
+          "ket": "Pelepah berlumpur bukan ciri Ulat Grayak"
+        },
+        {
+          "gejala_id": "G08",
+          "cf": 0.6,
+          "ket": "Kerusakan daun berlubang parah dimakan larva"
+        },
+        {
+          "gejala_id": "G09",
+          "cf": -0.6,
+          "ket": "Sundep bukan ciri Ulat Grayak"
+        },
+        {
+          "gejala_id": "G10",
+          "cf": -0.8,
+          "ket": "Batang mudah dicabut bukan ciri Ulat Grayak"
+        },
+        {
+          "gejala_id": "G11",
+          "cf": -0.8,
+          "ket": "Lubang gerek bukan ciri Ulat Grayak"
+        },
+        {
+          "gejala_id": "G12",
+          "cf": -0.6,
+          "ket": "Kerdil bukan ciri khas Ulat Grayak"
+        },
+        {
+          "gejala_id": "G13",
+          "cf": -0.4,
+          "ket": "Anakan mati massal bukan ciri khas Ulat Grayak"
+        },
+        {
+          "gejala_id": "G14",
+          "cf": -0.6,
+          "ket": "Malai kering bukan ciri Ulat Grayak"
+        },
+        {
+          "gejala_id": "G15",
+          "cf": -0.4,
+          "ket": "Gabah hampa bukan ciri utama Ulat Grayak"
+        },
+        {
+          "gejala_id": "G16",
+          "cf": -0.8,
+          "ket": "Leher malai hitam bukan ciri Ulat Grayak"
+        },
+        {
+          "gejala_id": "G17",
+          "cf": -0.8,
+          "ket": "Beras bercak bukan ciri Ulat Grayak"
+        },
+        {
+          "gejala_id": "G18",
+          "cf": -0.8,
+          "ket": "Bau busuk bulir bukan ciri Ulat Grayak"
+        },
+        {
+          "gejala_id": "G19",
+          "cf": -0.8,
+          "ket": "Serangga coklat di pangkal bukan Ulat Grayak"
+        },
+        {
+          "gejala_id": "G20",
+          "cf": -0.8,
+          "ket": "Bau menyengat bukan ciri Ulat Grayak"
+        },
+        {
+          "gejala_id": "G21",
+          "cf": -0.8,
+          "ket": "Keong bukan ciri Ulat Grayak"
+        },
+        {
+          "gejala_id": "G22",
+          "cf": -0.4,
+          "ket": "Tanaman dimakan pangkal bisa terjadi tapi tidak spesifik Ulat Grayak"
+        },
+        {
+          "gejala_id": "G23",
+          "cf": -0.8,
+          "ket": "Telur merah muda bukan ciri Ulat Grayak"
+        },
+        {
+          "gejala_id": "G24",
+          "cf": -0.4,
+          "ket": "Pola spot tidak spesifik Ulat Grayak"
+        },
+        {
+          "gejala_id": "G25",
+          "cf": 0.3,
+          "ket": "Kelembaban tinggi sedikit mendukung perkembangan Ulat Grayak"
+        },
+        {
+          "gejala_id": "G26",
+          "cf": -0.2,
+          "ket": "Pupuk N tidak spesifik untuk Ulat Grayak"
+        },
+        {
+          "gejala_id": "G27",
+          "cf": -0.2,
+          "ket": "Ulat Grayak dapat menyerang berbagai fase, tidak spesifik generatif"
+        },
+        {
+          "gejala_id": "G28",
+          "cf": -0.8,
+          "ket": "Daun pipa bukan ciri Ulat Grayak — mengarah Ganjur"
+        },
+        {
+          "gejala_id": "G29",
+          "cf": -0.8,
+          "ket": "Tubular putih bukan ciri Ulat Grayak — mengarah Ganjur"
+        },
+        {
+          "gejala_id": "G30",
+          "cf": 0.9,
+          "ket": "Daun terpotong hingga gundul dalam semalam — gejala definitif Ulat Grayak"
+        },
+        {
+          "gejala_id": "G31",
+          "cf": 0.85,
+          "ket": "Ditemukan ulat grayak/gelap di tanah atau pangkal rumpun — konfirmasi langsung"
+        },
+        {
+          "gejala_id": "G32",
+          "cf": -0.8,
+          "ket": "Anakan rimbun kerdil bukan ciri Ulat Grayak — mengarah Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G33",
+          "cf": -0.6,
+          "ket": "Daun bergerigi bukan ciri Ulat Grayak"
+        },
+        {
+          "gejala_id": "G34",
+          "cf": -0.4,
+          "ket": "Wereng beterbangan tidak spesifik Ulat Grayak"
+        }
+      ]
+    },
+    {
+      "id": "P13",
+      "nama": "Kerdil Rumput",
+      "jenis": "penyakit",
+      "organisme": "RGSV / RRSV (virus, vektor wereng coklat)",
+      "fase_rentan": [
+        "Vegetatif",
+        "Generatif"
+      ],
+      "sumber": [
+        "BBPOPT",
+        "IPB Digitani"
+      ],
+      "aturan": [
+        {
+          "gejala_id": "G01",
+          "cf": 0.4,
+          "ket": "Menguning merata bisa terjadi pada serangan Kerdil Rumput berat"
+        },
+        {
+          "gejala_id": "G02",
+          "cf": -0.8,
+          "ket": "Hawar dari tepi bukan ciri Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G03",
+          "cf": -0.8,
+          "ket": "Kering terbakar bukan ciri Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G04",
+          "cf": -0.8,
+          "ket": "Bercak oval bukan ciri Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G05",
+          "cf": -0.8,
+          "ket": "Bercak belah ketupat bukan ciri Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G06",
+          "cf": -0.6,
+          "ket": "Daun oranye terpelintir bukan ciri khas Kerdil Rumput (warna beda)"
+        },
+        {
+          "gejala_id": "G07",
+          "cf": -0.8,
+          "ket": "Pelepah berlumpur bukan ciri Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G08",
+          "cf": -0.8,
+          "ket": "Kerdil Rumput bukan disebabkan pemakan daun"
+        },
+        {
+          "gejala_id": "G09",
+          "cf": -0.6,
+          "ket": "Sundep bukan ciri Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G10",
+          "cf": -0.8,
+          "ket": "Batang mudah dicabut bukan ciri Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G11",
+          "cf": -0.8,
+          "ket": "Lubang gerek bukan ciri Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G12",
+          "cf": 0.9,
+          "ket": "Tanaman tumbuh sangat kerdil dan kurus — ciri utama Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G13",
+          "cf": 0.5,
+          "ket": "Sebagian anakan bisa mati karena virus, tidak semasif HDB"
+        },
+        {
+          "gejala_id": "G14",
+          "cf": -0.6,
+          "ket": "Malai kering bukan ciri khas Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G15",
+          "cf": 0.5,
+          "ket": "Gabah hampa karena tanaman steril akibat virus"
+        },
+        {
+          "gejala_id": "G16",
+          "cf": -0.8,
+          "ket": "Leher malai hitam bukan ciri Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G17",
+          "cf": -0.8,
+          "ket": "Beras bercak bukan ciri Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G18",
+          "cf": -0.8,
+          "ket": "Bau busuk bulir bukan ciri Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G19",
+          "cf": 0.3,
+          "ket": "Wereng coklat (vektor) bisa terlihat di pertanaman"
+        },
+        {
+          "gejala_id": "G20",
+          "cf": -0.8,
+          "ket": "Bau menyengat bukan ciri Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G21",
+          "cf": -0.8,
+          "ket": "Keong bukan ciri Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G22",
+          "cf": -0.8,
+          "ket": "Dimakan dari pangkal bukan ciri Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G23",
+          "cf": -0.8,
+          "ket": "Telur merah muda bukan ciri Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G24",
+          "cf": -0.4,
+          "ket": "Pola spot tidak spesifik Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G25",
+          "cf": 0.3,
+          "ket": "Kelembaban tinggi sedikit mendukung perkembangan vektor wereng"
+        },
+        {
+          "gejala_id": "G26",
+          "cf": -0.2,
+          "ket": "Pupuk N tidak spesifik untuk Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G27",
+          "cf": -0.6,
+          "ket": "Kerdil Rumput terutama menyerang fase vegetatif, bukan generatif"
+        },
+        {
+          "gejala_id": "G28",
+          "cf": -0.8,
+          "ket": "Daun pipa bukan ciri Kerdil Rumput — mengarah Ganjur"
+        },
+        {
+          "gejala_id": "G29",
+          "cf": -0.8,
+          "ket": "Tubular putih bukan ciri Kerdil Rumput — mengarah Ganjur"
+        },
+        {
+          "gejala_id": "G30",
+          "cf": -0.8,
+          "ket": "Daun gundul semalam bukan ciri Kerdil Rumput — mengarah Ulat Grayak"
+        },
+        {
+          "gejala_id": "G31",
+          "cf": -0.8,
+          "ket": "Ulat grayak bukan ciri Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G32",
+          "cf": 0.95,
+          "ket": "Anakan sangat banyak dan rapat menyerupai rumput, kurus-kerdil — gejala definitif Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G33",
+          "cf": 0.8,
+          "ket": "Tepi daun bergerigi/melintir/bintik hijau tua — ciri khas infeksi virus Kerdil Rumput"
+        },
+        {
+          "gejala_id": "G34",
+          "cf": 0.6,
+          "ket": "Populasi wereng coklat beterbangan sebagai vektor penular RGSV/RRSV"
+        }
+      ]
+    }
+  ],
+  "cf_formula": {
+    "rumus_kombinasi": "CF_combined = CF1 + CF2*(1-CF1)  jika keduanya positif",
+    "rumus_campuran": "CF_combined = (CF1+CF2) / (1 - min(|CF1|,|CF2|))  jika berbeda tanda",
+    "rumus_negatif": "CF_combined = CF1 + CF2*(1+CF1)  jika keduanya negatif",
+    "threshold_tampil": 0.2,
+    "keterangan": "Diagnosis ditampilkan jika CF_combined >= 0.2. CF negatif secara aktif menurunkan confidence score diagnosis yang tidak cocok."
+  }
+}
