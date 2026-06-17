@@ -2,25 +2,140 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1a1a1a;
+  --green-dark: #1b5e20;
+  --green-medium: #2e7d32;
+  --green-light: #c5e1a5;
+  --green-pale: #e8f5e9;
+  --green-olive: #6b7c5e;
+  --cream: #f5f5dc;
+  --cream-light: #fafaf2;
+  --accent-yellow: #f9a825;
+  --text-muted: #6b7280;
+  --text-dark: #1a1a1a;
+  --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  --card-shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-green-dark: var(--green-dark);
+  --color-green-medium: var(--green-medium);
+  --color-green-light: var(--green-light);
+  --color-green-pale: var(--green-pale);
+  --color-green-olive: var(--green-olive);
+  --color-cream: var(--cream);
+  --color-cream-light: var(--cream-light);
+  --color-accent-yellow: var(--accent-yellow);
+  --color-text-muted: var(--text-muted);
+  --color-text-dark: var(--text-dark);
+  --font-sans: var(--font-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.7s ease-out both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out both;
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 3s ease-in-out infinite;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.7s ease-out both;
+}
+
+.animation-delay-100 {
+  animation-delay: 0.1s;
+}
+
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animation-delay-300 {
+  animation-delay: 0.3s;
+}
+
+.animation-delay-400 {
+  animation-delay: 0.4s;
+}
+
+.animation-delay-500 {
+  animation-delay: 0.5s;
 }
