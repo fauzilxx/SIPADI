@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function Home() {
@@ -14,7 +15,7 @@ export default function Home() {
         <div className="w-full px-4 sm:px-6 lg:px-12">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <a href="#" className="flex items-center gap-2 group">
+            <Link href="/" className="flex items-center gap-2 group">
               <div className="relative w-[18px] h-[18px] flex items-center justify-center transition-transform group-hover:scale-105">
                 <img
                   src="/icons/Icon.svg"
@@ -25,7 +26,7 @@ export default function Home() {
               <span className="text-[25px] font-bold text-green-dark tracking-tight leading-none">
                 SIPADI
               </span>
-            </a>
+            </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-1">
@@ -43,34 +44,20 @@ export default function Home() {
                     }`}
                 />
               </a>
-              <a
-                href="#features"
-                onClick={() => setActiveSection("features")}
-                className={`group relative py-2 px-1 mx-3 text-sm font-semibold transition-colors duration-300 ${activeSection === "features"
-                    ? "text-green-dark"
-                    : "text-text-muted hover:text-green-dark"
-                  }`}
+              <Link
+                href="/pertanyaan"
+                className="group relative py-2 px-1 mx-3 text-sm font-semibold transition-colors duration-300 text-text-muted hover:text-green-dark"
               >
                 Pertanyaan
-                <span
-                  className={`absolute bottom-0 left-0 h-[2.5px] bg-green-dark transition-all duration-300 ${activeSection === "features" ? "w-full" : "w-0"
-                    }`}
-                />
-              </a>
-              <a
-                href="#cta"
-                onClick={() => setActiveSection("cta")}
-                className={`group relative py-2 px-1 mx-3 text-sm font-semibold transition-colors duration-300 ${activeSection === "cta"
-                    ? "text-green-dark"
-                    : "text-text-muted hover:text-green-dark"
-                  }`}
+                <span className="absolute bottom-0 left-0 h-[2.5px] bg-green-dark transition-all duration-300 w-0 group-hover:w-full" />
+              </Link>
+              <Link
+                href="/pertanyaan"
+                className="group relative py-2 px-1 mx-3 text-sm font-semibold transition-colors duration-300 text-text-muted hover:text-green-dark"
               >
                 Diagnosis
-                <span
-                  className={`absolute bottom-0 left-0 h-[2.5px] bg-green-dark transition-all duration-300 ${activeSection === "cta" ? "w-full" : "w-0"
-                    }`}
-                />
-              </a>
+                <span className="absolute bottom-0 left-0 h-[2.5px] bg-green-dark transition-all duration-300 w-0 group-hover:w-full" />
+              </Link>
             </div>
 
             {/* Mobile Hamburger */}
@@ -115,39 +102,24 @@ export default function Home() {
                     setActiveSection("hero");
                     setMobileMenuOpen(false);
                   }}
-                  className={`px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${activeSection === "hero"
-                      ? "text-green-dark bg-green-pale/80"
-                      : "text-text-muted hover:bg-green-pale"
-                    }`}
+                  className="px-4 py-3 text-sm font-semibold rounded-lg transition-colors text-green-dark bg-green-pale/80"
                 >
                   Home
                 </a>
-                <a
-                  href="#features"
-                  onClick={() => {
-                    setActiveSection("features");
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${activeSection === "features"
-                      ? "text-green-dark bg-green-pale/80"
-                      : "text-text-muted hover:bg-green-pale"
-                    }`}
+                <Link
+                  href="/pertanyaan"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-4 py-3 text-sm font-semibold rounded-lg transition-colors text-text-muted hover:bg-green-pale"
                 >
                   Pertanyaan
-                </a>
-                <a
-                  href="#cta"
-                  onClick={() => {
-                    setActiveSection("cta");
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${activeSection === "cta"
-                      ? "text-green-dark bg-green-pale/80"
-                      : "text-text-muted hover:bg-green-pale"
-                    }`}
+                </Link>
+                <Link
+                  href="/pertanyaan"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-4 py-3 text-sm font-semibold rounded-lg transition-colors text-text-muted hover:bg-green-pale"
                 >
                   Diagnosis
-                </a>
+                </Link>
               </div>
             </div>
           )}
@@ -189,8 +161,8 @@ export default function Home() {
 
               {/* CTA Button */}
               <div className="flex items-center gap-4 mt-2">
-                <a
-                  href="#cta"
+                <Link
+                  href="/pertanyaan"
                   id="hero-cta-button"
                   className="inline-flex items-center gap-2 bg-green-dark text-white font-semibold px-6 py-3.5 rounded-xl hover:bg-green-dark/95 transition-all duration-300 hover:shadow-lg hover:shadow-green-dark/20 hover:-translate-y-0.5"
                 >
@@ -208,7 +180,7 @@ export default function Home() {
                     <line x1="5" y1="12" x2="19" y2="12" />
                     <polyline points="12 5 19 12 12 19" />
                   </svg>
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -307,8 +279,8 @@ export default function Home() {
                   beberapa pertanyaan singkat, dan sistem akan langsung mendeteksi masalah
                   pada padi Anda dengan hasil yang akurat.
                 </p>
-                <a
-                  href="#cta"
+                <Link
+                  href="/pertanyaan"
                   className="inline-flex items-center gap-2 text-sm font-semibold transition-opacity hover:opacity-85 group/link"
                   style={{ color: "#154212" }}
                 >
@@ -328,7 +300,7 @@ export default function Home() {
                       strokeLinejoin="round"
                     />
                   </svg>
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -435,8 +407,8 @@ export default function Home() {
                 Jangan biarkan penyakit dan hama merusak padi Anda. Gunakan
                 SIPADI sekarang untuk diagnosa dini dan penanganan tepat.
               </p>
-              <a
-                href="#"
+              <Link
+                href="/pertanyaan"
                 id="cta-main-button"
                 className="inline-flex items-center gap-2 bg-green-light text-green-dark font-bold px-8 py-4 rounded-full hover:bg-cream hover:text-green-dark transition-all duration-300 hover:shadow-xl hover:shadow-green-light/30 hover:-translate-y-0.5 text-base"
               >
@@ -450,7 +422,7 @@ export default function Home() {
                     strokeLinejoin="round"
                   />
                 </svg>
-              </a>
+              </Link>
             </div>
           </div>
         </div>
