@@ -1,9 +1,9 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
 
-import marketplaceData from "@/marketplace_produk.json";
-import nonChemicalData from "@/pengendali_non_kimia.json";
-import recommendationData from "@/rekomendasi_pencegahan.json";
+import marketplaceData from "@/data/marketplace_produk.json";
+import nonChemicalData from "@/data/pengendali_non_kimia.json";
+import recommendationData from "@/data/rekomendasi_pencegahan.json";
 
 export interface RecommendationSource {
   judul: string;

@@ -6,8 +6,16 @@ import {
   type KnowledgeBaseData,
 } from "@/lib/knowledge-base";
 
-const knowledgeBasePath = path.join(process.cwd(), "knowledge_base_v2.json");
-const backupPath = path.join(process.cwd(), "knowledge_base_v2.backup.json");
+const knowledgeBasePath = path.join(
+  process.cwd(),
+  "data",
+  "knowledge_base_v2.json"
+);
+const backupPath = path.join(
+  process.cwd(),
+  "data",
+  "knowledge_base_v2.backup.json"
+);
 
 export async function readKnowledgeBaseFile() {
   const raw = await readFile(knowledgeBasePath, "utf8");

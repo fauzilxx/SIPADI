@@ -1,4 +1,4 @@
-import knowledgeBase from "@/knowledge_base_v2.json";
+import knowledgeBase from "@/data/knowledge_base_v2.json";
 
 export interface Gejala {
   id: string;

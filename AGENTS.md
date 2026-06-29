@@ -31,8 +31,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Frontend         : React 19.2.4
 - Styling          : Tailwind CSS v4 via global CSS entry
 - Build Tool       : Turbopack via Next.js
-- Knowledge Base   : Local JSON file (`knowledge_base_v2.json`)
-- Supplemental Data: Local JSON files for recommendations, marketplace products, and non-chemical controls
+- Knowledge Base   : Local JSON file (`data/knowledge_base_v2.json`)
+- Supplemental Data: Local JSON files in `data/` for recommendations, marketplace products, and non-chemical controls
 - Diagnosis Engine : Custom TypeScript engine (`lib/diagnosis.ts`)
 - Auth             : Simple signed cookie session for expert dashboard
 - Testing          : Vitest
@@ -88,7 +88,7 @@ Minimum required reading flow:
 6. Read all expert dashboard components
 7. Read the current test file
 8. Read the implementation summary markdown files
-9. Read `knowledge_base_v2.json`
+9. Read `data/knowledge_base_v2.json`
 10. Read the relevant Next.js local docs in `node_modules/next/dist/docs/`
 
 If the agent has not done this, it should consider itself insufficiently oriented.
@@ -127,10 +127,11 @@ sipadi/
 │   ├── images/
 │   │   ├── bahanaktif+kemasan/        # Local product/package images mapped from marketplace data
 │   │   └── pengendali-non-kimia/      # Local non-chemical control images mapped by slug
-├── knowledge_base_v2.json             # Core domain data
-├── rekomendasi_pencegahan.json        # Supplemental recommendation dataset (separate from diagnosis KB)
-├── marketplace_produk.json            # Product/package catalog + marketplace links + usage notes
-├── pengendali_non_kimia.json          # Non-chemical control catalog + usage notes + image filenames
+├── data/
+│   ├── knowledge_base_v2.json         # Core domain data
+│   ├── rekomendasi_pencegahan.json    # Supplemental recommendation dataset (separate from diagnosis KB)
+│   ├── marketplace_produk.json        # Product/package catalog + marketplace links + usage notes
+│   └── pengendali_non_kimia.json      # Non-chemical control catalog + usage notes + image filenames
 ├── IMPLEMENTASI_BACKEND_OPSI_A.md     # Summary of diagnosis backend migration
 ├── IMPLEMENTASI_DASHBOARD_PAKAR.md    # Summary of expert dashboard implementation
 ├── next.config.ts
@@ -183,7 +184,7 @@ sipadi/
 - `lib/supplemental-content.ts`
 - `lib/__tests__/diagnosis.test.ts`
 - `lib/__tests__/supplemental-content.test.ts`
-- `knowledge_base_v2.json`
+- `data/knowledge_base_v2.json`
 
 ### Project Decision Docs
 
@@ -192,9 +193,9 @@ sipadi/
 
 ### Supplemental Content Data
 
-- `rekomendasi_pencegahan.json`
-- `marketplace_produk.json`
-- `pengendali_non_kimia.json`
+- `data/rekomendasi_pencegahan.json`
+- `data/marketplace_produk.json`
+- `data/pengendali_non_kimia.json`
 
 ---
 
@@ -211,14 +212,14 @@ Current active flow:
 5. Selected data is stored in `sessionStorage`
 6. `/hasil` sends the payload to `POST /api/diagnosis`
 7. Backend validates input and runs reasoning
-8. Backend hydrates supplemental recommendation content for the top diagnosis using `rekomendasi_pencegahan.json`, `marketplace_produk.json`, and `pengendali_non_kimia.json`
+8. Backend hydrates supplemental recommendation content for the top diagnosis using `data/rekomendasi_pencegahan.json`, `data/marketplace_produk.json`, and `data/pengendali_non_kimia.json`
 9. UI renders diagnosis result plus linked marketplace and non-chemical recommendation content from API response
 
 Important:
 
 - Diagnosis is no longer computed directly in the result page.
 - Do not reintroduce query-string-based diagnosis logic.
-- `knowledge_base_v2.json` still drives reasoning.
+- `data/knowledge_base_v2.json` still drives reasoning.
 - Supplemental recommendation/media JSON files are content sources and should not be treated as the diagnosis engine source of truth.
 
 ### Expert Dashboard Flow
@@ -264,7 +265,7 @@ Do not change diagnosis behavior casually. If you change the engine:
 
 ### Knowledge Base
 
-`knowledge_base_v2.json` is the central source of truth.
+`data/knowledge_base_v2.json` is the central source of truth.
 
 It affects:
 
@@ -287,17 +288,17 @@ Any structural change to this file usually requires reviewing:
 
 The project now also keeps presentation-oriented content in separate JSON files:
 
-- `rekomendasi_pencegahan.json`
-- `marketplace_produk.json`
-- `pengendali_non_kimia.json`
+- `data/rekomendasi_pencegahan.json`
+- `data/marketplace_produk.json`
+- `data/pengendali_non_kimia.json`
 
 These files are intended for treatment/prevention copy, marketplace product references, and non-chemical control/media mapping.
 
 Important:
 
-- Do not move diagnosis rules out of `knowledge_base_v2.json`.
+- Do not move diagnosis rules out of `data/knowledge_base_v2.json`.
 - Do not assume supplemental JSON files are validated by the expert save route.
-- `rekomendasi_pencegahan.json` now owns explicit `productIds` references per `penyakit_id`, split into `marketplace` and `nonKimia`.
+- `data/rekomendasi_pencegahan.json` now owns explicit `productIds` references per `penyakit_id`, split into `marketplace` and `nonKimia`.
 - Product display should resolve through `productIds`, not text matching against recommendation sentences.
 - `lib/supplemental-content.ts` is the resolver layer that joins recommendation entries with marketplace and non-chemical catalogs.
 - `app/api/diagnosis/route.ts` is responsible for returning hydrated supplemental recommendation content for the top diagnosis.
@@ -443,7 +444,7 @@ If instructions are ambiguous, ask first before making risky architectural chang
 Before editing, the agent should be able to answer:
 
 1. Does this change affect public diagnosis, expert dashboard, or both?
-2. Which files read from `knowledge_base_v2.json` directly or indirectly?
+2. Which files read from `data/knowledge_base_v2.json` directly or indirectly?
 3. Does this change alter validation rules?
 4. Does it affect `sessionStorage`, cookies, route handlers, or file writes?
 5. Should diagnosis tests be updated?
@@ -469,13 +470,13 @@ These are already true in the current codebase:
 - Diagnosis backend migration has already happened.
 - Opsi A flow (`kelompok -> gejala -> hasil`) is already active.
 - Expert dashboard already exists and can edit/save the local knowledge base.
-- Save route already creates `knowledge_base_v2.backup.json`.
-- `P05` (Tikus Sawah) in `knowledge_base_v2.json` now includes treatment/prevention content.
-- `rekomendasi_pencegahan.json` is a curated supplemental dataset and its `P10` entry has been repurposed from Neck Blast to Tikus Sawah to match current project needs.
-- `rekomendasi_pencegahan.json` now includes explicit `productIds` per disease/hama so linked products do not depend on text parsing.
-- `marketplace_produk.json` maps product/package content, marketplace links, image filenames, and practical usage notes.
-- `marketplace_produk.json` must remain valid JSON because it is imported directly by TypeScript code.
-- `pengendali_non_kimia.json` maps non-chemical control items, usage notes, optional marketplace search links, and image filenames for items with product-style visuals.
+- Save route already creates `data/knowledge_base_v2.backup.json`.
+- `P05` (Tikus Sawah) in `data/knowledge_base_v2.json` now includes treatment/prevention content.
+- `data/rekomendasi_pencegahan.json` is a curated supplemental dataset and its `P10` entry has been repurposed from Neck Blast to Tikus Sawah to match current project needs.
+- `data/rekomendasi_pencegahan.json` now includes explicit `productIds` per disease/hama so linked products do not depend on text parsing.
+- `data/marketplace_produk.json` maps product/package content, marketplace links, image filenames, and practical usage notes.
+- `data/marketplace_produk.json` must remain valid JSON because it is imported directly by TypeScript code.
+- `data/pengendali_non_kimia.json` maps non-chemical control items, usage notes, optional marketplace search links, and image filenames for items with product-style visuals.
 - `/api/diagnosis` now returns hydrated supplemental recommendation data for the top diagnosis, and `/hasil` renders it.
 - Product/package images under `public/images/bahanaktif+kemasan/` and non-chemical images under `public/images/pengendali-non-kimia/` have been normalized to frontend-friendly filenames.
 

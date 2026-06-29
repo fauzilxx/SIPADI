@@ -7,9 +7,21 @@ import type {
   RecommendationEntry,
 } from "@/lib/supplemental-content";
 
-const recommendationPath = path.join(process.cwd(), "rekomendasi_pencegahan.json");
-const marketplacePath = path.join(process.cwd(), "marketplace_produk.json");
-const nonChemicalPath = path.join(process.cwd(), "pengendali_non_kimia.json");
+const recommendationPath = path.join(
+  process.cwd(),
+  "data",
+  "rekomendasi_pencegahan.json"
+);
+const marketplacePath = path.join(
+  process.cwd(),
+  "data",
+  "marketplace_produk.json"
+);
+const nonChemicalPath = path.join(
+  process.cwd(),
+  "data",
+  "pengendali_non_kimia.json"
+);
 
 export interface SupplementalContentBundle {
   rekomendasi: RecommendationEntry[];
