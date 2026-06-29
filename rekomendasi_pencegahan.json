@@ -1,0 +1,782 @@
+{
+    "_meta":  {
+                  "nama_proyek":  "PadiDoc â€” Sistem Pakar Diagnosa Hama \u0026 Penyakit Padi",
+                  "deskripsi":  "Data rekomendasi solusi dan pencegahan untuk 13 penyakit/hama padi",
+                  "versi":  "1.1.0",
+                  "kompatibel_dengan":  "knowledge_base_v2.json (v3.0.0)",
+                  "struktur":  {
+                                   "solusi":  "Tindakan kuratif yang dilakukan setelah terdiagnosis â€” fokus menghentikan \u0026 memulihkan",
+                                   "pencegahan_jangka_pendek":  "Tindakan preventif dalam 1 musim tanam berjalan (0â€“4 minggu ke depan)",
+                                   "pencegahan_jangka_panjang":  "Tindakan strategis lintas musim / struktural untuk menekan risiko berulang",
+                                   "sumber":  "Daftar referensi yang mendasari rekomendasi pada entri tersebut"
+                               }
+              },
+    "rekomendasi":  [
+                        {
+                            "penyakit_id":  "P01",
+                            "nama":  "Wereng Batang Coklat (WBC)",
+                            "productIds":  {
+                                               "marketplace":  ["PRD01", "PRD02"],
+                                               "nonKimia":  ["NK01", "NK02", "NK09"]
+                                           },
+                            "solusi":  {
+                                           "kimia":  [
+                                                         "Semprotkan insektisida berbahan aktif buprofezin (Applaud 10 WP) atau imidakloprid (Confidor 200 SL) sesuai dosis anjuran",
+                                                         "Gunakan insektisida sistemik yang disemprotkan ke pangkal batang agar lebih efektif mengenai koloni WBC",
+                                                         "Hindari penggunaan insektisida piretroid karena dapat memicu resurjensi WBC"
+                                                     ],
+                                           "mekanis":  [
+                                                           "Pasang lampu perangkap (light trap) di tengah sawah untuk menangkap imago WBC aktif malam hari",
+                                                           "Semprot air bertekanan tinggi ke pangkal batang untuk menyapu koloni WBC",
+                                                           "Cabut dan bakar rumpun tanaman yang sudah hopperburn parah agar tidak menjadi sumber infestasi"
+                                                       ],
+                                           "biologis":  [
+                                                            "Lepas musuh alami: parasitoid telur Anagrus nilaparvatae atau predator Cyrtorhinus lividipennis",
+                                                            "Semprotkan bioinsektisida berbasis jamur Beauveria bassiana pada koloni WBC"
+                                                        ]
+                                       },
+                            "pencegahan_jangka_pendek":  [
+                                                             "Kurangi dosis pupuk nitrogen (urea) â€” kelebihan N mempercepat perkembangan populasi WBC",
+                                                             "Lakukan pemantauan rutin setiap 7 hari dengan mengamati pangkal batang, ambang ekonomi 10â€“20 WBC per rumpun",
+                                                             "Pertahankan populasi musuh alami dengan tidak menyemprot insektisida secara terjadwal tanpa dasar pengamatan",
+                                                             "Keringkan petakan sawah secara berkala (intermitten irrigation) untuk mengganggu habitat WBC",
+                                                             "Pasang yellow sticky trap untuk monitoring populasi imago"
+                                                         ],
+                            "pencegahan_jangka_panjang":  [
+                                                              "Gunakan varietas tahan WBC seperti Inpari 13, Inpari 30, Inpari 32, atau Ciherang yang memiliki gen ketahanan Bph",
+                                                              "Terapkan tanam serentak (Â±2 minggu) dengan petani sekitar untuk memutus siklus hidup WBC antar musim",
+                                                              "Lakukan rotasi varietas setiap 2â€“3 musim untuk mencegah patahan ketahanan varietas",
+                                                              "Terapkan sistem Pengendalian Hama Terpadu (PHT): monitoring berbasis ekosistem, utamakan musuh alami",
+                                                              "Hindari menanam padi terus-menerus (monokultur) tanpa jeda â€” rotasi dengan palawija 1Ã— setahun"
+                                                          ],
+                            "sumber":  [
+                                           {
+                                               "judul":  "Pengendalian Wereng Batang Coklat pada Padi",
+                                               "penerbit":  "Pusat Perpustakaan dan Literasi Pertanian, Badan Penyuluhan dan Pengembangan SDM Pertanian (BPPSDMP) Kementan RI",
+                                               "url":  "https://pustaka.bppsdmp.pertanian.go.id/info-literasi/pengendalian-wereng-batang-coklat-pada-padi",
+                                               "tahun":  "2023"
+                                           },
+                                           {
+                                               "judul":  "Kenali dan Pahami Wereng Batang Coklat Untuk Amankan Produksi Padi",
+                                               "penerbit":  "Pilar Pertanian / Webinar Propaktani Kementan RI (narasumber: Prof. Aunu Rauf, Prof. Andi Trisyono UGM, BBPOPT)",
+                                               "url":  "https://pilarpertanian.com/kenali-dan-pahami-wereng-batang-coklat-untuk-amankan-produksi-padi",
+                                               "tahun":  "2021"
+                                           },
+                                           {
+                                               "judul":  "Tatalaksana Pengendalian Wereng Coklat dan Virus Kerdil",
+                                               "penerbit":  "Dinas Pertanian dan Pangan Kabupaten Badung / Kementan RI",
+                                               "url":  "https://diperpa.badungkab.go.id/Artikel/18229-tatalaksana-pengendalian-wereng-coklat-dan-virus-kerdil",
+                                               "tahun":  "2020"
+                                           },
+                                           {
+                                               "judul":  "BBPOPT â€” Balai Besar Peramalan Organisme Pengganggu Tumbuhan Jatisari",
+                                               "penerbit":  "Kementerian Pertanian RI",
+                                               "url":  "https://bbpopt.tanamanpangan.pertanian.go.id",
+                                               "tahun":  "2024"
+                                           }
+                                       ]
+                        },
+                        {
+                            "penyakit_id":  "P02",
+                            "nama":  "Penggerek Batang Padi",
+                            "productIds":  {
+                                               "marketplace":  ["PRD03", "PRD04", "PRD15"],
+                                               "nonKimia":  ["NK01", "NK11", "NK18"]
+                                           },
+                            "solusi":  {
+                                           "kimia":  [
+                                                         "Aplikasikan insektisida berbahan aktif karbofuran (Furadan 3G) butiran ke dalam air saat fase sundep (vegetatif)",
+                                                         "Semprotkan klorantraniliprol (Ferterra 0.4 GR) atau fipronil (Regent 50 SC) saat populasi ngengat tinggi",
+                                                         "Lakukan penyemprotan pada sore/malam hari saat ngengat aktif bertelur"
+                                                     ],
+                                           "mekanis":  [
+                                                           "Kumpulkan dan musnahkan kelompok telur penggerek batang yang ditemukan di daun",
+                                                           "Potong anakan yang menunjukkan gejala sundep (pucuk mati) hingga ke pangkal untuk mengeluarkan larva",
+                                                           "Pasang lampu perangkap untuk menangkap ngengat penggerek dewasa"
+                                                       ],
+                                           "biologis":  [
+                                                            "Lepas parasitoid telur Trichogramma japonicum atau T. chilonis (5â€“10 pias/ha) saat puncak penerbangan ngengat",
+                                                            "Semprot bioinsektisida Bacillus thuringiensis (Bt) var. kurstaki saat instar larva muda"
+                                                        ]
+                                       },
+                            "pencegahan_jangka_pendek":  [
+                                                             "Pantau populasi ngengat dengan light trap â€” ambang kendali 6 ngengat/perangkap/malam",
+                                                             "Periksa daun bendera untuk kelompok telur setiap 7 hari sejak tanam",
+                                                             "Pertahankan genangan air Â±5 cm pada fase vegetatif untuk menghambat larva yang jatuh ke tanah",
+                                                             "Hindari penanaman terlambat yang bertepatan dengan puncak populasi penggerek",
+                                                             "Segera potong dan musnahkan malai beluk agar larva tidak berpindah ke rumpun sehat"
+                                                         ],
+                            "pencegahan_jangka_panjang":  [
+                                                              "Gunakan varietas yang memiliki toleransi terhadap penggerek batang (Cisantana, Inpari seri tahan)",
+                                                              "Lakukan sinkronisasi tanam antar petani dalam satu hamparan untuk memutus siklus generasi penggerek",
+                                                              "Bajak dan rendam sawah pasca panen minimal 2 minggu untuk membunuh pupa yang tersisa di sisa batang",
+                                                              "Hancurkan sisa jerami dan tunggul padi setelah panen â€” jangan biarkan di sawah sebagai sumber ngengat generasi berikut",
+                                                              "Rotasi tanaman dengan palawija untuk memutus siklus inang"
+                                                          ],
+                            "sumber":  [
+                                           {
+                                               "judul":  "Hama Penggerek Batang Padi dan Rekomendasi Pengendaliannya",
+                                               "penerbit":  "IPB Digitani â€” Institut Pertanian Bogor",
+                                               "url":  "https://digitani.ipb.ac.id/hama-penggerek-batang-padi-dan-rekomendasi-pengendaliannya/",
+                                               "tahun":  "2023"
+                                           },
+                                           {
+                                               "judul":  "Hama Penggerek Batang Padi dan Strategi Pengendaliannya",
+                                               "penerbit":  "Dinas Pertanian Kabupaten Badung / Kementan RI",
+                                               "url":  "https://diperpa.badungkab.go.id/Artikel/18080-hama-penggerek-batang-padi-dan-strategi-pengendaliannya",
+                                               "tahun":  "2018"
+                                           },
+                                           {
+                                               "judul":  "Pengendalian Terpadu Penggerek Batang Padi: Tantangan dan Peluang",
+                                               "penerbit":  "Repository Kementerian Pertanian RI / Direktorat Bina Perlindungan Tanaman",
+                                               "url":  "https://repository.pertanian.go.id/items/4521b3fb-749e-4705-98aa-d996e7c08e7f",
+                                               "tahun":  "2020"
+                                           },
+                                           {
+                                               "judul":  "BBPOPT â€” Pengamatan OPT Penggerek Batang Padi",
+                                               "penerbit":  "Balai Besar Peramalan OPT Jatisari, Kementan RI",
+                                               "url":  "https://bbpopt.org/index.php/pengamatan/",
+                                               "tahun":  "2020"
+                                           }
+                                       ]
+                        },
+                        {
+                            "penyakit_id":  "P03",
+                            "nama":  "Walang Sangit",
+                            "productIds":  {
+                                               "marketplace":  ["PRD05"],
+                                               "nonKimia":  ["NK08", "NK15", "NK21"]
+                                           },
+                            "solusi":  {
+                                           "kimia":  [
+                                                         "Semprotkan insektisida berbahan aktif malation atau BPMC (Bassa 50 EC) pada sore/malam hari saat walang sangit aktif",
+                                                         "Gunakan insektisida kontak berbahan aktif deltametrin atau sipermetrin jika populasi sangat tinggi",
+                                                         "Semprot terutama pada saat padi bunting hingga masak susu untuk melindungi pengisian bulir"
+                                                     ],
+                                           "mekanis":  [
+                                                           "Tangkap walang sangit secara massal dengan jaring serok pada pagi hari saat suhu masih rendah",
+                                                           "Pasang perangkap umpan dari bangkai ikan/udang busuk untuk menarik walang sangit",
+                                                           "Usir walang sangit dengan asap atau suara gaduh pada waktu pengisian bulir"
+                                                       ],
+                                           "biologis":  [
+                                                            "Pelihara dan lindungi musuh alami: semut, laba-laba, dan predator lain yang memangsa telur walang sangit",
+                                                            "Tanam tanaman berbunga (refugia) di sekitar pematang untuk menarik predator alami"
+                                                        ]
+                                       },
+                            "pencegahan_jangka_pendek":  [
+                                                             "Bersihkan gulma di pematang dan tepi sawah â€” walang sangit berlindung dan bertelur di sana",
+                                                             "Pantau populasi walang sangit sejak fase bunting, ambang kendali 5 ekor/rumpun saat masak susu",
+                                                             "Jangan biarkan padi terlalu lama di lahan setelah matang â€” segera panen untuk menghindari kerusakan biji",
+                                                             "Lakukan penyemprotan pada pagi hari pukul 06.00â€“08.00 atau sore 17.00â€“19.00 saat walang sangit aktif di malai"
+                                                         ],
+                            "pencegahan_jangka_panjang":  [
+                                                              "Tanam serentak agar fase pengisian biji tidak memanjang â€” walang sangit berkumpul pada hamparan yang pengisian bijinya paling belakang",
+                                                              "Kelola pematang sawah: potong gulma secara rutin agar tidak menjadi habitat walang sangit",
+                                                              "Tingkatkan sanitasi sawah antar musim â€” rotasi atau pengolahan tanah untuk mengurangi populasi walang sangit di lahan bera",
+                                                              "Kembangkan refugia di sekitar lahan sawah untuk meningkatkan populasi musuh alami serangga"
+                                                          ],
+                            "sumber":  [
+                                           {
+                                               "judul":  "Pengendalian Hama dan Penyakit pada Tanaman Padi",
+                                               "penerbit":  "DGW Fertilizer / Kementan RI",
+                                               "url":  "https://www.dgwfertilizer.co.id/pengendalian-hama-dan-penyakit-pada-tanaman-padi/",
+                                               "tahun":  "2021"
+                                           },
+                                           {
+                                               "judul":  "Kendalikan Hama Padi Dengan Musuh Alami",
+                                               "penerbit":  "Pusat Perpustakaan dan Literasi Pertanian BPPSDMP Kementan RI",
+                                               "url":  "https://pustaka.bppsdmp.pertanian.go.id/info-literasi/info-teknologi-kendalikan-hama-padi-dengan-musuh-alami",
+                                               "tahun":  "2024"
+                                           },
+                                           {
+                                               "judul":  "Masalah Lapang Hama Penyakit dan Hara pada Padi",
+                                               "penerbit":  "Balai Besar Penelitian Tanaman Padi (BBPADI) â€” Kementan RI",
+                                               "url":  "https://bbpadi.litbang.pertanian.go.id",
+                                               "tahun":  "2022"
+                                           }
+                                       ]
+                        },
+                        {
+                            "penyakit_id":  "P04",
+                            "nama":  "Blast (Blas Daun \u0026 Leher)",
+                            "productIds":  {
+                                               "marketplace":  ["PRD06", "PRD07"],
+                                               "nonKimia":  ["NK10", "NK13", "NK20"]
+                                           },
+                            "solusi":  {
+                                           "kimia":  [
+                                                         "Semprotkan fungisida berbahan aktif trisiklazol (Beam 75 WP) atau isoprotiolan (Fuji-One 400 EC) saat gejala blas daun pertama muncul",
+                                                         "Untuk blas leher malai, semprotkan fungisida pada saat 5â€“10% malai keluar (fase bunting akhir)",
+                                                         "Ulangi penyemprotan 7â€“10 hari kemudian jika kondisi cuaca lembab terus-menerus"
+                                                     ],
+                                           "mekanis":  [
+                                                           "Pangkas dan musnahkan daun yang terinfeksi blas berat sebelum spora menyebar",
+                                                           "Hindari penyiraman/irigasi yang membasahi daun pada malam hari â€” percikan air membantu spora berpindah"
+                                                       ],
+                                           "biologis":  [
+                                                            "Semprotkan Trichoderma harzianum atau Pseudomonas fluorescens sebagai biofungisida pada daun",
+                                                            "Aplikasikan silika (Si) melalui pupuk silikat â€” meningkatkan ketebalan dinding sel daun sehingga lebih tahan infeksi"
+                                                        ]
+                                       },
+                            "pencegahan_jangka_pendek":  [
+                                                             "Kurangi dosis pupuk nitrogen â€” kelebihan N membuat jaringan daun lunak dan rentan terhadap Pyricularia oryzae",
+                                                             "Atur jarak tanam lebih lebar (25Ã—25 cm) untuk meningkatkan sirkulasi udara dan mengurangi kelembaban kanopi",
+                                                             "Hindari irigasi berlebih â€” pertahankan kondisi lahan macak-macak terutama saat cuaca hujan berkepanjangan",
+                                                             "Amati daun bendera secara intensif saat usia 45â€“60 HST untuk deteksi dini blas leher"
+                                                         ],
+                            "pencegahan_jangka_panjang":  [
+                                                              "Gunakan varietas tahan blast: Inpari 42, Inpago seri, atau varietas lokal yang telah diuji ketahanannya di daerah setempat",
+                                                              "Rotasi varietas setiap 2â€“3 musim â€” infeksi tahan terhadap satu ras dapat patah jika varietas tidak dirotasi",
+                                                              "Gunakan benih bersertifikat dan perlakukan benih dengan fungisida (seed treatment) sebelum tanam",
+                                                              "Terapkan pemupukan berimbang N-P-K-Si untuk meningkatkan ketahanan jaringan tanaman",
+                                                              "Catat riwayat serangan blast per petak/musim untuk memetakan lahan dengan risiko tinggi"
+                                                          ],
+                            "sumber":  [
+                                           {
+                                               "judul":  "Pengendalian Penyakit Blast pada Tanaman Padi",
+                                               "penerbit":  "PT Etong Chemical Indonesia",
+                                               "url":  "https://etongchem.id/2023/05/11/pengendalian-penyakit-blast-pada-tanaman-padi/",
+                                               "tahun":  "2023"
+                                           },
+                                           {
+                                               "judul":  "Masalah Lapang Hama Penyakit dan Hara pada Padi (Buku Panduan)",
+                                               "penerbit":  "Balai Besar Penelitian Tanaman Padi (BBPADI), Badan Litbang Pertanian â€” Kementan RI",
+                                               "url":  "https://bbpadi.litbang.pertanian.go.id",
+                                               "tahun":  "2022"
+                                           },
+                                           {
+                                               "judul":  "Rice Blast Management â€” Rice Knowledge Bank",
+                                               "penerbit":  "International Rice Research Institute (IRRI)",
+                                               "url":  "https://www.knowledgebank.irri.org/decision-tools/rice-doctor/rice-doctor-fact-sheets/item/blast",
+                                               "tahun":  "2023"
+                                           }
+                                       ]
+                        },
+                        {
+                            "penyakit_id":  "P05",
+                            "nama":  "Hawar Daun Bakteri (HDB / Kresek)",
+                            "productIds":  {
+                                               "marketplace":  ["PRD11"],
+                                               "nonKimia":  ["NK12", "NK13", "NK20"]
+                                           },
+                            "solusi":  {
+                                           "kimia":  [
+                                                         "Semprotkan bakterisida berbahan aktif tembaga oksiklorida (Copper Oxychloride) atau streptomisin sulfat pada tanaman terinfeksi",
+                                                         "Gunakan agen pengendali hayati berbasis Bacillus subtilis yang bersifat antibakteri",
+                                                         "Tidak ada fungisida kimia yang efektif â€” hindari penyemprotan fungisida yang tidak tepat sasaran"
+                                                     ],
+                                           "mekanis":  [
+                                                           "Potong dan bakar daun yang menunjukkan gejala hawar parah untuk memutus sumber inokulum",
+                                                           "Hindari kerja di sawah saat hujan â€” bakteri Xanthomonas oryzae pv. oryzae menyebar melalui percikan air dan kontak"
+                                                       ],
+                                           "biologis":  [
+                                                            "Aplikasikan Bacillus subtilis atau Pseudomonas fluorescens ke tanaman dan tanah untuk persaingan biologis",
+                                                            "Perkuat ketahanan tanaman dengan pupuk kalium (KCl) â€” kalium meningkatkan dinding sel dan ketahanan terhadap bakteri"
+                                                        ]
+                                       },
+                            "pencegahan_jangka_pendek":  [
+                                                             "Kurangi pupuk nitrogen berlebih â€” N tinggi memperparah infeksi HDB",
+                                                             "Tambahkan pupuk kalium (KCl) sesuai kebutuhan untuk memperkuat tanaman",
+                                                             "Hindari irigasi berlebih yang menyebabkan genangan di permukaan daun â€” air mengalir membantu penyebaran bakteri",
+                                                             "Jangan lakukan pemangkasan daun secara besar-besaran â€” luka besar adalah pintu masuk bakteri",
+                                                             "Pantau intensitas serangan setiap 7 hari dan dokumentasikan pola penyebarannya"
+                                                         ],
+                            "pencegahan_jangka_panjang":  [
+                                                              "Gunakan varietas tahan HDB: Inpari 13, Inpari 28, Code, atau Angke",
+                                                              "Gunakan benih bebas penyakit dari sumber bersertifikat",
+                                                              "Lakukan rotasi tanaman atau bera untuk memutus inokulum bakteri di tanah",
+                                                              "Sanitasi saluran irigasi â€” bakteri dapat menyebar melalui air irigasi dari petak yang terinfeksi",
+                                                              "Terapkan pemupukan berimbang: hindari nitrogen tunggal tanpa K dan P"
+                                                          ],
+                            "sumber":  [
+                                           {
+                                               "judul":  "Penyakit Hawar Daun Bakteri pada Tanaman Padi",
+                                               "penerbit":  "Dinas Pertanian Kabupaten Buleleng / Kementan RI",
+                                               "url":  "https://distan.bulelengkab.go.id/informasi/detail/artikel/55_penyakit-hawar-daun-bakteri-pada-tanaman-padi",
+                                               "tahun":  "2025"
+                                           },
+                                           {
+                                               "judul":  "Pengendalian Hawar Daun Bakteri (HDB) Tanaman Padi",
+                                               "penerbit":  "Dinas Ketahanan Pangan, Tanaman Pangan dan Hortikultura Provinsi Lampung / Kementan RI",
+                                               "url":  "https://dinastph.lampungprov.go.id/detail-post/pengendalian-hawar-daun-bakteri-hdb-tanaman-padi",
+                                               "tahun":  "2021"
+                                           },
+                                           {
+                                               "judul":  "Penyakit Hawar Daun Bakteri (HDB) pada Tanaman Padi dan Pengendaliannya",
+                                               "penerbit":  "Cybext â€” Cyber Extension Kementan RI",
+                                               "url":  "http://cybex.pertanian.go.id/mobile/artikel/93699/Penyakit-Hawar-Daun-Bakteri-hdb-Pada-Tanaman-Padi-Dan-Pengendaliannya/",
+                                               "tahun":  "2020"
+                                           },
+                                           {
+                                               "judul":  "Bacterial Leaf Blight Management",
+                                               "penerbit":  "International Rice Research Institute (IRRI) â€” Rice Knowledge Bank",
+                                               "url":  "https://www.knowledgebank.irri.org/decision-tools/rice-doctor/rice-doctor-fact-sheets/item/bacterial-blight",
+                                               "tahun":  "2023"
+                                           }
+                                       ]
+                        },
+                        {
+                            "penyakit_id":  "P06",
+                            "nama":  "Brown Spot (Bercak Coklat)",
+                            "productIds":  {
+                                               "marketplace":  ["PRD08", "PRD09", "PRD10"],
+                                               "nonKimia":  ["NK10", "NK18", "NK21"]
+                                           },
+                            "solusi":  {
+                                           "kimia":  [
+                                                         "Semprotkan fungisida berbahan aktif mancozeb (Dithane M-45), iprodion (Rovral), atau propikonazol (Tilt 250 EC)",
+                                                         "Ulangi penyemprotan 10â€“14 hari kemudian jika kondisi cuaca tetap lembab",
+                                                         "Perlakukan benih dengan fungisida berbahan aktif karbendazim sebelum tanam untuk mencegah infeksi benih"
+                                                     ],
+                                           "mekanis":  [
+                                                           "Pangkas daun yang bergejala parah untuk mengurangi sumber inokulum",
+                                                           "Tingkatkan drainase petakan â€” brown spot lebih parah di lahan tergenang terus-menerus"
+                                                       ],
+                                           "biologis":  [
+                                                            "Aplikasikan Trichoderma sp. ke tanah dan daun sebagai biofungisida",
+                                                            "Perkuat nutrisi tanaman dengan pupuk kalium dan fosfat untuk meningkatkan ketahanan alami"
+                                                        ]
+                                       },
+                            "pencegahan_jangka_pendek":  [
+                                                             "Perbaiki kesuburan lahan dengan menambahkan pupuk P dan K â€” defisiensi hara utama penyebab brown spot",
+                                                             "Lakukan uji tanah untuk mengetahui status hara lahan sebelum pemupukan",
+                                                             "Hindari pemupukan N yang tidak berimbang tanpa diimbangi P dan K",
+                                                             "Pastikan benih yang digunakan bersih dari infeksi Bipolaris oryzae dengan seed treatment"
+                                                         ],
+                            "pencegahan_jangka_panjang":  [
+                                                              "Perbaiki kesuburan tanah secara permanen dengan penambahan bahan organik (kompos, pupuk kandang) setiap musim",
+                                                              "Rotasi tanaman untuk memutus siklus jamur Bipolaris oryzae di tanah",
+                                                              "Gunakan varietas yang lebih tahan terhadap brown spot â€” varietas modern umumnya lebih toleran",
+                                                              "Lakukan analisis tanah rutin setiap 1â€“2 tahun untuk memantau status hara P, K, dan pH",
+                                                              "Hindari penyimpanan benih yang lembab â€” brown spot dapat terbawa benih"
+                                                          ],
+                            "sumber":  [
+                                           {
+                                               "judul":  "Mirip Dengan Penyakit Blas, Kenali Penyakit Bercak Coklat (Brown Spot) pada Padi",
+                                               "penerbit":  "Dinas Pertanian Kabupaten Buleleng â€” mengacu Badan Litbang Pertanian (2020)",
+                                               "url":  "https://distan.bulelengkab.go.id/informasi/detail/artikel/66_mirip-dengan-penyakit-blas-kenali-penyakit-bercak-coklat-brown-spot-pada-padi-helminthosporium-oryzae",
+                                               "tahun":  "2025"
+                                           },
+                                           {
+                                               "judul":  "Brown Spot of Rice â€” Rice Knowledge Bank",
+                                               "penerbit":  "International Rice Research Institute (IRRI)",
+                                               "url":  "https://www.knowledgebank.irri.org/decision-tools/rice-doctor/rice-doctor-fact-sheets/item/brown-spot",
+                                               "tahun":  "2023"
+                                           },
+                                           {
+                                               "judul":  "Masalah Lapang Hama Penyakit dan Hara pada Padi",
+                                               "penerbit":  "Balai Besar Penelitian Tanaman Padi (BBPADI) â€” Kementan RI",
+                                               "url":  "https://bbpadi.litbang.pertanian.go.id",
+                                               "tahun":  "2022"
+                                           }
+                                       ]
+                        },
+                        {
+                            "penyakit_id":  "P07",
+                            "nama":  "Tungro",
+                            "productIds":  {
+                                               "marketplace":  ["PRD02", "PRD05"],
+                                               "nonKimia":  ["NK20", "NK21"]
+                                           },
+                            "solusi":  {
+                                           "kimia":  [
+                                                         "Tidak ada pestisida yang dapat menyembuhkan tungro â€” fokus pada pengendalian vektornya (wereng hijau/GLH)",
+                                                         "Semprotkan insektisida berbahan aktif imidakloprid atau BPMC untuk mengendalikan wereng hijau sebagai vektor",
+                                                         "Lakukan penyemprotan segera setelah deteksi dini gejala tungro di areal persemaian atau pertanaman muda"
+                                                     ],
+                                           "mekanis":  [
+                                                           "Cabut dan musnahkan tanaman yang terinfeksi tungro â€” tanaman ini menjadi sumber inokulum virus bagi wereng hijau",
+                                                           "Pasang light trap untuk mengendalikan populasi wereng hijau",
+                                                           "Isolasi petak yang terinfeksi dengan tidak membiarkan wereng hijau berpindah ke petak sehat"
+                                                       ],
+                                           "biologis":  [
+                                                            "Pertahankan populasi musuh alami wereng hijau: laba-laba, Cyrtorhinus sp., dan Anagrus sp.",
+                                                            "Semprotkan Beauveria bassiana pada populasi wereng hijau"
+                                                        ]
+                                       },
+                            "pencegahan_jangka_pendek":  [
+                                                             "Monitor populasi wereng hijau setiap 7 hari sejak persemaian â€” ambang kendali 2 ekor/rumpun",
+                                                             "Jangan tanam terlambat â€” tanaman yang tertunda lebih rentan karena populasi wereng hijau lebih tinggi",
+                                                             "Gunakan plastik penutup persemaian (sungkup) untuk mencegah wereng hijau menyerang bibit",
+                                                             "Kurangi pupuk N berlebih yang membuat tanaman lebih menarik bagi wereng hijau"
+                                                         ],
+                            "pencegahan_jangka_panjang":  [
+                                                              "Gunakan varietas tahan tungro: Tukad Petanu, Tukad Balian, Tukad Unda, Kalimas, atau Inpari seri tahan tungro",
+                                                              "Tanam serentak dengan petani sekitar untuk memutus siklus wereng hijau sebagai vektor",
+                                                              "Rotasi tanaman dengan palawija (bukan padi) minimal 1 musim per tahun",
+                                                              "Hindari menanam di sekitar lahan yang diketahui endemik tungro",
+                                                              "Gunakan benih sehat bersertifikat yang bebas dari tanaman yang pernah terinfeksi tungro"
+                                                          ],
+                            "sumber":  [
+                                           {
+                                               "judul":  "Pengendalian Hama dan Penyakit pada Tanaman Padi (bagian Tungro/Wereng Hijau)",
+                                               "penerbit":  "DGW Fertilizer / Kementan RI",
+                                               "url":  "https://www.dgwfertilizer.co.id/pengendalian-hama-dan-penyakit-pada-tanaman-padi/",
+                                               "tahun":  "2021"
+                                           },
+                                           {
+                                               "judul":  "Tungro Disease Management â€” Rice Knowledge Bank",
+                                               "penerbit":  "International Rice Research Institute (IRRI)",
+                                               "url":  "https://www.knowledgebank.irri.org/decision-tools/rice-doctor/rice-doctor-fact-sheets/item/tungro",
+                                               "tahun":  "2023"
+                                           },
+                                           {
+                                               "judul":  "Masalah Lapang Hama Penyakit dan Hara pada Padi",
+                                               "penerbit":  "Balai Besar Penelitian Tanaman Padi (BBPADI) â€” Kementan RI",
+                                               "url":  "https://bbpadi.litbang.pertanian.go.id",
+                                               "tahun":  "2022"
+                                           }
+                                       ]
+                        },
+                        {
+                            "penyakit_id":  "P08",
+                            "nama":  "Sheath Blight (Busuk Pelepah)",
+                            "productIds":  {
+                                               "marketplace":  ["PRD12", "PRD16"],
+                                               "nonKimia":  ["NK10", "NK18", "NK19"]
+                                           },
+                            "solusi":  {
+                                           "kimia":  [
+                                                         "Semprotkan fungisida berbahan aktif heksakonazol (Anvil 50 SC), validamisin A (Validacin 3L), atau azoksistrobin",
+                                                         "Arahkan semprotan ke pangkal batang dan pelepah daun â€” zona infeksi utama Rhizoctonia solani",
+                                                         "Ulangi penyemprotan 10â€“14 hari kemudian jika gejala masih berkembang"
+                                                     ],
+                                           "mekanis":  [
+                                                           "Atur jarak tanam lebih lebar (30Ã—30 cm) untuk mengurangi kontak antar rumpun dan menurunkan kelembaban kanopi",
+                                                           "Hindari genangan air yang dangkal terus-menerus â€” kondisi ini mempercepat penyebaran Rhizoctonia solani"
+                                                       ],
+                                           "biologis":  [
+                                                            "Aplikasikan Trichoderma harzianum ke tanah sebelum tanam atau ke tanaman sebagai biofungisida",
+                                                            "Semprotkan Bacillus subtilis pada pangkal batang untuk kompetisi dan antibiosis terhadap R. solani"
+                                                        ]
+                                       },
+                            "pencegahan_jangka_pendek":  [
+                                                             "Kurangi pupuk nitrogen â€” N berlebih menyebabkan pertumbuhan vegetatif lebat yang memperparah penyebaran sheath blight",
+                                                             "Atur jarak tanam tidak terlalu rapat â€” populasi tanam tinggi mempercepat penyebaran R. solani antar rumpun",
+                                                             "Pertahankan drainase yang baik â€” hindari genangan yang terlalu lama",
+                                                             "Pantau pelepah bagian bawah setiap 7 hari sejak 30 HST, terutama saat musim hujan"
+                                                         ],
+                            "pencegahan_jangka_panjang":  [
+                                                              "Gunakan varietas dengan ketahanan moderat terhadap sheath blight: Inpari 30, Inpari 33",
+                                                              "Terapkan pemupukan berimbang â€” hindari nitrogen tunggal dosis tinggi",
+                                                              "Lakukan pengolahan tanah yang baik dan sempurnakan drainase petak sawah",
+                                                              "Aplikasikan Trichoderma sp. pada tanah setiap musim sebagai perlindungan biologis berkelanjutan",
+                                                              "Rotasi tanaman untuk mengurangi akumulasi inokulum R. solani di tanah"
+                                                          ],
+                            "sumber":  [
+                                           {
+                                               "judul":  "Sheath Blight Management â€” Rice Knowledge Bank",
+                                               "penerbit":  "International Rice Research Institute (IRRI)",
+                                               "url":  "https://www.knowledgebank.irri.org/decision-tools/rice-doctor/rice-doctor-fact-sheets/item/sheath-blight",
+                                               "tahun":  "2023"
+                                           },
+                                           {
+                                               "judul":  "Masalah Lapang Hama Penyakit dan Hara pada Padi",
+                                               "penerbit":  "Balai Besar Penelitian Tanaman Padi (BBPADI) â€” Kementan RI",
+                                               "url":  "https://bbpadi.litbang.pertanian.go.id",
+                                               "tahun":  "2022"
+                                           },
+                                           {
+                                               "judul":  "Pengendalian Hama Terpadu: Cara Panen Padi Tetap Aman Meski Hama Datang",
+                                               "penerbit":  "IPB Digitani â€” Institut Pertanian Bogor",
+                                               "url":  "https://digitani.ipb.ac.id/pengendalian-hama-terpadu-cara-panen-padi-tetap-aman-meski-hama-datang/",
+                                               "tahun":  "2024"
+                                           }
+                                       ]
+                        },
+                        {
+                            "penyakit_id":  "P09",
+                            "nama":  "Keong Mas",
+                            "productIds":  {
+                                               "marketplace":  ["PRD13", "PRD14"],
+                                               "nonKimia":  ["NK06", "NK16", "NK17"]
+                                           },
+                            "solusi":  {
+                                           "kimia":  [
+                                                         "Aplikasikan molluskisida berbahan aktif niklosamida (Brestan 60 WP) atau metaldehid sesuai dosis anjuran",
+                                                         "Taburkan saponin dari bungkil biji teh (Mollucide) ke petakan â€” bahan alami efektif untuk keong mas",
+                                                         "Aplikasikan pada genangan air saat 7â€“14 HST saat tanaman masih rentan terhadap serangan keong mas"
+                                                     ],
+                                           "mekanis":  [
+                                                           "Pasang saringan bambu/plastik di pintu masuk air irigasi untuk mencegah keong masuk ke petakan",
+                                                           "Kumpulkan keong mas dan telurnya secara manual setiap pagi â€” terutama di sudut petak dan pematang",
+                                                           "Pasang perangkap dari batang pisang/bambu di sawah untuk memikat keong bertelur, lalu kumpulkan",
+                                                           "Tancapkan ajir (tongkat) setiap 1 mÂ² untuk tempat bertelur, lalu hancurkan kelompok telur yang ditemukan"
+                                                       ],
+                                           "biologis":  [
+                                                            "Pelihara bebek/itik di sawah (sistem mina padi-itik) untuk memangsa keong mas muda",
+                                                            "Manfaatkan predator alami: ular, kepiting, dan burung untuk pengendalian populasi"
+                                                        ]
+                                       },
+                            "pencegahan_jangka_pendek":  [
+                                                             "Pasang saringan di pintu air irigasi sebelum memasukkan air ke petakan baru",
+                                                             "Kumpulkan dan hancurkan telur keong mas (berwarna merah muda) yang ditemukan di batang tanaman atau pematang",
+                                                             "Keringkan sawah sementara (2â€“3 hari) untuk membuat keong mas migrasi ke area yang masih tergenang, lalu kumpulkan",
+                                                             "Tanami padi yang sudah cukup besar (\u003e21 HST) karena tanaman lebih tahan terhadap serangan keong"
+                                                         ],
+                            "pencegahan_jangka_panjang":  [
+                                                              "Normalkan saluran air dan pasang perangkap permanen di saluran irigasi untuk mencegah penyebaran keong",
+                                                              "Pelihara bebek di sawah antar musim tanam untuk memangsa keong mas yang tersisa",
+                                                              "Tidak membuang keong mas ke saluran air â€” buat lubang pembuangan/penguburan di area tertentu",
+                                                              "Hindari membawa bibit dari lahan yang terinfeksi keong mas ke lahan baru",
+                                                              "Tingkatkan kesadaran petani sekitar untuk pengendalian serentak agar keong mas tidak berpindah antar petak"
+                                                          ],
+                            "sumber":  [
+                                           {
+                                               "judul":  "Pengendalian Hama dan Penyakit pada Tanaman Padi (bagian Keong Mas)",
+                                               "penerbit":  "DGW Fertilizer / Kementan RI",
+                                               "url":  "https://www.dgwfertilizer.co.id/pengendalian-hama-dan-penyakit-pada-tanaman-padi/",
+                                               "tahun":  "2021"
+                                           },
+                                           {
+                                               "judul":  "Golden Apple Snail Management â€” Rice Knowledge Bank",
+                                               "penerbit":  "International Rice Research Institute (IRRI)",
+                                               "url":  "https://www.knowledgebank.irri.org/decision-tools/rice-doctor/rice-doctor-fact-sheets/item/apple-snails",
+                                               "tahun":  "2023"
+                                           },
+                                           {
+                                               "judul":  "Masalah Lapang Hama Penyakit dan Hara pada Padi",
+                                               "penerbit":  "Balai Besar Penelitian Tanaman Padi (BBPADI) â€” Kementan RI",
+                                               "url":  "https://bbpadi.litbang.pertanian.go.id",
+                                               "tahun":  "2022"
+                                           }
+                                       ]
+                        },
+                        {
+                            "penyakit_id":  "P10",
+                            "nama":  "Tikus Sawah",
+                            "productIds":  {
+                                               "marketplace":  ["PRD17"],
+                                               "nonKimia":  ["NK03", "NK04", "NK05", "NK14", "NK15"]
+                                           },
+                            "solusi":  {
+                                           "kimia":  [
+                                                         "Gunakan rodentisida atau umpan beracun secara hati-hati sesuai label dan pengawasan lapang, terutama pada titik serangan aktif dan bukan penyebaran acak di seluruh petakan",
+                                                         "Tempatkan umpan pada jalur lintasan, lubang aktif, atau lokasi persembunyian tikus agar aplikasi lebih tepat sasaran",
+                                                         "Lakukan aplikasi pada waktu pengendalian serentak satu hamparan supaya tekanan populasi turun lebih efektif dan perpindahan tikus antarpetak berkurang"
+                                                     ],
+                                           "mekanis":  [
+                                                           "Lakukan gropyokan atau perburuan tikus secara serentak bersama petani sekitar untuk menekan populasi secepat mungkin",
+                                                           "Bongkar, genangi, dan tutup lubang aktif di pematang, tanggul, dan sekitar saluran irigasi untuk menghancurkan sarang serta anak tikus",
+                                                           "Pasang perangkap mekanis atau Trap Barrier System (TBS) pada titik lintasan aktif sejak awal pertanaman"
+                                                       ],
+                                           "biologis":  [
+                                                            "Pelihara musuh alami seperti burung hantu dengan menyediakan habitat atau rumah burung hantu bila sesuai dengan kondisi setempat",
+                                                            "Jaga keseimbangan ekosistem sawah agar predator alami tikus seperti ular dan burung pemangsa tetap hadir di sekitar lahan"
+                                                        ]
+                                       },
+                            "pencegahan_jangka_pendek":  [
+                                                             "Lakukan pengamatan rutin pada pematang, tanggul, dan bagian tengah petakan untuk mendeteksi jejak serangan sejak dini",
+                                                             "Segera kendalikan lubang aktif dan jalur lintasan tikus sebelum tanaman masuk fase bunting hingga pengisian malai",
+                                                             "Bersihkan gulma, semak, tumpukan jerami, dan tempat persembunyian tikus di sekitar sawah",
+                                                             "Lakukan pengendalian serentak dalam satu hamparan agar tikus tidak berpindah ke lahan yang belum dikendalikan"
+                                                         ],
+                            "pencegahan_jangka_panjang":  [
+                                                              "Terapkan tanam serentak dalam satu hamparan untuk memutus ketersediaan pakan tikus sepanjang musim",
+                                                              "Lakukan sanitasi habitat secara konsisten antarmusim, termasuk perapihan pematang, tanggul, dan area sekitar saluran air",
+                                                              "Laksanakan pengendalian dini sebelum tanam dan pada awal musim agar populasi tidak meledak saat fase rentan tanaman",
+                                                              "Kembangkan sistem pengendalian terpadu berbasis komunitas, termasuk pemasangan rumah burung hantu atau perangkap permanen sesuai kebutuhan wilayah",
+                                                              "Catat lokasi, musim, dan intensitas serangan untuk memetakan titik rawan tikus sawah pada musim berikutnya"
+                                                          ],
+                            "sumber":  [
+                                           {
+                                               "judul":  "Masalah Lapang Hama Penyakit dan Hara pada Padi",
+                                               "penerbit":  "Balai Besar Penelitian Tanaman Padi (BBPADI) - Kementan RI",
+                                               "url":  "https://bbpadi.litbang.pertanian.go.id",
+                                               "tahun":  "2022"
+                                           },
+                                           {
+                                               "judul":  "Kendalikan Hama Padi Dengan Musuh Alami",
+                                               "penerbit":  "Pusat Perpustakaan dan Literasi Pertanian BPPSDMP Kementan RI",
+                                               "url":  "https://pustaka.bppsdmp.pertanian.go.id/info-literasi/info-teknologi-kendalikan-hama-padi-dengan-musuh-alami",
+                                               "tahun":  "2024"
+                                           },
+                                           {
+                                               "judul":  "Rice Knowledge Bank - International Rice Research Institute (IRRI)",
+                                               "penerbit":  "International Rice Research Institute (IRRI)",
+                                               "url":  "https://www.knowledgebank.irri.org",
+                                               "tahun":  "2023"
+                                           }
+                                       ]
+                        },
+                        {
+                            "penyakit_id":  "P11",
+                            "nama":  "Ganjur",
+                            "productIds":  {
+                                               "marketplace":  ["PRD03", "PRD04", "PRD15"],
+                                               "nonKimia":  ["NK01", "NK09", "NK20"]
+                                           },
+                            "solusi":  {
+                                           "kimia":  [
+                                                         "Aplikasikan insektisida butiran berbahan aktif karbofuran (Furadan 3G) di daerah perakaran saat serangan awal terdeteksi",
+                                                         "Semprotkan insektisida berbahan aktif fipronil atau klorantraniliprol untuk membunuh larva yang masih aktif",
+                                                         "Penyemprotan efektif dilakukan saat fase vegetatif awal sebelum larva masuk jauh ke dalam jaringan meristem"
+                                                     ],
+                                           "mekanis":  [
+                                                           "Cabut dan musnahkan tanaman dengan gejala daun pipa (galform) â€” tanaman ini sudah tidak produktif dan menjadi sumber populasi",
+                                                           "Pasang light trap untuk menangkap imago ganjur dewasa yang aktif pada malam hari",
+                                                           "Keringkan sawah sementara untuk mengganggu siklus larva yang berada di tanah"
+                                                       ],
+                                           "biologis":  [
+                                                            "Pertahankan populasi parasitoid: Platygaster oryzae dan Neanastatus muzaini yang memarasit telur dan larva ganjur",
+                                                            "Semprotkan Beauveria bassiana pada tanah dan pangkal tanaman"
+                                                        ]
+                                       },
+                            "pencegahan_jangka_pendek":  [
+                                                             "Monitor ada tidaknya imago ganjur dengan light trap sejak awal musim â€” serangan biasanya dimulai dari tepi sawah",
+                                                             "Hindari tanam terlambat â€” pertanaman yang tertunda lebih rentan karena bertepatan dengan puncak populasi ganjur",
+                                                             "Pertahankan genangan minimal 5 cm untuk menghambat larva yang baru menetas bermigrasi ke tanaman",
+                                                             "Periksa pucuk tanaman muda (fase vegetatif awal) untuk deteksi dini gejala daun pipa"
+                                                         ],
+                            "pencegahan_jangka_panjang":  [
+                                                              "Gunakan varietas tahan ganjur: IR66, Way Rarem, Cilamaya Muncul, atau Inpari seri tahan ganjur",
+                                                              "Tanam serentak dalam satu hamparan untuk memutus siklus generasi ganjur antar musim",
+                                                              "Bajak dan rendam sawah pasca panen untuk membunuh pupa/larva yang tersisa di tanah",
+                                                              "Rotasi tanaman dengan palawija minimal satu musim untuk memutus siklus hidup ganjur",
+                                                              "Hindari penanaman di lokasi yang secara historis selalu terserang ganjur tanpa persiapan pengendalian"
+                                                          ],
+                            "sumber":  [
+                                           {
+                                               "judul":  "Kendalikan Hama Padi Dengan Musuh Alami (bagian Ganjur)",
+                                               "penerbit":  "Pusat Perpustakaan dan Literasi Pertanian BPPSDMP Kementan RI",
+                                               "url":  "https://pustaka.bppsdmp.pertanian.go.id/info-literasi/info-teknologi-kendalikan-hama-padi-dengan-musuh-alami",
+                                               "tahun":  "2024"
+                                           },
+                                           {
+                                               "judul":  "Gall Midge Management â€” Rice Knowledge Bank",
+                                               "penerbit":  "International Rice Research Institute (IRRI)",
+                                               "url":  "https://www.knowledgebank.irri.org/decision-tools/rice-doctor/rice-doctor-fact-sheets/item/gall-midge",
+                                               "tahun":  "2023"
+                                           },
+                                           {
+                                               "judul":  "Masalah Lapang Hama Penyakit dan Hara pada Padi",
+                                               "penerbit":  "Balai Besar Penelitian Tanaman Padi (BBPADI) â€” Kementan RI",
+                                               "url":  "https://bbpadi.litbang.pertanian.go.id",
+                                               "tahun":  "2022"
+                                           }
+                                       ]
+                        },
+                        {
+                            "penyakit_id":  "P12",
+                            "nama":  "Ulat Grayak",
+                            "productIds":  {
+                                               "marketplace":  ["PRD15"],
+                                               "nonKimia":  ["NK01", "NK07", "NK08", "NK11"]
+                                           },
+                            "solusi":  {
+                                           "kimia":  [
+                                                         "Semprotkan insektisida berbahan aktif klorantraniliprol (Prevathon 50 SC), spinosad, atau emamektin benzoat saat larva instar muda (1â€“3)",
+                                                         "Lakukan penyemprotan pada sore atau malam hari saat ulat aktif makan di permukaan daun",
+                                                         "Hindari penyemprotan saat siang hari karena ulat bersembunyi di tanah"
+                                                     ],
+                                           "mekanis":  [
+                                                           "Kumpulkan ulat secara manual pada pagi atau malam hari â€” ulat berkumpul di pangkal rumpun dan permukaan tanah",
+                                                           "Hancurkan kelompok telur ulat grayak yang ditemukan di helaian daun",
+                                                           "Pasang light trap untuk menangkap ngengat Spodoptera litura dewasa",
+                                                           "Olah tanah di sekitar tanaman untuk membunuh kepompong ulat grayak yang berada di tanah"
+                                                       ],
+                                           "biologis":  [
+                                                            "Semprotkan Spodoptera Litura Nuclear Polyhedrosis Virus (SLNPV) â€” bioinsektisida spesifik ulat grayak",
+                                                            "Semprotkan Bacillus thuringiensis var. kurstaki (Bt) pada fase larva instar awal",
+                                                            "Lepas parasitoid: Telenomus remus (parasitoid telur) atau Cotesia marginiventris"
+                                                        ]
+                                       },
+                            "pencegahan_jangka_pendek":  [
+                                                             "Pantau populasi ngengat Spodoptera dengan feromon seks atau light trap",
+                                                             "Periksa tanaman setiap 3â€“5 hari â€” cari kelompok telur dan larva muda sebelum meledak",
+                                                             "Hindari aplikasi insektisida spektrum luas yang membunuh musuh alami ulat grayak",
+                                                             "Pertahankan sanitasi lahan â€” singkirkan gulma di pematang yang menjadi inang alternatif ulat grayak"
+                                                         ],
+                            "pencegahan_jangka_panjang":  [
+                                                              "Terapkan sistem PHT â€” pertahankan musuh alami seperti parasitoid dan predator generalis (laba-laba, kumbang carabid)",
+                                                              "Rotasi tanaman untuk memutus siklus Spodoptera litura yang bersifat polifag",
+                                                              "Olah tanah secara dalam sebelum tanam untuk membunuh pupa di dalam tanah",
+                                                              "Tanam refugia di pematang (bunga matahari, kenikir) untuk meningkatkan populasi parasitoid dan predator",
+                                                              "Gunakan perangkap feromon seks untuk pemantauan populasi ngengat secara rutin lintas musim"
+                                                          ],
+                            "sumber":  [
+                                           {
+                                               "judul":  "Teknik Pengendalian Hama Ulat Grayak pada Tanaman Padi",
+                                               "penerbit":  "Bertani Academy",
+                                               "url":  "https://academy.bertani.co/artikel/teknik-pengendalian-ulat-grayak-pada-padi",
+                                               "tahun":  "2024"
+                                           },
+                                           {
+                                               "judul":  "Kendalikan Hama Padi Dengan Musuh Alami (bagian Ulat Grayak)",
+                                               "penerbit":  "Pusat Perpustakaan dan Literasi Pertanian BPPSDMP Kementan RI",
+                                               "url":  "https://pustaka.bppsdmp.pertanian.go.id/info-literasi/info-teknologi-kendalikan-hama-padi-dengan-musuh-alami",
+                                               "tahun":  "2024"
+                                           },
+                                           {
+                                               "judul":  "Bioinsektisida SL-NPV untuk Mengendalikan Ulat Grayak (dalam: Orasi Ilmiah Guru Besar Moh. Yunus)",
+                                               "penerbit":  "Universitas Tadulako â€” mengacu Bedjo (2016), Pengembangan Inovasi Pertanian Kementan",
+                                               "url":  "https://dgb.untad.ac.id/wp-content/uploads/2026/04/Orasi-Ilmiah-Guru-Besar-Moh-Yunus-2019.pdf",
+                                               "tahun":  "2019"
+                                           }
+                                       ]
+                        },
+                        {
+                            "penyakit_id":  "P13",
+                            "nama":  "Kerdil Rumput",
+                            "productIds":  {
+                                               "marketplace":  ["PRD01", "PRD02"],
+                                               "nonKimia":  ["NK01", "NK09", "NK19", "NK20"]
+                                           },
+                            "solusi":  {
+                                           "kimia":  [
+                                                         "Tidak ada pestisida yang dapat menyembuhkan infeksi virus RGSV/RRSV penyebab kerdil rumput",
+                                                         "Fokus pengendalian pada vektornya (wereng coklat) dengan insektisida berbahan aktif buprofezin, imidakloprid, atau thiamethoxam",
+                                                         "Hindari insektisida piretroid yang dapat memicu resurjensi wereng coklat sebagai vektor"
+                                                     ],
+                                           "mekanis":  [
+                                                           "Cabut dan musnahkan tanaman yang terinfeksi kerdil rumput â€” tanaman sudah tidak produktif dan menjadi reservoir virus",
+                                                           "Pasang light trap untuk menangkap imago wereng coklat sebagai vektor penular RGSV/RRSV",
+                                                           "Keringkan sawah sementara untuk mengganggu aktivitas wereng coklat"
+                                                       ],
+                                           "biologis":  [
+                                                            "Pertahankan populasi musuh alami wereng coklat: Cyrtorhinus lividipennis, Anagrus nilaparvatae, dan laba-laba",
+                                                            "Semprotkan Beauveria bassiana pada koloni wereng coklat"
+                                                        ]
+                                       },
+                            "pencegahan_jangka_pendek":  [
+                                                             "Kendalikan populasi wereng coklat sejak awal â€” kerdil rumput hanya bisa dicegah dengan memutus rantai penularan vektor",
+                                                             "Monitor sawah setiap 7 hari dan catat distribusi tanaman bergejala untuk menentukan intensitas serangan",
+                                                             "Kurangi pupuk nitrogen berlebih yang menarik wereng coklat dan memperparah gejala virus",
+                                                             "Segera cabut dan musnahkan tanaman bergejala kerdil untuk mencegah wereng coklat menghisap virus dari tanaman sakit dan menularkan ke tanaman sehat"
+                                                         ],
+                            "pencegahan_jangka_panjang":  [
+                                                              "Gunakan varietas tahan/toleran kerdil rumput: IR64, Ciherang, Inpari 13, Inpari 30, atau varietas dengan gen ketahanan terhadap RGSV",
+                                                              "Tanam serentak untuk memutus siklus wereng coklat sebagai vektor penular virus lintas musim",
+                                                              "Rotasi tanaman dengan non-padi minimal 1 musim per tahun untuk menekan populasi wereng coklat dan inang virus",
+                                                              "Perbaiki drainase sawah dan hindari kondisi lahan selalu tergenang yang menjadi habitat favorit wereng coklat",
+                                                              "Terapkan PHT berbasis ekosistem untuk menjaga keseimbangan populasi wereng coklat dan musuh alaminya"
+                                                          ],
+                            "sumber":  [
+                                           {
+                                               "judul":  "Rekomendasi Pengendalian Penyakit Virus Kerdil Hampa dan Kerdil Rumput",
+                                               "penerbit":  "Balai Besar Penelitian Tanaman Padi (BBPADI) â€” Badan Litbang Pertanian Kementan RI",
+                                               "url":  "https://bbpadi.litbang.pertanian.go.id/index.php/info-berita/info-teknologi/rekomendasi-pengendalian-penyakit-virus-kerdil-hampa-dan-kerdil-rumput",
+                                               "tahun":  "2018"
+                                           },
+                                           {
+                                               "judul":  "Tatalaksana Pengendalian Wereng Coklat dan Virus Kerdil",
+                                               "penerbit":  "Dinas Pertanian dan Pangan Kabupaten Badung / Kementan RI",
+                                               "url":  "https://diperpa.badungkab.go.id/Artikel/18229-tatalaksana-pengendalian-wereng-coklat-dan-virus-kerdil",
+                                               "tahun":  "2020"
+                                           },
+                                           {
+                                               "judul":  "Pengendalian Hama Terpadu: Cara Panen Padi Tetap Aman Meski Hama Datang",
+                                               "penerbit":  "IPB Digitani â€” Institut Pertanian Bogor",
+                                               "url":  "https://digitani.ipb.ac.id/pengendalian-hama-terpadu-cara-panen-padi-tetap-aman-meski-hama-datang/",
+                                               "tahun":  "2024"
+                                           },
+                                           {
+                                               "judul":  "Rice Grassy Stunt Virus Management â€” Rice Knowledge Bank",
+                                               "penerbit":  "International Rice Research Institute (IRRI)",
+                                               "url":  "https://www.knowledgebank.irri.org/decision-tools/rice-doctor/rice-doctor-fact-sheets/item/grassy-stunt",
+                                               "tahun":  "2023"
+                                           }
+                                       ]
+                        }
+                    ]
+}

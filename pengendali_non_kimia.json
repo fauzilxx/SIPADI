@@ -1,0 +1,297 @@
+{
+  "_meta": {
+    "nama": "Pengendali Non-Kimia SIPADI",
+    "deskripsi": "Daftar alat, agen hayati, dan metode pengendalian non-kimia untuk hama dan penyakit padi.",
+    "catatan": "Item yang berupa alat atau produk dapat dipasangkan dengan foto/marketplace. Item berbasis praktik lapang cukup memakai nama, deskripsi, dan catatan penggunaan."
+  },
+  "items": [
+    {
+      "id": "NK01",
+      "nama": "Light Trap",
+      "slug": "light-trap",
+      "jenis": "alat",
+      "punyaFotoProduk": true,
+      "imageFileName": "light-trap.png",
+      "deskripsi": "Perangkap cahaya untuk menarik dan memantau hama terbang aktif malam hari.",
+      "catatanPenggunaan": "Dipakai pada malam hari di area sawah untuk monitoring populasi dan pengendalian awal. Lebih efektif sebagai bagian dari pengendalian terpadu, bukan satu-satunya metode utama.",
+      "cocokUntukPenyakit": ["P01", "P02", "P10", "P11", "P12", "P13"],
+      "marketplaceSearchLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=light%20trap%20hama",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=light%20trap%20hama",
+        "blibli": "https://www.blibli.com/search?keyword=light%20trap%20hama"
+      }
+    },
+    {
+      "id": "NK02",
+      "nama": "Yellow Sticky Trap",
+      "slug": "yellow-sticky-trap",
+      "jenis": "alat",
+      "punyaFotoProduk": true,
+      "imageFileName": "yellow-sticky-trap.png",
+      "deskripsi": "Lembaran perangkap lengket berwarna kuning untuk menangkap dan memantau serangga terbang kecil.",
+      "catatanPenggunaan": "Diletakkan di sekitar tanaman dan diganti bila permukaannya sudah penuh serangga atau tertutup debu. Cocok untuk monitoring populasi imago.",
+      "cocokUntukPenyakit": ["P01"],
+      "marketplaceSearchLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=yellow%20sticky%20trap%20tanaman",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=yellow%20sticky%20trap%20tanaman",
+        "blibli": "https://www.blibli.com/search?keyword=yellow%20sticky%20trap%20tanaman"
+      }
+    },
+    {
+      "id": "NK03",
+      "nama": "Perangkap Tikus",
+      "slug": "perangkap-tikus",
+      "jenis": "alat",
+      "punyaFotoProduk": true,
+      "imageFileName": "perangkap-tikus.png",
+      "deskripsi": "Perangkap mekanis untuk menangkap tikus pada jalur lintasan aktif di sawah.",
+      "catatanPenggunaan": "Letakkan di dekat lubang, pematang, atau jalur lewat tikus. Periksa setiap hari dan pindahkan bila lokasi kurang efektif.",
+      "cocokUntukPenyakit": ["P10"],
+      "marketplaceSearchLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=perangkap%20tikus%20sawah",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=perangkap%20tikus%20sawah",
+        "blibli": "https://www.blibli.com/search?keyword=perangkap%20tikus%20sawah"
+      }
+    },
+    {
+      "id": "NK04",
+      "nama": "Trap Barrier System (TBS)",
+      "slug": "trap-barrier-system",
+      "jenis": "alat",
+      "punyaFotoProduk": true,
+      "imageFileName": "trap-barrier-system.png",
+      "deskripsi": "Sistem penghalang dan perangkap untuk membatasi masuknya tikus ke petakan sawah.",
+      "catatanPenggunaan": "Dipakai sejak awal musim pada titik rawan atau mengelilingi petak. Efektivitas meningkat bila dikelola bersama dalam satu hamparan.",
+      "cocokUntukPenyakit": ["P10"],
+      "marketplaceSearchLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=trap%20barrier%20system%20tikus",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=trap%20barrier%20system%20tikus",
+        "blibli": "https://www.blibli.com/search?keyword=trap%20barrier%20system%20tikus"
+      }
+    },
+    {
+      "id": "NK05",
+      "nama": "Rumah Burung Hantu",
+      "slug": "rumah-burung-hantu",
+      "jenis": "alat",
+      "punyaFotoProduk": true,
+      "imageFileName": "rumah-burung-hantu.png",
+      "deskripsi": "Rumah atau kotak sarang untuk menarik burung hantu sebagai predator alami tikus.",
+      "catatanPenggunaan": "Diposisikan di area yang tenang dan aman dari gangguan manusia. Hasilnya lebih terasa untuk pengendalian jangka panjang daripada efek instan.",
+      "cocokUntukPenyakit": ["P10"],
+      "marketplaceSearchLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=rumah%20burung%20hantu",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=rumah%20burung%20hantu",
+        "blibli": "https://www.blibli.com/search?keyword=rumah%20burung%20hantu"
+      }
+    },
+    {
+      "id": "NK06",
+      "nama": "Perangkap Keong",
+      "slug": "perangkap-keong",
+      "jenis": "alat",
+      "punyaFotoProduk": true,
+      "imageFileName": "perangkap-keong.png",
+      "deskripsi": "Perangkap sederhana untuk mengumpulkan keong mas di area tergenang atau sudut petakan.",
+      "catatanPenggunaan": "Letakkan di lokasi yang sering dilalui keong dan cek rutin agar hasil pengumpulan optimal.",
+      "cocokUntukPenyakit": ["P09"],
+      "marketplaceSearchLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=perangkap%20keong",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=perangkap%20keong",
+        "blibli": "https://www.blibli.com/search?keyword=perangkap%20keong"
+      }
+    },
+    {
+      "id": "NK07",
+      "nama": "Feromon Trap",
+      "slug": "feromon-trap",
+      "jenis": "alat",
+      "punyaFotoProduk": true,
+      "imageFileName": "feromon-trap.png",
+      "deskripsi": "Perangkap berbasis feromon untuk memantau atau menekan populasi serangga target tertentu.",
+      "catatanPenggunaan": "Gunakan jenis feromon yang sesuai dengan hama sasaran. Umumnya lebih efektif untuk monitoring populasi daripada pengendalian tunggal.",
+      "cocokUntukPenyakit": ["P12"],
+      "marketplaceSearchLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=feromon%20trap%20hama",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=feromon%20trap%20hama",
+        "blibli": "https://www.blibli.com/search?keyword=feromon%20trap%20hama"
+      }
+    },
+    {
+      "id": "NK08",
+      "nama": "Refugia",
+      "slug": "refugia",
+      "jenis": "tanaman-pendukung",
+      "punyaFotoProduk": true,
+      "imageFileName": "refugia.png",
+      "deskripsi": "Tanaman berbunga di sekitar sawah yang menarik musuh alami hama.",
+      "catatanPenggunaan": "Tanam di pematang atau tepi sawah dan rawat agar tetap berbunga. Hindari menjadikannya gulma yang tidak terkelola.",
+      "cocokUntukPenyakit": ["P03", "P12"],
+      "marketplaceSearchLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=benih%20bunga%20refugia",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=benih%20bunga%20refugia",
+        "blibli": "https://www.blibli.com/search?keyword=benih%20bunga%20refugia"
+      }
+    },
+    {
+      "id": "NK09",
+      "nama": "Beauveria bassiana",
+      "slug": "beauveria-bassiana",
+      "jenis": "agen-hayati",
+      "punyaFotoProduk": true,
+      "imageFileName": "beauveria-bassiana.png",
+      "deskripsi": "Jamur entomopatogen yang digunakan untuk membantu menekan populasi serangga hama.",
+      "catatanPenggunaan": "Aplikasikan saat kelembaban cukup tinggi agar infeksi jamur bekerja optimal. Hindari pencampuran sembarangan dengan bahan yang dapat menurunkan viabilitas jamur.",
+      "cocokUntukPenyakit": ["P01", "P11", "P13"],
+      "marketplaceSearchLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=beauveria%20bassiana",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=beauveria%20bassiana",
+        "blibli": "https://www.blibli.com/search?keyword=beauveria%20bassiana"
+      }
+    },
+    {
+      "id": "NK10",
+      "nama": "Trichoderma",
+      "slug": "trichoderma",
+      "jenis": "agen-hayati",
+      "punyaFotoProduk": true,
+      "imageFileName": "trichoderma.png",
+      "deskripsi": "Jamur antagonis yang sering digunakan untuk membantu menekan patogen tanaman dan memperbaiki kesehatan tanah.",
+      "catatanPenggunaan": "Lebih baik digunakan sejak awal tanam atau sebagai pencegahan. Cocok untuk aplikasi rutin pada media atau pangkal tanaman.",
+      "cocokUntukPenyakit": ["P04", "P06", "P08"],
+      "marketplaceSearchLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=trichoderma",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=trichoderma",
+        "blibli": "https://www.blibli.com/search?keyword=trichoderma"
+      }
+    },
+    {
+      "id": "NK11",
+      "nama": "Bacillus thuringiensis",
+      "slug": "bacillus-thuringiensis",
+      "jenis": "agen-hayati",
+      "punyaFotoProduk": true,
+      "imageFileName": "bacillus-thuringiensis.png",
+      "deskripsi": "Bakteri bioinsektisida yang efektif untuk membantu pengendalian larva serangga tertentu.",
+      "catatanPenggunaan": "Paling efektif saat hama masih pada fase larva muda. Lakukan aplikasi saat populasi mulai muncul, bukan ketika serangan sudah terlalu berat.",
+      "cocokUntukPenyakit": ["P02", "P12"],
+      "marketplaceSearchLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=bacillus%20thuringiensis",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=bacillus%20thuringiensis",
+        "blibli": "https://www.blibli.com/search?keyword=bacillus%20thuringiensis"
+      }
+    },
+    {
+      "id": "NK12",
+      "nama": "Bacillus subtilis",
+      "slug": "bacillus-subtilis",
+      "jenis": "agen-hayati",
+      "punyaFotoProduk": true,
+      "imageFileName": "bacillus-subtilis.png",
+      "deskripsi": "Bakteri antagonis yang membantu menekan beberapa penyakit tanaman dan mendukung kesehatan tanaman.",
+      "catatanPenggunaan": "Lebih baik dipakai sebagai tindakan pencegahan atau pada serangan awal. Ulangi aplikasi sesuai kebutuhan lapang.",
+      "cocokUntukPenyakit": ["P05", "P08"],
+      "marketplaceSearchLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=bacillus%20subtilis",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=bacillus%20subtilis",
+        "blibli": "https://www.blibli.com/search?keyword=bacillus%20subtilis"
+      }
+    },
+    {
+      "id": "NK13",
+      "nama": "Pseudomonas fluorescens",
+      "slug": "pseudomonas-fluorescens",
+      "jenis": "agen-hayati",
+      "punyaFotoProduk": true,
+      "imageFileName": "pseudomonas-fluorescens.png",
+      "deskripsi": "Bakteri antagonis yang digunakan untuk membantu menekan patogen dan meningkatkan ketahanan tanaman.",
+      "catatanPenggunaan": "Cocok digunakan pada fase pencegahan atau serangan awal. Aplikasikan sesuai dosis dan waktu yang dianjurkan pada label produk hayati.",
+      "cocokUntukPenyakit": ["P04", "P05"],
+      "marketplaceSearchLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=pseudomonas%20fluorescens",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=pseudomonas%20fluorescens",
+        "blibli": "https://www.blibli.com/search?keyword=pseudomonas%20fluorescens"
+      }
+    },
+    {
+      "id": "NK14",
+      "nama": "Gropyokan Tikus",
+      "slug": "gropyokan-tikus",
+      "jenis": "metode-lapang",
+      "punyaFotoProduk": false,
+      "deskripsi": "Pengendalian tikus secara massal dan serentak oleh petani dalam satu hamparan.",
+      "catatanPenggunaan": "Harus dilakukan bersama dan serentak agar tikus tidak sekadar berpindah ke petak lain. Cocok untuk penurunan populasi cepat di area serangan.",
+      "cocokUntukPenyakit": ["P10"]
+    },
+    {
+      "id": "NK15",
+      "nama": "Sanitasi Pematang",
+      "slug": "sanitasi-pematang",
+      "jenis": "metode-lapang",
+      "punyaFotoProduk": false,
+      "deskripsi": "Pembersihan gulma, semak, sisa tanaman, dan tempat persembunyian hama di sekitar sawah.",
+      "catatanPenggunaan": "Lakukan rutin sebelum dan selama musim tanam untuk mengurangi habitat hama dan sumber inokulum penyakit.",
+      "cocokUntukPenyakit": ["P03", "P09", "P10", "P12"]
+    },
+    {
+      "id": "NK16",
+      "nama": "Pengumpulan Telur Keong Mas",
+      "slug": "pengumpulan-telur-keong-mas",
+      "jenis": "metode-lapang",
+      "punyaFotoProduk": false,
+      "deskripsi": "Pengambilan dan pemusnahan kelompok telur keong mas yang menempel di batang, ajir, atau pematang.",
+      "catatanPenggunaan": "Telur berwarna merah muda dikumpulkan secara manual dan dimusnahkan sesegera mungkin agar tidak menetas menjadi populasi baru.",
+      "cocokUntukPenyakit": ["P09"]
+    },
+    {
+      "id": "NK17",
+      "nama": "Itik di Sawah",
+      "slug": "itik-di-sawah",
+      "jenis": "metode-lapang",
+      "punyaFotoProduk": false,
+      "deskripsi": "Pemanfaatan itik atau bebek untuk membantu memangsa keong mas muda di areal sawah.",
+      "catatanPenggunaan": "Perlu penyesuaian waktu pelepasan agar tidak merusak tanaman muda. Cocok sebagai bagian dari pengendalian keong mas secara alami.",
+      "cocokUntukPenyakit": ["P09"]
+    },
+    {
+      "id": "NK18",
+      "nama": "Rotasi Tanaman",
+      "slug": "rotasi-tanaman",
+      "jenis": "metode-lapang",
+      "punyaFotoProduk": false,
+      "deskripsi": "Pergiliran padi dengan tanaman lain untuk memutus siklus hidup hama atau patogen tertentu.",
+      "catatanPenggunaan": "Dilakukan antarmusim dan lebih efektif bila direncanakan bersama pola tanam setempat. Berguna untuk menurunkan tekanan OPT jangka panjang.",
+      "cocokUntukPenyakit": ["P02", "P06", "P08", "P10", "P11", "P13"]
+    },
+    {
+      "id": "NK19",
+      "nama": "Drainase Lahan",
+      "slug": "drainase-lahan",
+      "jenis": "metode-lapang",
+      "punyaFotoProduk": false,
+      "deskripsi": "Pengaturan aliran dan genangan air sawah agar kondisi tidak terlalu mendukung perkembangan hama atau penyakit tertentu.",
+      "catatanPenggunaan": "Pastikan saluran berfungsi baik dan genangan tidak berlebihan. Berguna terutama pada penyakit yang dipicu kelembaban tinggi.",
+      "cocokUntukPenyakit": ["P06", "P08", "P13"]
+    },
+    {
+      "id": "NK20",
+      "nama": "Pemusnahan Tanaman Terserang",
+      "slug": "pemusnahan-tanaman-terserang",
+      "jenis": "metode-lapang",
+      "punyaFotoProduk": false,
+      "deskripsi": "Pencabutan, pemotongan, atau pemusnahan tanaman atau bagian tanaman yang sudah parah terserang.",
+      "catatanPenggunaan": "Lakukan selektif pada sumber serangan berat agar tidak menjadi pusat penyebaran ke tanaman sehat di sekitarnya.",
+      "cocokUntukPenyakit": ["P01", "P04", "P05", "P10", "P11", "P13"]
+    },
+    {
+      "id": "NK21",
+      "nama": "Pengamatan Rutin Lapang",
+      "slug": "pengamatan-rutin-lapang",
+      "jenis": "metode-lapang",
+      "punyaFotoProduk": false,
+      "deskripsi": "Pemeriksaan sawah secara berkala untuk mendeteksi gejala, telur, larva, atau pola serangan sejak dini.",
+      "catatanPenggunaan": "Lakukan dengan interval tetap, terutama pada fase rentan tanaman. Catatan lapang membantu menentukan tindakan yang lebih tepat waktu.",
+      "cocokUntukPenyakit": ["P01", "P02", "P03", "P04", "P05", "P06", "P07", "P08", "P09", "P10", "P11", "P12", "P13"]
+    }
+  ]
+}

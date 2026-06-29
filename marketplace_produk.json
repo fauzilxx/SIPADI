@@ -1,0 +1,230 @@
+{
+  "_meta": {
+    "nama": "Marketplace Produk SIPADI",
+    "deskripsi": "Daftar produk pestisida/obat pertanian dan link marketplace tanpa field gambar.",
+    "catatan": "Field img sengaja tidak disertakan agar bisa dipetakan ke folder gambar lokal aplikasi."
+  },
+  "produk": [
+    {
+      "id": "PRD01",
+      "productName": "Applaud 10 WP",
+      "activeIngredient": "Buprofezin",
+      "category": "insektisida",
+      "imageFileName": "buprofezin.png",
+      "catatanPenggunaan": "Semprotkan saat koloni hama mulai terlihat di pangkal batang atau area serangan awal. Arahkan larutan ke bagian bawah tanaman karena hama sering bersembunyi di sana, dan lakukan pada pagi atau sore hari agar semprotan tidak cepat menguap.",
+      "marketplaceLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=Applaud%2010%20WP",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=Applaud%2010%20WP",
+        "blibli": "https://www.blibli.com/search?keyword=Applaud%2010%20WP"
+      }
+    },
+    {
+      "id": "PRD02",
+      "productName": "Confidor 200 SL",
+      "activeIngredient": "Imidakloprid",
+      "category": "insektisida",
+      "imageFileName": "imidakloprid.png",
+      "catatanPenggunaan": "Gunakan saat hama penghisap mulai muncul pada persemaian atau pertanaman muda. Semprot merata pada daun dan bagian pangkal tanaman, terutama pada titik serangan pertama, dan ulangi hanya bila populasi hama masih bertambah setelah pemantauan beberapa hari.",
+      "marketplaceLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=Confidor%20200%20SL",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=Confidor%20200%20SL",
+        "blibli": "https://www.blibli.com/search?keyword=Confidor%20200%20SL"
+      }
+    },
+    {
+      "id": "PRD03",
+      "productName": "Furadan 3G",
+      "activeIngredient": "Karbofuran",
+      "category": "insektisida",
+      "imageFileName": "karbofuran.png",
+      "catatanPenggunaan": "Taburkan bentuk butiran di sekitar pangkal tanaman atau area perakaran pada petakan yang mulai menunjukkan gejala serangan. Paling cocok untuk fase vegetatif awal ketika tanaman masih rentan terhadap kerusakan pangkal dan akar.",
+      "marketplaceLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=Furadan%203G",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=Furadan%203G",
+        "blibli": "https://www.blibli.com/search?keyword=Furadan%203G"
+      }
+    },
+    {
+      "id": "PRD04",
+      "productName": "Regent 50 SC",
+      "activeIngredient": "Fipronil",
+      "category": "insektisida",
+      "imageFileName": "fipronil.png",
+      "catatanPenggunaan": "Semprotkan saat hama target sedang aktif makan atau aktif bergerak, umumnya pada pagi atau sore hari. Arahkan ke bagian tanaman yang menjadi titik aktivitas hama, seperti pangkal batang atau daun muda, agar kontak bahan lebih efektif.",
+      "marketplaceLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=Regent%2050%20SC",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=Regent%2050%20SC",
+        "blibli": "https://www.blibli.com/search?keyword=Regent%2050%20SC"
+      }
+    },
+    {
+      "id": "PRD05",
+      "productName": "Bassa 50 EC",
+      "activeIngredient": "BPMC",
+      "category": "insektisida",
+      "imageFileName": "bpmc.png",
+      "catatanPenggunaan": "Gunakan ketika populasi serangga penghisap atau hama sasaran mulai meningkat pada fase rentan tanaman. Semprot pada pagi atau sore hari dan fokuskan ke bagian tanaman yang sedang didatangi hama, terutama malai atau tajuk bawah.",
+      "marketplaceLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=Bassa%2050%20EC",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=Bassa%2050%20EC",
+        "blibli": "https://www.blibli.com/search?keyword=Bassa%2050%20EC"
+      }
+    },
+    {
+      "id": "PRD06",
+      "productName": "Beam 75 WP",
+      "activeIngredient": "Trisiklazol",
+      "category": "fungisida",
+      "imageFileName": "trisiklazol.png",
+      "catatanPenggunaan": "Semprotkan segera saat gejala bercak awal mulai muncul pada daun, atau menjelang fase keluarnya malai bila riwayat blas di lahan tinggi. Tutupi permukaan daun dan leher malai secara merata agar perlindungan tidak terputus pada bagian yang rentan.",
+      "marketplaceLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=Beam%2075%20WP",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=Beam%2075%20WP",
+        "blibli": "https://www.blibli.com/search?keyword=Beam%2075%20WP"
+      }
+    },
+    {
+      "id": "PRD07",
+      "productName": "Fuji-One 400 EC",
+      "activeIngredient": "Isoprotiolan",
+      "category": "fungisida",
+      "imageFileName": "isoprotiolan.png",
+      "catatanPenggunaan": "Gunakan saat gejala awal penyakit mulai terlihat dan ulangkan pemantauan terutama pada fase bunting sampai malai keluar. Semprot merata ke daun dan titik infeksi utama agar perkembangan penyakit tidak meluas ke bagian generatif.",
+      "marketplaceLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=Fuji-One%20400%20EC",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=Fuji-One%20400%20EC",
+        "blibli": "https://www.blibli.com/search?keyword=Fuji-One%20400%20EC"
+      }
+    },
+    {
+      "id": "PRD08",
+      "productName": "Dithane M-45",
+      "activeIngredient": "Mancozeb",
+      "category": "fungisida",
+      "imageFileName": "mancozeb.png",
+      "catatanPenggunaan": "Pakai sebagai lapisan pelindung ketika cuaca lembab, hujan sering turun, atau gejala awal mulai muncul. Semprot merata ke daun bagian atas dan bawah agar permukaan tanaman terlindungi sebelum bercak berkembang lebih luas.",
+      "marketplaceLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=Dithane%20M-45",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=Dithane%20M-45",
+        "blibli": "https://www.blibli.com/search?keyword=Dithane%20M-45"
+      }
+    },
+    {
+      "id": "PRD09",
+      "productName": "Rovral",
+      "activeIngredient": "Iprodion",
+      "category": "fungisida",
+      "imageFileName": "iprodion.png",
+      "catatanPenggunaan": "Semprotkan pada gejala awal penyakit dan fokuskan ke jaringan tanaman yang paling sering menjadi lokasi infeksi, seperti daun, pelepah, atau pangkal batang. Cocok digunakan saat kelembaban tinggi dan serangan belum terlalu berat.",
+      "marketplaceLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=Rovral",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=Rovral",
+        "blibli": "https://www.blibli.com/search?keyword=Rovral"
+      }
+    },
+    {
+      "id": "PRD10",
+      "productName": "Tilt 250 EC",
+      "activeIngredient": "Propikonazol",
+      "category": "fungisida",
+      "imageFileName": "propikonazol.png",
+      "catatanPenggunaan": "Gunakan ketika bercak penyakit mulai aktif berkembang pada daun atau tajuk tanaman. Semprotkan merata pada area serangan dan lakukan pada kondisi cuaca teduh agar bahan menempel lebih lama di permukaan daun.",
+      "marketplaceLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=Tilt%20250%20EC",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=Tilt%20250%20EC",
+        "blibli": "https://www.blibli.com/search?keyword=Tilt%20250%20EC"
+      }
+    },
+    {
+      "id": "PRD11",
+      "productName": "Copper Oxychloride",
+      "activeIngredient": "Tembaga oksiklorida",
+      "category": "bakterisida/fungisida",
+      "imageFileName": "tembaga-oksiklorida.png",
+      "catatanPenggunaan": "Semprotkan pada gejala awal penyakit bakteri atau jamur, terutama pada daun yang mulai menunjukkan perubahan warna. Arahkan ke permukaan daun secara merata karena bahan bekerja paling baik bila menutup jaringan yang terpapar.",
+      "marketplaceLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=Copper%20Oxychloride",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=Copper%20Oxychloride",
+        "blibli": "https://www.blibli.com/search?keyword=Copper%20Oxychloride"
+      }
+    },
+    {
+      "id": "PRD12",
+      "productName": "Validacin 3L",
+      "activeIngredient": "Validamisin A",
+      "category": "fungisida",
+      "imageFileName": "validamisin-a.png",
+      "catatanPenggunaan": "Fokuskan semprotan ke pelepah, pangkal batang, atau area lembab tempat infeksi paling sering berkembang. Cocok digunakan saat gejala masih terbatas dan belum menyebar ke seluruh rumpun.",
+      "marketplaceLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=Validacin%203L",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=Validacin%203L",
+        "blibli": "https://www.blibli.com/search?keyword=Validacin%203L"
+      }
+    },
+    {
+      "id": "PRD13",
+      "productName": "Brestan 60 WP",
+      "activeIngredient": "Niklosamida",
+      "category": "molluskisida",
+      "imageFileName": "niklosamida.png",
+      "catatanPenggunaan": "Taburkan atau larutkan pada petakan yang masih tergenang dan sedang diserang keong, terutama saat bibit baru pindah tanam atau tanaman masih muda. Paling efektif bila digabung dengan pengumpulan keong dan telurnya pada hari yang sama.",
+      "marketplaceLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=Brestan%2060%20WP",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=Brestan%2060%20WP",
+        "blibli": "https://www.blibli.com/search?keyword=Brestan%2060%20WP"
+      }
+    },
+    {
+      "id": "PRD14",
+      "productName": "Mollucide",
+      "activeIngredient": "Saponin",
+      "category": "molluskisida",
+      "imageFileName": "saponin.png",
+      "catatanPenggunaan": "Gunakan pada area sawah yang tergenang dan menunjukkan keberadaan keong aktif. Sebarkan pada lokasi berkumpulnya keong, lalu lanjutkan dengan pengumpulan manual agar populasi turun lebih cepat.",
+      "marketplaceLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=Mollucide",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=Mollucide",
+        "blibli": "https://www.blibli.com/search?keyword=Mollucide"
+      }
+    },
+    {
+      "id": "PRD15",
+      "productName": "Prevathon 50 SC",
+      "activeIngredient": "Klorantraniliprol",
+      "category": "insektisida",
+      "imageFileName": "klorantraniliprol.png",
+      "catatanPenggunaan": "Semprotkan saat larva masih berukuran kecil dan baru mulai merusak daun. Aplikasi pada sore hari biasanya lebih efektif karena banyak larva aktif makan pada waktu itu.",
+      "marketplaceLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=Prevathon%2050%20SC",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=Prevathon%2050%20SC",
+        "blibli": "https://www.blibli.com/search?keyword=Prevathon%2050%20SC"
+      }
+    },
+    {
+      "id": "PRD16",
+      "productName": "Anvil 50 SC",
+      "activeIngredient": "Heksakonazol",
+      "category": "fungisida",
+      "imageFileName": "heksakonazol.png",
+      "catatanPenggunaan": "Gunakan segera saat gejala penyakit mulai terlihat pada daun atau pelepah, terutama ketika kelembaban kebun tinggi. Semprot merata pada bagian bawah dan tengah tajuk tanaman yang paling mudah mempertahankan kelembaban.",
+      "marketplaceLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=Anvil%2050%20SC",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=Anvil%2050%20SC",
+        "blibli": "https://www.blibli.com/search?keyword=Anvil%2050%20SC"
+      }
+    },
+    {
+      "id": "PRD17",
+      "productName": "Rodentisida Tikus Sawah",
+      "activeIngredient": "Bervariasi",
+      "category": "rodentisida",
+      "imageFileName": "rodentisida-tikus-sawah.png",
+      "catatanPenggunaan": "Letakkan umpan pada jalur lintasan, lubang aktif, sudut pematang, atau titik masuk tikus ke petakan. Paling baik digunakan bersamaan dengan gropyokan, penutupan lubang, atau perangkap agar tikus tidak sekadar berpindah lokasi.",
+      "marketplaceLinks": {
+        "shopee": "https://shopee.co.id/search?keyword=rodentisida%20tikus%20sawah",
+        "tokopedia": "https://www.tokopedia.com/search?st=product&q=rodentisida%20tikus%20sawah",
+        "blibli": "https://www.blibli.com/search?keyword=rodentisida%20tikus%20sawah"
+      }
+    }
+  ]
+}

@@ -451,6 +451,12 @@ export default function Home() {
               >
                 Tentang Kami
               </a>
+              <Link
+                href="/pakar"
+                className="hover:text-green-dark/80 transition-colors"
+              >
+                Dashboard Pakar
+              </Link>
               <a
                 href="#"
                 className="hover:text-green-dark/80 transition-colors"
