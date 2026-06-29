@@ -374,7 +374,20 @@
           "cf": 0.5,
           "ket": "Populasi wereng coklat beterbangan mendukung WBC sebagai vektor/serangga terkait"
         }
-      ]
+      ],
+      "solusi": {
+        "penanganan": [
+          "Aplikasi insektisida berbahan aktif BPMC, imidakloprid, atau fipronil sesuai dosis anjuran",
+          "Lakukan penyemprotan saat populasi mencapai 5 ekor per rumpun",
+          "Gunakan jebakan lampu (light trap) untuk mengendalikan populasi dewasa"
+        ],
+        "pencegahan": [
+          "Gunakan varietas tahan wereng (IR64, Inpari 33, Ciherang)",
+          "Atur jarak tanam tidak terlalu rapat (25×25 cm)",
+          "Hindari penggunaan pupuk nitrogen berlebihan",
+          "Terapkan sistem tanam jajar legowo"
+        ]
+      }
     },
     {
       "id": "P02",
@@ -551,7 +564,20 @@
           "cf": -0.4,
           "ket": "Wereng beterbangan tidak spesifik Penggerek"
         }
-      ]
+      ],
+      "solusi": {
+        "penanganan": [
+          "Cabut dan musnahkan tanaman yang menunjukkan gejala sundep/beluk",
+          "Aplikasi insektisida granular (karbofuran) pada awal tanam",
+          "Gunakan insektisida berbahan aktif klorantraniliprol saat fase generatif"
+        ],
+        "pencegahan": [
+          "Tanam serempak dalam satu hamparan untuk memutus siklus hama",
+          "Bersihkan jerami dan sisa tanaman dari musim sebelumnya",
+          "Gunakan varietas tahan penggerek batang",
+          "Pasang perangkap feromon untuk memantau populasi ngengat dewasa"
+        ]
+      }
     },
     {
       "id": "P03",
@@ -728,7 +754,20 @@
           "cf": -0.4,
           "ket": "Wereng beterbangan tidak spesifik Walang Sangit"
         }
-      ]
+      ],
+      "solusi": {
+        "penanganan": [
+          "Aplikasi insektisida berbahan aktif deltamethrin atau sipermetrin saat fase berbunga",
+          "Penangkapan manual walang sangit menggunakan jaring serangga di pagi hari",
+          "Pasang perangkap dengan umpan ikan busuk untuk menarik walang sangit"
+        ],
+        "pencegahan": [
+          "Jaga kebersihan gulma di sekitar sawah karena menjadi tempat persembunyian",
+          "Tanam serempak agar serangan tidak terkonsentrasi",
+          "Pertahankan populasi musuh alami seperti laba-laba",
+          "Hindari penyemprotan insektisida berspektrum luas yang membunuh musuh alami"
+        ]
+      }
     },
     {
       "id": "P04",
@@ -905,7 +944,20 @@
           "cf": -0.4,
           "ket": "Wereng beterbangan tidak spesifik Keong Mas"
         }
-      ]
+      ],
+      "solusi": {
+        "penanganan": [
+          "Kumpulkan dan musnahkan keong mas serta telurnya secara manual",
+          "Aplikasi moluskisida (niklosamida) sesuai dosis anjuran",
+          "Gunakan saponin dari bungkil teh sebagai pengendali alami"
+        ],
+        "pencegahan": [
+          "Pasang saringan pada pintu air masuk dan keluar sawah",
+          "Pelihara itik atau bebek di sawah setelah tanam (>3 minggu)",
+          "Atur kedalaman air maksimal 2-3 cm saat tanaman masih muda",
+          "Kumpulkan telur merah muda yang menempel di batang dan musnahkan"
+        ]
+      }
     },
     {
       "id": "P05",
@@ -1082,7 +1134,20 @@
           "cf": -0.4,
           "ket": "Wereng beterbangan tidak spesifik Tikus"
         }
-      ]
+      ],
+      "solusi": {
+        "penanganan": [
+          "Lakukan gropyokan (pengusiran massal) dengan memasang perangkap bubu",
+          "Gunakan rodentisida antikoagulan (brodifakum) dalam bentuk umpan beracun",
+          "Pasang TBS (Trap Barrier System) di sekeliling sawah"
+        ],
+        "pencegahan": [
+          "Bersihkan pematang dan lingkungan sawah dari semak yang menjadi sarang tikus",
+          "Tanam serempak untuk mengurangi ketersediaan makanan sepanjang musim",
+          "Buat saluran sanitasi yang bersih di sekitar petakan sawah",
+          "Lestarikan predator alami seperti burung hantu dan ular sawah"
+        ]
+      }
     },
     {
       "id": "P06",
@@ -1259,7 +1324,20 @@
           "cf": -0.4,
           "ket": "Wereng beterbangan tidak spesifik Blast"
         }
-      ]
+      ],
+      "solusi": {
+        "penanganan": [
+          "Aplikasi fungisida berbahan aktif trisiklazol, isoprotiolan, atau kasugamisin",
+          "Semprot saat gejala awal muncul dan ulangi 7-10 hari kemudian",
+          "Kurangi dosis pupuk nitrogen jika serangan berat"
+        ],
+        "pencegahan": [
+          "Gunakan varietas tahan blast (Inpari 33, Situ Bagendit)",
+          "Hindari pemupukan nitrogen berlebihan (maks. 200 kg urea/ha)",
+          "Gunakan benih yang sehat dan bebas penyakit",
+          "Aplikasi pupuk kalium (KCl) untuk memperkuat jaringan tanaman"
+        ]
+      }
     },
     {
       "id": "P07",
@@ -1436,7 +1514,20 @@
           "cf": -0.4,
           "ket": "Wereng beterbangan tidak spesifik HDB"
         }
-      ]
+      ],
+      "solusi": {
+        "penanganan": [
+          "Aplikasi bakterisida berbahan aktif tembaga hidroksida atau antibiotik pertanian",
+          "Kurangi genangan air di sawah untuk memperlambat penyebaran bakteri",
+          "Hentikan pemupukan nitrogen jika serangan sudah berat"
+        ],
+        "pencegahan": [
+          "Gunakan varietas tahan HDB (Ciherang, Inpari 30, IR64)",
+          "Hindari pemupukan nitrogen berlebihan",
+          "Jaga drainase sawah agar tidak tergenang terlalu dalam",
+          "Gunakan benih bersertifikat yang bebas patogen"
+        ]
+      }
     },
     {
       "id": "P08",
@@ -1613,7 +1704,20 @@
           "cf": -0.4,
           "ket": "Wereng coklat beterbangan bisa jadi vektor co-infeksi tapi tidak spesifik Tungro (vektornya wereng hijau)"
         }
-      ]
+      ],
+      "solusi": {
+        "penanganan": [
+          "Kendalikan wereng hijau (vektor utama) dengan insektisida sistemik",
+          "Cabut dan musnahkan tanaman yang menunjukkan gejala tungro berat",
+          "Lakukan pergiliran varietas tahan tungro secara berkala"
+        ],
+        "pencegahan": [
+          "Gunakan varietas tahan tungro (Inpari 9, Tukad Balian)",
+          "Tanam serempak untuk menekan populasi wereng hijau",
+          "Bersihkan sisa tanaman dari musim sebelumnya",
+          "Monitor populasi wereng hijau dengan perangkap kuning"
+        ]
+      }
     },
     {
       "id": "P09",
@@ -1790,7 +1894,20 @@
           "cf": -0.4,
           "ket": "Wereng beterbangan tidak spesifik Brown Spot"
         }
-      ]
+      ],
+      "solusi": {
+        "penanganan": [
+          "Aplikasi fungisida berbahan aktif mancozeb, propineb, atau iprodion",
+          "Semprot pada fase pembentukan anakan dan fase generatif",
+          "Tambahkan pupuk kalium untuk memperkuat ketahanan tanaman"
+        ],
+        "pencegahan": [
+          "Gunakan benih sehat dan bebas penyakit",
+          "Hindari kekurangan hara — pastikan pemupukan berimbang (N, P, K)",
+          "Atur jarak tanam yang tidak terlalu rapat",
+          "Perbaiki drainase sawah untuk menghindari genangan berlebihan"
+        ]
+      }
     },
     {
       "id": "P10",
@@ -1967,7 +2084,20 @@
           "cf": -0.4,
           "ket": "Wereng beterbangan tidak spesifik Sheath Blight"
         }
-      ]
+      ],
+      "solusi": {
+        "penanganan": [
+          "Aplikasi fungisida berbahan aktif heksakonazol, validamisin, atau azoksistrobin",
+          "Kurangi kelembaban dengan mengatur tinggi air di sawah",
+          "Buang daun pelepah yang sudah terinfeksi berat"
+        ],
+        "pencegahan": [
+          "Atur jarak tanam optimal (25×25 cm) untuk sirkulasi udara",
+          "Hindari pemupukan nitrogen berlebihan",
+          "Bersihkan sisa tanaman dari musim sebelumnya",
+          "Gunakan varietas yang memiliki toleransi terhadap sheath blight"
+        ]
+      }
     },
     {
       "id": "P11",
@@ -2152,7 +2282,20 @@
           "cf": -0.4,
           "ket": "Wereng beterbangan tidak spesifik Ganjur"
         }
-      ]
+      ],
+      "solusi": {
+        "penanganan": [
+          "Cabut dan musnahkan tanaman yang menunjukkan gejala daun pipa / tubular putih",
+          "Aplikasi insektisida sistemik granular (karbofuran) pada saat tanaman masih muda",
+          "Atur drainase untuk mengeringkan sawah sementara guna mengurangi populasi lalat ganjur"
+        ],
+        "pencegahan": [
+          "Tanam serempak dalam satu hamparan untuk memutus siklus hidup lalat ganjur",
+          "Gunakan varietas yang tahan terhadap ganjur jika tersedia",
+          "Hindari penanaman yang terlambat di musim hujan",
+          "Monitor secara rutin keberadaan lalat kecil di sekitar tanaman muda"
+        ]
+      }
     },
     {
       "id": "P12",
@@ -2338,7 +2481,20 @@
           "cf": -0.4,
           "ket": "Wereng beterbangan tidak spesifik Ulat Grayak"
         }
-      ]
+      ],
+      "solusi": {
+        "penanganan": [
+          "Aplikasi insektisida berbahan aktif klorantraniliprol, emamektin benzoat, atau spinetoram",
+          "Lakukan pengumpulan dan pemusnahan kelompok ulat secara manual di pagi atau sore hari",
+          "Semprot saat populasi ulat masih instar awal (sebelum menyebar)"
+        ],
+        "pencegahan": [
+          "Monitor keberadaan kelompok telur dan ulat muda secara rutin",
+          "Pertahankan populasi musuh alami (parasitoid, predator)",
+          "Bersihkan gulma di pematang yang menjadi sumber pakan alternatif",
+          "Gunakan perangkap lampu untuk menangkap ngengat dewasa"
+        ]
+      }
     },
     {
       "id": "P13",
@@ -2524,7 +2680,20 @@
           "cf": 0.6,
           "ket": "Populasi wereng coklat beterbangan sebagai vektor penular RGSV/RRSV"
         }
-      ]
+      ],
+      "solusi": {
+        "penanganan": [
+          "Cabut dan musnahkan tanaman yang terinfeksi virus kerdil rumput (RGSV/RRSV)",
+          "Kendalikan wereng coklat (vektor utama) dengan insektisida sistemik",
+          "Lakukan penanaman ulang (sulam) dengan bibit sehat jika serangan masih dini"
+        ],
+        "pencegahan": [
+          "Gunakan varietas tahan wereng coklat untuk memutus penularan virus",
+          "Tanam serempak dan hindari penanaman bergilir yang tumpang tindih",
+          "Monitor populasi wereng coklat sejak fase persemaian",
+          "Eradikasi sumber inokulum — bersihkan pertanaman lama sebelum musim tanam baru"
+        ]
+      }
     }
   ],
   "cf_formula": {
