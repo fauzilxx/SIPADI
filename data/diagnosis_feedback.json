@@ -27,6 +27,48 @@
           "id": "G26",
           "cfUser": 1
         }
+      ],
+      "submitterName": "Pengguna SIPADI"
+    },
+    {
+      "id": "FDB-1782841411019",
+      "submittedAt": "2026-06-30T17:43:31.020Z",
+      "reviewedAt": null,
+      "reviewStatus": "pending",
+      "showAsPublicCard": false,
+      "reviewerNotes": "",
+      "submitterName": "Test",
+      "diagnosisPenyakitId": "P06",
+      "diagnosisNama": "Blast",
+      "diagnosisConfidence": 85,
+      "isAccurate": true,
+      "rating": 5,
+      "comment": "test",
+      "selectedGejala": []
+    },
+    {
+      "id": "FDB-1782841504535",
+      "submittedAt": "2026-06-30T17:45:04.535Z",
+      "reviewedAt": null,
+      "reviewStatus": "pending",
+      "showAsPublicCard": false,
+      "reviewerNotes": "",
+      "submitterName": "Petani Test",
+      "diagnosisPenyakitId": "P06",
+      "diagnosisNama": "Blast (Blas)",
+      "diagnosisConfidence": 85,
+      "isAccurate": true,
+      "rating": 5,
+      "comment": "",
+      "selectedGejala": [
+        {
+          "id": "G15",
+          "cfUser": 1
+        },
+        {
+          "id": "G26",
+          "cfUser": 1
+        }
       ]
     }
   ]

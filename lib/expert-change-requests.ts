@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { setTimeout as delay } from "node:timers/promises";
 
 import type { DashboardUserRole } from "@/lib/expert-auth";
 import {
@@ -589,15 +590,41 @@ export function validateExpertChangeRequestApply(
   };
 }
 
+async function writeFileWithRetry(
+  filePath: string,
+  content: string,
+  maxAttempts = 3,
+  delayMs = 200
+): Promise<void> {
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      await writeFile(filePath, content, "utf8");
+      return;
+    } catch (err) {
+      lastError = err;
+      console.warn(
+        `[expert-change-requests] writeFile attempt ${attempt}/${maxAttempts} failed:`,
+        err
+      );
+      if (attempt < maxAttempts) {
+        await delay(delayMs);
+      }
+    }
+  }
+
+  throw lastError;
+}
+
 async function ensureChangeRequestsFile() {
   try {
     await readFile(changeRequestsPath, "utf8");
   } catch {
     await mkdir(path.dirname(changeRequestsPath), { recursive: true });
-    await writeFile(
+    await writeFileWithRetry(
       changeRequestsPath,
-      `${JSON.stringify(defaultChangeRequestData, null, 2)}\n`,
-      "utf8"
+      `${JSON.stringify(defaultChangeRequestData, null, 2)}\n`
     );
   }
 }
@@ -677,7 +704,7 @@ function mapChangeRequestToRow(
 }
 
 async function writeChangeRequestsFile(data: ExpertChangeRequestFileData) {
-  await writeFile(changeRequestsPath, `${JSON.stringify(data, null, 2)}\n`, "utf8");
+  await writeFileWithRetry(changeRequestsPath, `${JSON.stringify(data, null, 2)}\n`);
 }
 
 export async function readExpertChangeRequestsFile() {

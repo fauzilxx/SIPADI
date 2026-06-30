@@ -1,5 +1,6 @@
 import { mkdir, readFile, rename, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { setTimeout as delay } from "node:timers/promises";
 
 import {
   getKnowledgeBaseRevisionFromData,
@@ -202,27 +203,42 @@ export async function writeTextFileAtomically(
   options?: AtomicWriteOptions
 ) {
   const directoryPath = path.dirname(targetPath);
-  const tempFilePath =
-    options?.tempFilePath ??
-    path.join(
-      directoryPath,
-      `${path.basename(targetPath)}.tmp-${process.pid}-${Date.now()}`
-    );
-
   await mkdir(directoryPath, { recursive: true });
 
-  try {
-    await writeFile(tempFilePath, contents, "utf8");
-    await rename(tempFilePath, targetPath);
-  } catch (error) {
-    try {
-      await unlink(tempFilePath);
-    } catch {
-      // Ignore cleanup failures so the original write error surfaces.
-    }
+  const maxAttempts = 3;
+  const delayMs = 200;
+  let lastError: unknown;
 
-    throw error;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const tempFilePath =
+      options?.tempFilePath ??
+      path.join(
+        directoryPath,
+        `${path.basename(targetPath)}.tmp-${process.pid}-${Date.now()}-${attempt}`
+      );
+
+    try {
+      await writeFile(tempFilePath, contents, "utf8");
+      await rename(tempFilePath, targetPath);
+      return;
+    } catch (error) {
+      lastError = error;
+      console.warn(
+        `[expert-kb] writeTextFileAtomically attempt ${attempt}/${maxAttempts} failed:`,
+        error
+      );
+      try {
+        await unlink(tempFilePath);
+      } catch {
+        // Ignore cleanup failures
+      }
+      if (attempt < maxAttempts) {
+        await delay(delayMs);
+      }
+    }
   }
+
+  throw lastError;
 }
 
 export function getKnowledgeBasePaths() {

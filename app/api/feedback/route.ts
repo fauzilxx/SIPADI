@@ -17,7 +17,8 @@ export async function GET() {
       totalFeedback: result.latestFeedbackCount,
       publicCards,
     });
-  } catch {
+  } catch (err) {
+    console.error("[feedback/route] GET error:", err);
     return Response.json(
       {
         success: false,
@@ -50,11 +51,16 @@ export async function POST(request: Request) {
       feedback: result.data,
       summary: result.summary,
     });
-  } catch {
+  } catch (err) {
+    console.error("[feedback/route] POST error:", err);
     return Response.json(
       {
         success: false,
         message: "Terjadi kesalahan saat menyimpan feedback.",
+        detail:
+          process.env.NODE_ENV === "development" && err instanceof Error
+            ? err.message
+            : undefined,
       },
       { status: 500 }
     );

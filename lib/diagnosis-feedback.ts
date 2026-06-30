@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { setTimeout as delay } from "node:timers/promises";
 
 import type { SelectedGejalaInput } from "@/lib/knowledge-base";
 import { getSupabaseAdminClient } from "@/lib/supabase-server";
@@ -255,15 +256,41 @@ export function validateDiagnosisFeedbackReview(
   };
 }
 
+async function writeFileWithRetry(
+  filePath: string,
+  content: string,
+  maxAttempts = 3,
+  delayMs = 200
+): Promise<void> {
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      await writeFile(filePath, content, "utf8");
+      return;
+    } catch (err) {
+      lastError = err;
+      console.warn(
+        `[diagnosis-feedback] writeFile attempt ${attempt}/${maxAttempts} failed:`,
+        err
+      );
+      if (attempt < maxAttempts) {
+        await delay(delayMs);
+      }
+    }
+  }
+
+  throw lastError;
+}
+
 async function ensureFeedbackFile() {
   try {
     await readFile(feedbackPath, "utf8");
   } catch {
     await mkdir(path.dirname(feedbackPath), { recursive: true });
-    await writeFile(
+    await writeFileWithRetry(
       feedbackPath,
-      `${JSON.stringify(defaultFeedbackData, null, 2)}\n`,
-      "utf8"
+      `${JSON.stringify(defaultFeedbackData, null, 2)}\n`
     );
   }
 }
@@ -426,7 +453,10 @@ export async function saveDiagnosisFeedback(input: DiagnosisFeedbackInput) {
     feedback: [...currentData.feedback, nextEntry],
   };
 
-  await writeFile(feedbackPath, `${JSON.stringify(nextData, null, 2)}\n`, "utf8");
+  await writeFileWithRetry(
+    feedbackPath,
+    `${JSON.stringify(nextData, null, 2)}\n`
+  );
 
   return {
     success: true as const,
@@ -498,7 +528,7 @@ export async function reviewDiagnosisFeedback(input: DiagnosisFeedbackReviewInpu
     };
   }
 
-  await writeFile(
+  await writeFileWithRetry(
     feedbackPath,
     `${JSON.stringify(
       {
@@ -507,8 +537,7 @@ export async function reviewDiagnosisFeedback(input: DiagnosisFeedbackReviewInpu
       },
       null,
       2
-    )}\n`,
-    "utf8"
+    )}\n`
   );
 
   return {
