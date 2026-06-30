@@ -230,14 +230,16 @@ Current active flow:
 2. Server page checks `sipadi_session` cookie
 3. If invalid: render `LoginForm`
 4. If valid: read local knowledge base file and render `PakarDashboard`
-5. Expert edits gejala/penyakit/solusi/CF matrix
-6. Save calls `POST /api/pakar/save`
-7. Save route verifies session, validates payload, creates backup, then writes JSON
+5. `Pakar` submits structured change requests from the dashboard
+6. `Admin` reviews requests and may apply approved requests into the knowledge base
+7. Direct knowledge base save remains admin-only via `POST /api/pakar/save`
+8. Save route verifies session, validates payload, creates backup, then writes JSON
 
 Important:
 
 - Session verification is server-side.
 - Knowledge base write flow is backend-only.
+- Approved expert requests can now be applied through an admin-reviewed backend flow instead of relying only on manual dashboard edits.
 
 ---
 

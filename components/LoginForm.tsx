@@ -1,12 +1,25 @@
 "use client";
 
+import { useEffect } from "react";
 import { useState } from "react";
 
-export default function LoginForm() {
-  const [username, setUsername] = useState("pakar");
+type PreferredDashboardRole = "pakar" | "admin";
+
+export default function LoginForm({
+  preferredRole = "pakar",
+}: {
+  preferredRole?: PreferredDashboardRole;
+}) {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    setUsername("");
+    setPassword("");
+    setErrorMessage(null);
+  }, [preferredRole]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -48,27 +61,50 @@ export default function LoginForm() {
       <div className="relative">
         <div className="mb-8">
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.28em] text-[#7a9a28]">
-            Expert Access
+            Dashboard Access
           </p>
           <h1 className="mb-3 text-3xl font-extrabold tracking-tight text-[#154212]">
-            Dashboard Pakar SIPADI
+            Dashboard Pakar dan Admin SIPADI
           </h1>
           <p className="max-w-xl text-sm leading-relaxed text-gray-600">
-            Masuk sebagai pakar untuk mengelola gejala, penyakit, solusi, dan
-            matriks Certainty Factor langsung dari browser.
+            Masuk sesuai peran Anda. Pakar mengajukan usulan perubahan knowledge
+            base, sedangkan admin mereview feedback petani, menyetujui usulan
+            pakar, dan mengelola basis pengetahuan.
           </p>
         </div>
 
         <form className="space-y-5" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="fake-username"
+            autoComplete="username"
+            tabIndex={-1}
+            aria-hidden="true"
+            className="hidden"
+          />
+          <input
+            type="password"
+            name="fake-password"
+            autoComplete="current-password"
+            tabIndex={-1}
+            aria-hidden="true"
+            className="hidden"
+          />
           <div>
             <label className="mb-2 block text-sm font-semibold text-[#154212]">
               Username
             </label>
             <input
+              key={preferredRole}
+              name="sipadi-login-id"
               value={username}
               onChange={(event) => setUsername(event.target.value)}
+              autoComplete="new-password"
+              autoCorrect="off"
+              autoCapitalize="none"
+              spellCheck={false}
               className="w-full rounded-2xl border border-[#d9e5d1] bg-white/80 px-4 py-3 text-sm text-[#154212] outline-none transition focus:border-[#7a9a28] focus:ring-2 focus:ring-[#BAD36F]/40"
-              placeholder="Masukkan username pakar"
+              placeholder="Masukkan username pakar atau admin"
             />
           </div>
 
@@ -78,14 +114,16 @@ export default function LoginForm() {
             </label>
             <input
               type="password"
+              name="sipadi-login-secret"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
+              autoComplete="new-password"
               className={`w-full rounded-2xl border bg-white/80 px-4 py-3 text-sm text-[#154212] outline-none transition focus:ring-2 ${
                 errorMessage
                   ? "border-red-300 focus:border-red-400 focus:ring-red-100"
                   : "border-[#d9e5d1] focus:border-[#7a9a28] focus:ring-[#BAD36F]/40"
               }`}
-              placeholder="Masukkan password pakar"
+              placeholder="Masukkan password sesuai peran"
             />
           </div>
 

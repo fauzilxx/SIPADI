@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import PublicLoginMenu from "@/components/PublicLoginMenu";
 import type { DiagnosisResult } from "@/lib/diagnosis";
 import {
   getPenyakitImageAsset,
@@ -25,6 +26,30 @@ interface DiagnosisApiResponse {
   topResultLabel?: string | null;
   treatment?: Treatment | null;
   supplementalRecommendation?: SupplementalRecommendation | null;
+}
+
+interface FeedbackSummary {
+  totalFeedback: number;
+  totalAccurate: number;
+  totalInaccurate: number;
+  accuracyPercentage: number;
+  averageRating: number;
+}
+
+interface PublicFeedbackCard {
+  id: string;
+  diagnosisNama: string;
+  isAccurate: boolean;
+  rating: number;
+  comment: string;
+}
+
+interface FeedbackApiResponse {
+  success: boolean;
+  message?: string;
+  errors?: string[];
+  summary?: FeedbackSummary;
+  publicCards?: PublicFeedbackCard[];
 }
 
 interface MarketplaceProduct {
@@ -84,6 +109,20 @@ export default function HasilPage() {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [data, setData] = useState<DiagnosisApiResponse | null>(null);
+  const [feedbackSummary, setFeedbackSummary] = useState<FeedbackSummary | null>(
+    null
+  );
+  const [publicFeedbackCards, setPublicFeedbackCards] = useState<
+    PublicFeedbackCard[]
+  >([]);
+  const [feedbackLoading, setFeedbackLoading] = useState(true);
+  const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
+  const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
+  const [feedbackForm, setFeedbackForm] = useState({
+    isAccurate: "" as "" | "yes" | "no",
+    rating: 5,
+    comment: "",
+  });
 
   useEffect(() => {
     const raw = sessionStorage.getItem(STORAGE_KEY);
@@ -140,12 +179,44 @@ export default function HasilPage() {
           return;
         }
 
-        setErrorMessage("Tidak dapat terhubung ke backend diagnosis.");
+        setErrorMessage("Hasil diagnosis belum bisa dimuat. Silakan coba lagi.");
         setLoading(false);
       }
     }
 
     runDiagnosis();
+
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadFeedbackData() {
+      try {
+        const response = await fetch("/api/feedback", {
+          signal: controller.signal,
+        });
+        const payload = (await response.json()) as FeedbackApiResponse;
+
+        if (!response.ok || !payload.success) {
+          setFeedbackLoading(false);
+          return;
+        }
+
+        setFeedbackSummary(payload.summary ?? null);
+        setPublicFeedbackCards(payload.publicCards ?? []);
+        setFeedbackLoading(false);
+      } catch (error) {
+        if ((error as Error).name === "AbortError") {
+          return;
+        }
+
+        setFeedbackLoading(false);
+      }
+    }
+
+    loadFeedbackData();
 
     return () => controller.abort();
   }, []);
@@ -156,7 +227,7 @@ export default function HasilPage() {
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#BAD36F] border-t-[#154212]" />
           <p className="text-sm font-semibold text-[#154212]">
-            Memproses diagnosa dari backend...
+            Sedang menyiapkan hasil diagnosis...
           </p>
         </div>
       </div>
@@ -178,6 +249,69 @@ export default function HasilPage() {
   const penyakitImage = topResult
     ? getPenyakitImageAsset(topResult.penyakitId)
     : null;
+
+  async function handleSubmitFeedback(
+    event: React.FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+
+    if (!topResult) {
+      return;
+    }
+
+    if (!feedbackForm.isAccurate) {
+      setFeedbackMessage("Silakan pilih apakah hasil diagnosis ini sesuai.");
+      return;
+    }
+
+    setFeedbackSubmitting(true);
+    setFeedbackMessage(null);
+
+    try {
+      const response = await fetch("/api/feedback", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          diagnosisPenyakitId: topResult.penyakitId,
+          diagnosisNama: topResult.nama,
+          diagnosisConfidence: topResult.cfPercentage,
+          isAccurate: feedbackForm.isAccurate === "yes",
+          rating: feedbackForm.rating,
+          comment: feedbackForm.comment,
+          selectedGejala: data?.selectedGejala ?? [],
+        }),
+      });
+
+      const payload = (await response.json()) as FeedbackApiResponse;
+
+      if (!response.ok || !payload.success) {
+        setFeedbackMessage(
+          payload.errors?.join(" ") ??
+            payload.message ??
+            "Feedback belum bisa disimpan."
+        );
+        setFeedbackSubmitting(false);
+        return;
+      }
+
+      setFeedbackSummary(payload.summary ?? null);
+      setFeedbackMessage(
+        payload.message ??
+          "Terima kasih, feedback Anda berhasil disimpan dan menunggu review admin."
+      );
+      setFeedbackForm({
+        isAccurate: "",
+        rating: 5,
+        comment: "",
+      });
+      setFeedbackSubmitting(false);
+    } catch {
+      setFeedbackMessage("Feedback belum bisa disimpan. Silakan coba lagi.");
+      setFeedbackSubmitting(false);
+    }
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-[#fcfdfa] font-sans">
@@ -217,6 +351,8 @@ export default function HasilPage() {
                 Diagnosis
               </Link>
             </div>
+
+            <PublicLoginMenu variant="desktop" />
 
             <button
               className="rounded-lg p-2 transition-colors hover:bg-green-pale md:hidden"
@@ -272,6 +408,10 @@ export default function HasilPage() {
                 >
                   Diagnosis
                 </Link>
+                <PublicLoginMenu
+                  variant="mobile"
+                  onNavigate={() => setMobileMenuOpen(false)}
+                />
               </div>
             </div>
           )}
@@ -371,11 +511,12 @@ export default function HasilPage() {
                   </div>
 
                   <p className="mb-6 text-[15px] leading-relaxed text-gray-600">
-                    Sistem backend SIPADI menyimpulkan bahwa kombinasi gejala
-                    yang Anda pilih paling kuat mengarah ke{" "}
+                    Berdasarkan gejala yang Anda pilih, kondisi padi Anda paling
+                    mendekati{" "}
                     <strong className="text-[#154212]">{topResult.nama}</strong>.
-                    Hasil ini dihitung dengan metode Forward Chaining dan
-                    Certainty Factor dari backend diagnosis.
+                    Gunakan hasil ini sebagai panduan awal untuk memeriksa
+                    tanaman di lapangan dan menentukan langkah penanganan yang
+                    paling sesuai.
                   </p>
 
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -543,10 +684,10 @@ export default function HasilPage() {
                         Rekomendasi Produk dan Pengendali Relevan
                       </h3>
                       <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                        SIPADI telah menghubungkan rekomendasi untuk{" "}
-                        <strong>{supplementalRecommendation.nama}</strong> dengan
-                        katalog produk kimia dan pengendali non-kimia yang
-                        relevan.
+                        Berikut ringkasan cara pengendalian yang dapat
+                        dipertimbangkan untuk{" "}
+                        <strong>{supplementalRecommendation.nama}</strong>,
+                        mulai dari tindakan kimia, mekanis, hingga biologis.
                       </p>
                     </div>
 
@@ -601,9 +742,10 @@ export default function HasilPage() {
                         Produk Marketplace Terkait
                       </h3>
                       <p className="mb-6 text-sm leading-relaxed text-gray-600">
-                        Produk ini ditautkan langsung dari rekomendasi penyakit,
-                        jadi daftar yang tampil tidak lagi bergantung pada
-                        pencocokan teks manual.
+                        Daftar ini berisi contoh produk yang bisa Anda pelajari
+                        lebih lanjut sesuai hasil diagnosis. Selalu baca label,
+                        ikuti dosis anjuran, dan utamakan penggunaan yang aman
+                        di lapangan.
                       </p>
 
                       {supplementalRecommendation.marketplaceProducts.length > 0 ? (
@@ -686,8 +828,8 @@ export default function HasilPage() {
                         </div>
                       ) : (
                         <div className="rounded-[20px] border border-dashed border-[#BAD36F]/40 bg-[#fafff0] px-6 py-6 text-sm leading-relaxed text-gray-600">
-                          Belum ada produk marketplace yang bisa di-resolve dari
-                          `productIds.marketplace` untuk penyakit ini.
+                          Belum ada contoh produk yang ditampilkan untuk hasil
+                          diagnosis ini.
                         </div>
                       )}
                     </div>
@@ -699,9 +841,9 @@ export default function HasilPage() {
                         Pengendali Non-Kimia yang Relevan
                       </h3>
                       <p className="mb-6 text-sm leading-relaxed text-gray-600">
-                        Item berikut terhubung langsung dari `productIds`
-                        rekomendasi penyakit, sehingga bisa ditampilkan sebagai
-                        alat, agen hayati, atau metode lapang pendukung.
+                        Bagian ini menampilkan pilihan pengendalian non-kimia
+                        yang dapat membantu, seperti alat, agen hayati, atau
+                        metode lapang pendukung.
                       </p>
 
                       {supplementalRecommendation.nonChemicalControls.length > 0 ? (
@@ -792,13 +934,217 @@ export default function HasilPage() {
                         </div>
                       ) : (
                         <div className="rounded-[20px] border border-dashed border-[#BAD36F]/40 bg-[#fafff0] px-6 py-6 text-sm leading-relaxed text-gray-600">
-                          Belum ada pengendali non-kimia yang bisa di-resolve
-                          dari `productIds.nonKimia` untuk penyakit ini.
+                          Belum ada rekomendasi pengendalian non-kimia yang
+                          ditampilkan untuk hasil diagnosis ini.
                         </div>
                       )}
                     </div>
                   ) : null}
                 </div>
+              )}
+
+              <section className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1.1fr]">
+                <div className="rounded-[24px] border border-gray-100 bg-white p-8 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                  <h3 className="mb-2 text-[20px] font-bold text-[#154212]">
+                    Ringkasan Feedback Program
+                  </h3>
+                  <p className="mb-6 text-sm leading-relaxed text-gray-600">
+                    Ringkasan ini berasal dari feedback petani yang masuk dan
+                    membantu memantau tingkat akurasi serta kepuasan terhadap
+                    program SIPADI.
+                  </p>
+
+                  {feedbackLoading ? (
+                    <p className="text-sm text-gray-500">
+                      Sedang memuat ringkasan feedback...
+                    </p>
+                  ) : feedbackSummary ? (
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div className="rounded-[18px] bg-[#f8faf6] p-4">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                          Tingkat Akurasi
+                        </p>
+                        <p className="mt-1 text-2xl font-extrabold text-[#154212]">
+                          {feedbackSummary.accuracyPercentage}%
+                        </p>
+                        <p className="mt-2 text-xs leading-relaxed text-gray-500">
+                          Dari {feedbackSummary.totalFeedback} feedback yang
+                          sudah masuk.
+                        </p>
+                      </div>
+
+                      <div className="rounded-[18px] bg-[#f8faf6] p-4">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                          Rating Program
+                        </p>
+                        <p className="mt-1 text-2xl font-extrabold text-[#154212]">
+                          {feedbackSummary.averageRating}/5
+                        </p>
+                        <p className="mt-2 text-xs leading-relaxed text-gray-500">
+                          {feedbackSummary.totalAccurate} sesuai,{" "}
+                          {feedbackSummary.totalInaccurate} belum sesuai.
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">
+                      Belum ada feedback yang tersimpan.
+                    </p>
+                  )}
+                </div>
+
+                <div className="rounded-[24px] border border-[#dce8d2] bg-white p-8 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                  <h3 className="mb-2 text-[20px] font-bold text-[#154212]">
+                    Beri Feedback Hasil Diagnosis
+                  </h3>
+                  <p className="mb-6 text-sm leading-relaxed text-gray-600">
+                    Feedback Anda akan disimpan, direview admin, lalu dipakai
+                    untuk menilai keakuratan dan meningkatkan kualitas program.
+                  </p>
+
+                  <form className="space-y-5" onSubmit={handleSubmitFeedback}>
+                    <div>
+                      <p className="mb-3 text-sm font-semibold text-[#154212]">
+                        Apakah hasil diagnosis ini sesuai dengan kondisi sawah
+                        Anda?
+                      </p>
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFeedbackForm((current) => ({
+                              ...current,
+                              isAccurate: "yes",
+                            }))
+                          }
+                          className={`rounded-[18px] border px-4 py-3 text-sm font-semibold transition-colors ${
+                            feedbackForm.isAccurate === "yes"
+                              ? "border-[#154212] bg-[#eef5e8] text-[#154212]"
+                              : "border-[#d9e5d1] bg-white text-gray-600 hover:bg-[#f8faf6]"
+                          }`}
+                        >
+                          Ya, sesuai
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFeedbackForm((current) => ({
+                              ...current,
+                              isAccurate: "no",
+                            }))
+                          }
+                          className={`rounded-[18px] border px-4 py-3 text-sm font-semibold transition-colors ${
+                            feedbackForm.isAccurate === "no"
+                              ? "border-[#154212] bg-[#eef5e8] text-[#154212]"
+                              : "border-[#d9e5d1] bg-white text-gray-600 hover:bg-[#f8faf6]"
+                          }`}
+                        >
+                          Belum sesuai
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-[#154212]">
+                        Rating Program
+                      </label>
+                      <select
+                        value={feedbackForm.rating}
+                        onChange={(event) =>
+                          setFeedbackForm((current) => ({
+                            ...current,
+                            rating: Number(event.target.value),
+                          }))
+                        }
+                        className="w-full rounded-2xl border border-[#d9e5d1] px-4 py-3 text-sm text-[#154212] outline-none focus:border-[#7a9a28] focus:ring-2 focus:ring-[#BAD36F]/40"
+                      >
+                        <option value={5}>5 - Sangat membantu</option>
+                        <option value={4}>4 - Membantu</option>
+                        <option value={3}>3 - Cukup membantu</option>
+                        <option value={2}>2 - Kurang membantu</option>
+                        <option value={1}>1 - Tidak membantu</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-[#154212]">
+                        Catatan Tambahan
+                      </label>
+                      <textarea
+                        value={feedbackForm.comment}
+                        onChange={(event) =>
+                          setFeedbackForm((current) => ({
+                            ...current,
+                            comment: event.target.value,
+                          }))
+                        }
+                        maxLength={500}
+                        rows={4}
+                        placeholder="Tuliskan kondisi lapang atau hal yang menurut Anda perlu diperbaiki."
+                        className="min-h-28 w-full rounded-2xl border border-[#d9e5d1] px-4 py-3 text-sm text-[#154212] outline-none focus:border-[#7a9a28] focus:ring-2 focus:ring-[#BAD36F]/40"
+                      />
+                      <p className="mt-2 text-xs text-gray-500">
+                        {feedbackForm.comment.length}/500 karakter
+                      </p>
+                    </div>
+
+                    {feedbackMessage && (
+                      <div className="rounded-2xl border border-[#d9e5d1] bg-[#f8faf6] px-4 py-3 text-sm text-[#154212]">
+                        {feedbackMessage}
+                      </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={feedbackSubmitting}
+                      className="inline-flex w-full items-center justify-center rounded-2xl bg-[#154212] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#12370f] disabled:cursor-not-allowed disabled:opacity-70"
+                    >
+                      {feedbackSubmitting
+                        ? "Menyimpan feedback..."
+                        : "Kirim Feedback"}
+                    </button>
+                  </form>
+                </div>
+              </section>
+
+              {publicFeedbackCards.length > 0 && (
+                <section className="rounded-[24px] border border-gray-100 bg-white p-8 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                  <div className="mb-6">
+                    <h3 className="text-[20px] font-bold text-[#154212]">
+                      Suara Petani Lain
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                      Berikut beberapa feedback petani yang sudah direview dan
+                      disetujui admin untuk ditampilkan.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+                    {publicFeedbackCards.slice(0, 6).map((card) => (
+                      <div
+                        key={card.id}
+                        className="rounded-[20px] border border-[#e7eee0] bg-[#fcfdfa] p-5"
+                      >
+                        <div className="mb-3 flex items-center justify-between gap-3">
+                          <span className="rounded-full bg-[#eef5e8] px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#154212]">
+                            {card.diagnosisNama}
+                          </span>
+                          <span className="text-sm font-bold text-[#7a9a28]">
+                            {card.rating}/5
+                          </span>
+                        </div>
+                        <p className="text-sm leading-relaxed text-[#3a4435]">
+                          {card.comment || "Feedback disetujui tanpa catatan tambahan."}
+                        </p>
+                        <p className="mt-4 text-xs font-semibold text-gray-500">
+                          {card.isAccurate
+                            ? "Hasil dinilai sesuai kondisi lapang"
+                            : "Hasil dinilai belum sepenuhnya sesuai"}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
               )}
 
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -845,9 +1191,10 @@ export default function HasilPage() {
                 Tidak Ditemukan Hasil
               </h3>
               <p className="mx-auto mb-8 max-w-md text-sm leading-relaxed text-gray-500">
-                Kombinasi gejala yang Anda pilih belum cukup kuat untuk melewati
-                filtering backend. Silakan kembali dan pilih gejala yang lebih
-                relevan atau tambahkan kelompok gejala lain.
+                Gejala yang Anda pilih belum cukup kuat untuk menunjukkan satu
+                masalah utama pada tanaman. Silakan kembali, pilih gejala yang
+                paling sesuai dengan kondisi di sawah, atau tambahkan gejala
+                lain yang juga terlihat.
               </p>
               <Link
                 href="/pertanyaan"

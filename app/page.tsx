@@ -2,11 +2,68 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+import PublicLoginMenu from "@/components/PublicLoginMenu";
+
+interface PublicFeedbackCard {
+  id: string;
+  diagnosisNama: string;
+  isAccurate: boolean;
+  rating: number;
+  comment: string;
+}
+
+interface HomeFeedbackResponse {
+  success: boolean;
+  publicCards?: PublicFeedbackCard[];
+}
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
+  const [publicFeedbackCards, setPublicFeedbackCards] = useState<
+    PublicFeedbackCard[]
+  >([]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadPublicFeedbackCards() {
+      try {
+        const response = await fetch("/api/feedback", {
+          signal: controller.signal,
+        });
+        const payload = (await response.json()) as HomeFeedbackResponse;
+
+        if (!response.ok || !payload.success) {
+          return;
+        }
+
+        setPublicFeedbackCards(payload.publicCards ?? []);
+      } catch (error) {
+        if ((error as Error).name === "AbortError") {
+          return;
+        }
+      }
+    }
+
+    loadPublicFeedbackCards();
+
+    return () => controller.abort();
+  }, []);
+
+  const marqueeCards = useMemo(() => {
+    if (publicFeedbackCards.length === 0) {
+      return [];
+    }
+
+    if (publicFeedbackCards.length === 1) {
+      return publicFeedbackCards;
+    }
+
+    return [...publicFeedbackCards, ...publicFeedbackCards];
+  }, [publicFeedbackCards]);
 
   return (
     <div className="flex flex-col min-h-screen bg-background font-sans">
@@ -59,6 +116,8 @@ export default function Home() {
                 <span className="absolute bottom-0 left-0 h-[2.5px] bg-green-dark transition-all duration-300 w-0 group-hover:w-full" />
               </Link>
             </div>
+
+            <PublicLoginMenu variant="desktop" />
 
             {/* Mobile Hamburger */}
             <button
@@ -120,6 +179,10 @@ export default function Home() {
                 >
                   Diagnosis
                 </Link>
+                <PublicLoginMenu
+                  variant="mobile"
+                  onNavigate={() => setMobileMenuOpen(false)}
+                />
               </div>
             </div>
           )}
@@ -389,6 +452,67 @@ export default function Home() {
         </div>
       </section>
 
+      {marqueeCards.length > 0 && (
+        <section className="pb-10 md:pb-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
+            <div className="mb-10 text-center animate-fade-in-up">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#BAD36F]/30 bg-[#BAD36F]/15 px-4 py-1.5">
+                <span className="text-xs font-bold uppercase tracking-[0.24em] text-[#154212]">
+                  Cerita Pengguna
+                </span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#154212]">
+                Pengalaman Petani Bersama SIPADI
+              </h2>
+              <p className="mx-auto mt-4 max-w-3xl text-sm sm:text-base leading-relaxed text-text-muted">
+                Beberapa petani membagikan pengalaman mereka setelah menggunakan
+                SIPADI untuk membantu mengenali kondisi padi dan menentukan
+                langkah penanganan awal di lapangan.
+              </p>
+            </div>
+
+            <div className="relative overflow-hidden rounded-[32px] border border-[#dce7d3] bg-white/70 py-5 shadow-sm">
+              <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-[#fafaf5] to-transparent" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-[#fafaf5] to-transparent" />
+
+              <div
+                className={`flex gap-4 px-4 ${
+                  publicFeedbackCards.length > 1
+                    ? "w-max animate-feedback-marquee"
+                    : "w-full justify-start"
+                }`}
+              >
+                {marqueeCards.map((card, index) => (
+                  <article
+                    key={`${card.id}-${index}`}
+                    className="w-[280px] flex-shrink-0 rounded-[24px] border border-[#e6eee1] bg-[#fcfdfa] p-5 shadow-[0_12px_24px_rgba(21,66,18,0.06)]"
+                  >
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <span className="rounded-full bg-[#eef5e8] px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#154212]">
+                        {card.diagnosisNama}
+                      </span>
+                      <span className="text-sm font-bold text-[#7a9a28]">
+                        {card.rating}/5
+                      </span>
+                    </div>
+
+                    <p className="text-sm leading-relaxed text-[#3a4435]">
+                      {card.comment || "Feedback disetujui tanpa catatan tambahan."}
+                    </p>
+
+                    <p className="mt-4 text-xs font-semibold text-gray-500">
+                      {card.isAccurate
+                        ? "Hasil dinilai sesuai kondisi lapang"
+                        : "Hasil dinilai belum sepenuhnya sesuai"}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ===== SECTION 3: CTA BANNER + FOOTER ===== */}
       <section id="cta" className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
@@ -451,12 +575,6 @@ export default function Home() {
               >
                 Tentang Kami
               </a>
-              <Link
-                href="/pakar"
-                className="hover:text-green-dark/80 transition-colors"
-              >
-                Dashboard Pakar
-              </Link>
               <a
                 href="#"
                 className="hover:text-green-dark/80 transition-colors"

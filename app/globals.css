@@ -102,6 +102,15 @@ body {
   }
 }
 
+@keyframes feedbackMarquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-50% - 0.5rem));
+  }
+}
+
 .animate-fade-in-up {
   animation: fadeInUp 0.7s ease-out both;
 }
@@ -120,6 +129,16 @@ body {
 
 .animate-slide-in-right {
   animation: slideInRight 0.7s ease-out both;
+}
+
+.animate-feedback-marquee {
+  animation: feedbackMarquee 28s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-feedback-marquee {
+    animation: none;
+  }
 }
 
 .animation-delay-100 {

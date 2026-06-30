@@ -1,0 +1,33 @@
+{
+  "_meta": {
+    "nama": "Feedback Diagnosis SIPADI",
+    "versi": "1.0.0",
+    "deskripsi": "Penyimpanan masukan petani terhadap hasil diagnosis untuk mengukur akurasi dan rating program."
+  },
+  "feedback": [
+    {
+      "id": "FDB-1782804992174",
+      "submittedAt": "2026-06-30T07:36:32.175Z",
+      "reviewedAt": "2026-06-30T07:44:02.174Z",
+      "reviewStatus": "approved",
+      "showAsPublicCard": true,
+      "reviewerNotes": "",
+      "diagnosisPenyakitId": "P06",
+      "diagnosisNama": "Blast (Blas)",
+      "diagnosisConfidence": 85,
+      "isAccurate": true,
+      "rating": 5,
+      "comment": "Diagnosis sipadi sangat membantu petani pemula",
+      "selectedGejala": [
+        {
+          "id": "G15",
+          "cfUser": 1
+        },
+        {
+          "id": "G26",
+          "cfUser": 1
+        }
+      ]
+    }
+  ]
+}

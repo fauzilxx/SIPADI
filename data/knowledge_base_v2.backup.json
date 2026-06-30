@@ -2557,7 +2557,7 @@
     "rumus_kombinasi": "CF_combined = CF1 + CF2*(1-CF1)  jika keduanya positif",
     "rumus_campuran": "CF_combined = (CF1+CF2) / (1 - min(|CF1|,|CF2|))  jika berbeda tanda",
     "rumus_negatif": "CF_combined = CF1 + CF2*(1+CF1)  jika keduanya negatif",
-    "threshold_tampil": 0.3,
+    "threshold_tampil": 0.2,
     "keterangan": "Diagnosis ditampilkan jika CF_combined >= 0.2. CF negatif secara aktif menurunkan confidence score diagnosis yang tidak cocok."
   }
 }

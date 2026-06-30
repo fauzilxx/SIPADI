@@ -3,15 +3,34 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 const SESSION_COOKIE_NAME = "sipadi_session";
 const SESSION_DURATION_SECONDS = 60 * 60 * 2;
 
+export type DashboardUserRole = "pakar" | "admin";
+
 function getSessionSecret() {
   return process.env.SIPADI_SESSION_SECRET || "sipadi-dev-secret";
 }
 
-export function getExpertCredentials() {
-  return {
-    username: process.env.SIPADI_EXPERT_USERNAME || "pakar",
-    password: process.env.SIPADI_EXPERT_PASSWORD || "padihebat123",
-  };
+export function getDashboardCredentials() {
+  return [
+    {
+      role: "pakar" as const,
+      username: process.env.SIPADI_EXPERT_USERNAME || "pakar",
+      password: process.env.SIPADI_EXPERT_PASSWORD || "padihebat123",
+    },
+    {
+      role: "admin" as const,
+      username: process.env.SIPADI_ADMIN_USERNAME || "admin",
+      password: process.env.SIPADI_ADMIN_PASSWORD || "adminhebat123",
+    },
+  ];
+}
+
+export function authenticateDashboardUser(username: string, password: string) {
+  return (
+    getDashboardCredentials().find(
+      (credential) =>
+        credential.username === username && credential.password === password
+    ) ?? null
+  );
 }
 
 function sign(payload: string) {
@@ -20,9 +39,12 @@ function sign(payload: string) {
     .digest("base64url");
 }
 
-export function createSessionToken(username: string) {
+export function createSessionToken(
+  username: string,
+  role: DashboardUserRole
+) {
   const expiresAt = Date.now() + SESSION_DURATION_SECONDS * 1000;
-  const payload = `${username}:${expiresAt}`;
+  const payload = `${username}:${role}:${expiresAt}`;
   const signature = sign(payload);
   return `${payload}.${signature}`;
 }
@@ -45,17 +67,30 @@ export function verifySessionToken(token: string | undefined | null) {
     return null;
   }
 
-  const [username, expiresAtRaw] = payload.split(":");
+  const [username, role, expiresAtRaw] = payload.split(":");
   const expiresAt = Number(expiresAtRaw);
 
-  if (!username || Number.isNaN(expiresAt) || expiresAt < Date.now()) {
+  if (
+    !username ||
+    (role !== "pakar" && role !== "admin") ||
+    Number.isNaN(expiresAt) ||
+    expiresAt < Date.now()
+  ) {
     return null;
   }
 
   return {
     username,
+    role: role as DashboardUserRole,
     expiresAt,
   };
+}
+
+export function hasDashboardRole(
+  session: { role: DashboardUserRole } | null,
+  role: DashboardUserRole
+) {
+  return session?.role === role;
 }
 
 export function getSessionCookieName() {

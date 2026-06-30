@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
+import PublicLoginMenu from "@/components/PublicLoginMenu";
 import {
   getGejalaByKelompok,
   getKelompokOptions,
@@ -137,6 +138,8 @@ export default function PertanyaanPage() {
               </Link>
             </div>
 
+            <PublicLoginMenu variant="desktop" />
+
             <button
               className="rounded-lg p-2 transition-colors hover:bg-green-pale md:hidden"
               onClick={() => setMobileMenuOpen((open) => !open)}
@@ -191,6 +194,10 @@ export default function PertanyaanPage() {
                 >
                   Diagnosis
                 </Link>
+                <PublicLoginMenu
+                  variant="mobile"
+                  onNavigate={() => setMobileMenuOpen(false)}
+                />
               </div>
             </div>
           )}

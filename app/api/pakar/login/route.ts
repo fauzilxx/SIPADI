@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 
 import {
+  authenticateDashboardUser,
   createSessionToken,
-  getExpertCredentials,
   getSessionCookieName,
   getSessionCookieOptions,
 } from "@/lib/expert-auth";
@@ -18,9 +18,9 @@ export async function POST(request: Request) {
 
     const username = body.username?.trim() ?? "";
     const password = body.password ?? "";
-    const expected = getExpertCredentials();
+    const user = authenticateDashboardUser(username, password);
 
-    if (username !== expected.username || password !== expected.password) {
+    if (!user) {
       return NextResponse.json(
         {
           success: false,
@@ -30,10 +30,11 @@ export async function POST(request: Request) {
       );
     }
 
-    const token = createSessionToken(username);
+    const token = createSessionToken(user.username, user.role);
     const response = NextResponse.json({
       success: true,
       message: "Login berhasil.",
+      role: user.role,
     });
 
     response.cookies.set(

@@ -1,7 +1,11 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-import { getSessionCookieName, verifySessionToken } from "@/lib/expert-auth";
+import {
+  getSessionCookieName,
+  hasDashboardRole,
+  verifySessionToken,
+} from "@/lib/expert-auth";
 import { saveKnowledgeBaseFile } from "@/lib/expert-kb";
 
 export const runtime = "nodejs";
@@ -18,6 +22,16 @@ export async function POST(request: Request) {
         message: "Sesi tidak valid. Silakan login ulang.",
       },
       { status: 401 }
+    );
+  }
+
+  if (!hasDashboardRole(session, "admin")) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Hanya admin yang dapat menyimpan knowledge base.",
+      },
+      { status: 403 }
     );
   }
 
