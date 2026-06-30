@@ -70,6 +70,31 @@
           "cfUser": 1
         }
       ]
+    },
+    {
+      "id": "FDB-1782845018674",
+      "submittedAt": "2026-06-30T18:43:38.674Z",
+      "reviewedAt": null,
+      "reviewStatus": "pending",
+      "showAsPublicCard": false,
+      "reviewerNotes": "",
+      "submitterName": "Fauzil",
+      "diagnosisPenyakitId": "P08",
+      "diagnosisNama": "Tungro",
+      "diagnosisConfidence": 76,
+      "isAccurate": true,
+      "rating": 5,
+      "comment": "Kerenn ada rekomendasi produk pencegahannya",
+      "selectedGejala": [
+        {
+          "id": "G01",
+          "cfUser": 1
+        },
+        {
+          "id": "G15",
+          "cfUser": 1
+        }
+      ]
     }
   ]
 }
