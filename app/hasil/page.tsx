@@ -38,6 +38,7 @@ interface FeedbackSummary {
 
 interface PublicFeedbackCard {
   id: string;
+  submitterName: string;
   diagnosisNama: string;
   isAccurate: boolean;
   rating: number;
@@ -119,6 +120,7 @@ export default function HasilPage() {
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
   const [feedbackForm, setFeedbackForm] = useState({
+    submitterName: "",
     isAccurate: "" as "" | "yes" | "no",
     rating: 5,
     comment: "",
@@ -264,6 +266,11 @@ export default function HasilPage() {
       return;
     }
 
+    if (!feedbackForm.submitterName.trim()) {
+      setFeedbackMessage("Silakan isi nama Anda sebelum mengirim feedback.");
+      return;
+    }
+
     setFeedbackSubmitting(true);
     setFeedbackMessage(null);
 
@@ -274,6 +281,7 @@ export default function HasilPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          submitterName: feedbackForm.submitterName,
           diagnosisPenyakitId: topResult.penyakitId,
           diagnosisNama: topResult.nama,
           diagnosisConfidence: topResult.cfPercentage,
@@ -302,6 +310,7 @@ export default function HasilPage() {
           "Terima kasih, feedback Anda berhasil disimpan dan menunggu review admin."
       );
       setFeedbackForm({
+        submitterName: "",
         isAccurate: "",
         rating: 5,
         comment: "",
@@ -1004,6 +1013,30 @@ export default function HasilPage() {
 
                   <form className="space-y-5" onSubmit={handleSubmitFeedback}>
                     <div>
+                      <label
+                        htmlFor="feedback-name"
+                        className="mb-2 block text-sm font-semibold text-[#154212]"
+                      >
+                        Nama
+                      </label>
+                      <input
+                        id="feedback-name"
+                        type="text"
+                        maxLength={100}
+                        value={feedbackForm.submitterName}
+                        onChange={(event) =>
+                          setFeedbackForm((current) => ({
+                            ...current,
+                            submitterName: event.target.value,
+                          }))
+                        }
+                        className="w-full rounded-2xl border border-[#d9e5d1] px-4 py-3 text-sm text-[#154212] outline-none focus:border-[#7a9a28] focus:ring-2 focus:ring-[#BAD36F]/40"
+                        placeholder="Contoh: Budi Santoso"
+                        required
+                      />
+                    </div>
+
+                    <div>
                       <p className="mb-3 text-sm font-semibold text-[#154212]">
                         Apakah hasil diagnosis ini sesuai dengan kondisi sawah
                         Anda?
@@ -1133,6 +1166,9 @@ export default function HasilPage() {
                             {card.rating}/5
                           </span>
                         </div>
+                        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                          {card.submitterName}
+                        </p>
                         <p className="text-sm leading-relaxed text-[#3a4435]">
                           {card.comment || "Feedback disetujui tanpa catatan tambahan."}
                         </p>

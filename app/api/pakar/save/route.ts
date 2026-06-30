@@ -38,16 +38,40 @@ export async function POST(request: Request) {
   try {
     const body = (await request.json()) as {
       data?: unknown;
+      expectedRevision?: unknown;
     };
+    const expectedRevision =
+      typeof body.expectedRevision === "number" &&
+      Number.isInteger(body.expectedRevision) &&
+      body.expectedRevision >= 0
+        ? body.expectedRevision
+        : undefined;
 
-    const result = await saveKnowledgeBaseFile(body.data);
+    const result = await saveKnowledgeBaseFile(body.data, {
+      expectedRevision,
+      updatedByUsername: session.username,
+    });
 
     if (!result.success) {
+      if (result.code === "conflict") {
+        return NextResponse.json(
+          {
+            success: false,
+            message:
+              "Knowledge base berubah di sesi lain. Muat ulang dashboard sebelum menyimpan lagi.",
+            errors: result.errors,
+            currentRevision: result.currentRevision ?? null,
+          },
+          { status: 409 }
+        );
+      }
+
       return NextResponse.json(
         {
           success: false,
           message: "Validasi knowledge base gagal.",
           errors: result.errors,
+          errorCategories: result.errorCategories ?? null,
         },
         { status: 400 }
       );
@@ -57,6 +81,7 @@ export async function POST(request: Request) {
       success: true,
       message: "Knowledge base berhasil disimpan.",
       data: result.data,
+      currentRevision: result.data._meta.revision ?? null,
     });
   } catch {
     return NextResponse.json(

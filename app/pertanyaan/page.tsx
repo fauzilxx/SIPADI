@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import PublicLoginMenu from "@/components/PublicLoginMenu";
 import {
-  getGejalaByKelompok,
-  getKelompokOptions,
+  getGejalaByKelompokFromData,
+  getKelompokLabel,
+  type Gejala,
+  type KelompokOption,
+  type KnowledgeBaseData,
   type SelectedGejalaInput,
 } from "@/lib/knowledge-base";
 
@@ -16,19 +19,84 @@ const STORAGE_KEY = "sipadi:selected-gejala";
 export default function PertanyaanPage() {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [knowledgeBaseData, setKnowledgeBaseData] =
+    useState<KnowledgeBaseData | null>(null);
+  const [knowledgeBaseMessage, setKnowledgeBaseMessage] = useState<string | null>(
+    null
+  );
   const [selectedKelompok, setSelectedKelompok] = useState<string[]>([]);
   const [selectedGejala, setSelectedGejala] = useState<Map<string, number>>(
     new Map()
   );
 
-  const kelompokOptions = useMemo(() => getKelompokOptions(), []);
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadKnowledgeBase() {
+      try {
+        const response = await fetch("/api/knowledge-base/public", {
+          signal: controller.signal,
+        });
+        const payload = (await response.json()) as {
+          success: boolean;
+          gejala?: Gejala[];
+          message?: string;
+        };
+
+        if (!response.ok || !payload.success || !payload.gejala) {
+          setKnowledgeBaseMessage(
+            payload.message ?? "Knowledge base publik belum dapat dimuat."
+          );
+          return;
+        }
+
+        setKnowledgeBaseData({
+          _meta: {},
+          cf_formula: {},
+          penyakit: [],
+          gejala: payload.gejala,
+        });
+      } catch (error) {
+        if ((error as Error).name === "AbortError") {
+          return;
+        }
+
+        setKnowledgeBaseMessage("Knowledge base publik belum dapat dimuat.");
+      }
+    }
+
+    loadKnowledgeBase();
+
+    return () => controller.abort();
+  }, []);
+
+  const kelompokOptions = useMemo(() => {
+    if (!knowledgeBaseData) {
+      return [];
+    }
+
+    const grouped = new Map<string, number>();
+
+    for (const gejala of knowledgeBaseData.gejala) {
+      grouped.set(gejala.kelompok, (grouped.get(gejala.kelompok) ?? 0) + 1);
+    }
+
+    return Array.from(grouped.entries()).map(([id, gejalaCount]) => ({
+      id,
+      label: getKelompokLabel(id),
+      gejalaCount,
+    }));
+  }, [knowledgeBaseData]);
   const gejalaList = useMemo(
-    () => getGejalaByKelompok(selectedKelompok),
-    [selectedKelompok]
+    () =>
+      knowledgeBaseData
+        ? getGejalaByKelompokFromData(knowledgeBaseData, selectedKelompok)
+        : [],
+    [knowledgeBaseData, selectedKelompok]
   );
 
   const groupedGejala = useMemo(() => {
-    const groups = new Map<string, ReturnType<typeof getGejalaByKelompok>>();
+    const groups = new Map<string, Gejala[]>();
 
     for (const gejala of gejalaList) {
       if (!groups.has(gejala.kelompok)) {
@@ -46,7 +114,9 @@ export default function PertanyaanPage() {
       if (previous.includes(kelompokId)) {
         setSelectedGejala((current) => {
           const next = new Map(current);
-          for (const gejala of getGejalaByKelompok([kelompokId])) {
+          for (const gejala of gejalaList.filter(
+            (item) => item.kelompok === kelompokId
+          )) {
             next.delete(gejala.id);
           }
           return next;
@@ -332,7 +402,19 @@ export default function PertanyaanPage() {
               </div>
             </div>
 
-            {selectedKelompok.length === 0 ? (
+            {!knowledgeBaseData && !knowledgeBaseMessage ? (
+              <div className="rounded-[20px] border border-dashed border-[#BAD36F]/40 bg-[#fafff0] px-6 py-10 text-center">
+                <p className="text-sm leading-relaxed text-text-muted">
+                  Sedang memuat knowledge base gejala terbaru...
+                </p>
+              </div>
+            ) : knowledgeBaseMessage ? (
+              <div className="rounded-[20px] border border-dashed border-red-200 bg-red-50 px-6 py-10 text-center">
+                <p className="text-sm leading-relaxed text-red-600">
+                  {knowledgeBaseMessage}
+                </p>
+              </div>
+            ) : selectedKelompok.length === 0 ? (
               <div className="rounded-[20px] border border-dashed border-[#BAD36F]/40 bg-[#fafff0] px-6 py-10 text-center">
                 <p className="text-sm leading-relaxed text-text-muted">
                   Belum ada kelompok yang dipilih. Pilih minimal satu kelompok

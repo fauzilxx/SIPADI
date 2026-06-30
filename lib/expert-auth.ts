@@ -1,9 +1,24 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
+import { createHmac, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
+
+import { getSupabaseAdminClient } from "@/lib/supabase-server";
 
 const SESSION_COOKIE_NAME = "sipadi_session";
 const SESSION_DURATION_SECONDS = 60 * 60 * 2;
 
 export type DashboardUserRole = "pakar" | "admin";
+
+interface DashboardCredentialRecord {
+  role: DashboardUserRole;
+  username: string;
+  password: string;
+}
+
+interface DashboardUserRow {
+  username: string;
+  role: DashboardUserRole;
+  password_hash: string;
+  is_active: boolean;
+}
 
 function getSessionSecret() {
   return process.env.SIPADI_SESSION_SECRET || "sipadi-dev-secret";
@@ -21,16 +36,68 @@ export function getDashboardCredentials() {
       username: process.env.SIPADI_ADMIN_USERNAME || "admin",
       password: process.env.SIPADI_ADMIN_PASSWORD || "adminhebat123",
     },
-  ];
+  ] satisfies DashboardCredentialRecord[];
 }
 
-export function authenticateDashboardUser(username: string, password: string) {
+export function hashDashboardPassword(password: string, salt?: string) {
+  const resolvedSalt = salt ?? randomBytes(16).toString("base64url");
+  const hash = scryptSync(password, resolvedSalt, 64).toString("base64url");
+  return `scrypt$${resolvedSalt}$${hash}`;
+}
+
+function verifyDashboardPasswordHash(password: string, passwordHash: string) {
+  const [algorithm, salt, hash] = passwordHash.split("$");
+
+  if (algorithm !== "scrypt" || !salt || !hash) {
+    return false;
+  }
+
+  const expectedHash = scryptSync(password, salt, 64);
+  const actualHash = Buffer.from(hash, "base64url");
+
+  if (expectedHash.length !== actualHash.length) {
+    return false;
+  }
+
+  return timingSafeEqual(expectedHash, actualHash);
+}
+
+function authenticateWithFallbackCredentials(username: string, password: string) {
   return (
     getDashboardCredentials().find(
       (credential) =>
         credential.username === username && credential.password === password
     ) ?? null
   );
+}
+
+export async function authenticateDashboardUser(
+  username: string,
+  password: string
+) {
+  const supabase = getSupabaseAdminClient();
+
+  if (supabase) {
+    const { data, error } = await supabase
+      .from("dashboard_users")
+      .select("username, role, password_hash, is_active")
+      .eq("username", username)
+      .eq("is_active", true)
+      .maybeSingle<DashboardUserRow>();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    if (data && verifyDashboardPasswordHash(password, data.password_hash)) {
+      return {
+        username: data.username,
+        role: data.role,
+      };
+    }
+  }
+
+  return authenticateWithFallbackCredentials(username, password);
 }
 
 function sign(payload: string) {

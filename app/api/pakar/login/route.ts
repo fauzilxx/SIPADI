@@ -18,7 +18,7 @@ export async function POST(request: Request) {
 
     const username = body.username?.trim() ?? "";
     const password = body.password ?? "";
-    const user = authenticateDashboardUser(username, password);
+    const user = await authenticateDashboardUser(username, password);
 
     if (!user) {
       return NextResponse.json(

@@ -31,10 +31,10 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Frontend         : React 19.2.4
 - Styling          : Tailwind CSS v4 via global CSS entry
 - Build Tool       : Turbopack via Next.js
-- Knowledge Base   : Local JSON file (`data/knowledge_base_v2.json`)
-- Supplemental Data: Local JSON files in `data/` for recommendations, marketplace products, and non-chemical controls
+- Knowledge Base   : Supabase-backed document with local JSON fallback (`data/knowledge_base_v2.json`)
+- Supplemental Data: Supabase-backed documents with local JSON fallback in `data/`
 - Diagnosis Engine : Custom TypeScript engine (`lib/diagnosis.ts`)
-- Auth             : Simple signed cookie session for expert dashboard
+- Auth             : Simple signed cookie session with Supabase-backed dashboard account storage
 - Testing          : Vitest
 - Package Manager  : npm (`package-lock.json` is the source of truth)
 
@@ -87,7 +87,7 @@ Minimum required reading flow:
 5. Read all core `lib/` files
 6. Read all expert dashboard components
 7. Read the current test file
-8. Read the implementation summary markdown files
+8. Read active supporting docs if present
 9. Read `data/knowledge_base_v2.json`
 10. Read the relevant Next.js local docs in `node_modules/next/dist/docs/`
 
@@ -132,8 +132,6 @@ sipadi/
 │   ├── rekomendasi_pencegahan.json    # Supplemental recommendation dataset (separate from diagnosis KB)
 │   ├── marketplace_produk.json        # Product/package catalog + marketplace links + usage notes
 │   └── pengendali_non_kimia.json      # Non-chemical control catalog + usage notes + image filenames
-├── IMPLEMENTASI_BACKEND_OPSI_A.md     # Summary of diagnosis backend migration
-├── IMPLEMENTASI_DASHBOARD_PAKAR.md    # Summary of expert dashboard implementation
 ├── next.config.ts
 ├── tsconfig.json
 ├── vitest.config.ts
@@ -153,7 +151,6 @@ sipadi/
 - `next.config.ts`
 - `vitest.config.ts`
 - `eslint.config.mjs`
-- `README.md` if relevant
 
 ### Pages
 
@@ -186,11 +183,6 @@ sipadi/
 - `lib/__tests__/supplemental-content.test.ts`
 - `data/knowledge_base_v2.json`
 
-### Project Decision Docs
-
-- `IMPLEMENTASI_BACKEND_OPSI_A.md`
-- `IMPLEMENTASI_DASHBOARD_PAKAR.md`
-
 ### Supplemental Content Data
 
 - `data/rekomendasi_pencegahan.json`
@@ -210,10 +202,11 @@ Current active flow:
 3. User selects specific symptoms inside chosen groups
 4. User sets confidence values (`cfUser`)
 5. Selected data is stored in `sessionStorage`
-6. `/hasil` sends the payload to `POST /api/diagnosis`
-7. Backend validates input and runs reasoning
-8. Backend hydrates supplemental recommendation content for the top diagnosis using `data/rekomendasi_pencegahan.json`, `data/marketplace_produk.json`, and `data/pengendali_non_kimia.json`
-9. UI renders diagnosis result plus linked marketplace and non-chemical recommendation content from API response
+6. `/pertanyaan` loads current public gejala data from backend
+7. `/hasil` sends the payload to `POST /api/diagnosis`
+8. Backend validates input and runs reasoning using the latest Supabase knowledge base when available
+9. Backend hydrates supplemental recommendation content for the top diagnosis using Supabase-backed supplemental documents when available
+10. UI renders diagnosis result plus linked marketplace and non-chemical recommendation content from API response
 
 Important:
 
@@ -238,7 +231,7 @@ Current active flow:
 Important:
 
 - Session verification is server-side.
-- Knowledge base write flow is backend-only.
+- Knowledge base write flow is backend-only and now syncs admin documents to Supabase when configured.
 - Approved expert requests can now be applied through an admin-reviewed backend flow instead of relying only on manual dashboard edits.
 
 ---
@@ -334,7 +327,7 @@ Do not move secret/session logic into client components.
 - Pages               : page.tsx
 - Shared logic        : lib/*.ts
 - Client components   : components/*.tsx
-- Markdown summaries  : IMPLEMENTASI_*.md
+- Markdown summaries  : optional support docs when present
 
 # Inside code
 - Variables           : camelCase
@@ -481,6 +474,8 @@ These are already true in the current codebase:
 - `data/pengendali_non_kimia.json` maps non-chemical control items, usage notes, optional marketplace search links, and image filenames for items with product-style visuals.
 - `/api/diagnosis` now returns hydrated supplemental recommendation data for the top diagnosis, and `/hasil` renders it.
 - Product/package images under `public/images/bahanaktif+kemasan/` and non-chemical images under `public/images/pengendali-non-kimia/` have been normalized to frontend-friendly filenames.
+- Dashboard account data, feedback petani, usulan perubahan pakar, and admin-managed documents now prefer Supabase storage and fall back to local files when Supabase admin credentials are incomplete.
+- Public diagnosis input now loads gejala data through backend so admin knowledge-base updates stored in Supabase can flow into `/pertanyaan` and `/api/diagnosis`.
 
 The agent should not accidentally undo these decisions.
 

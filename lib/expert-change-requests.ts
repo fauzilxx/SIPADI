@@ -7,9 +7,11 @@ import {
   saveKnowledgeBaseFile,
 } from "@/lib/expert-kb";
 import {
+  penyakitHasStrongSymptomSupport,
   validateKnowledgeBaseData,
   type KnowledgeBaseData,
 } from "@/lib/knowledge-base";
+import { getSupabaseAdminClient } from "@/lib/supabase-server";
 
 export type ChangeRequestStatus = "pending" | "approved" | "rejected" | "applied";
 
@@ -109,6 +111,7 @@ const changeRequestsPath = path.join(
   "data",
   "expert_change_requests.json"
 );
+const changeRequestsTable = "expert_change_requests";
 
 const defaultChangeRequestData: ExpertChangeRequestFileData = {
   _meta: {
@@ -144,6 +147,14 @@ function findPenyakitById(data: KnowledgeBaseData, penyakitId: string) {
 
 function findGejalaById(data: KnowledgeBaseData, gejalaId: string) {
   return data.gejala.find((item) => item.id === gejalaId) ?? null;
+}
+
+function normalizeGejalaLabelForDomainCheck(label: string) {
+  return label
+    .toLocaleLowerCase("id-ID")
+    .replace(/[^a-z0-9\s]/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function buildApplicationSummary(payload: ChangeRequestStructuredPayload) {
@@ -319,9 +330,22 @@ function validateStructuredPayloadAgainstKnowledgeBase(
       if (findGejalaById(knowledgeBaseData, payload.gejalaId)) {
         errors.push(`Gejala ${payload.gejalaId} sudah ada di knowledge base.`);
       }
+
+      if (
+        knowledgeBaseData.gejala.some(
+          (gejala) =>
+            normalizeGejalaLabelForDomainCheck(gejala.label) ===
+            normalizeGejalaLabelForDomainCheck(payload.gejalaLabel)
+        )
+      ) {
+        errors.push(
+          `Label gejala "${payload.gejalaLabel}" duplikat atau terlalu mirip dengan gejala yang sudah ada.`
+        );
+      }
       break;
     case "revise_aturan":
-      if (!findPenyakitById(knowledgeBaseData, payload.penyakitId)) {
+      const targetPenyakit = findPenyakitById(knowledgeBaseData, payload.penyakitId);
+      if (!targetPenyakit) {
         errors.push(
           `Target penyakit/hama ${payload.penyakitId} tidak ditemukan di knowledge base.`
         );
@@ -331,6 +355,36 @@ function validateStructuredPayloadAgainstKnowledgeBase(
         errors.push(
           `Target gejala ${payload.gejalaId} tidak ditemukan di knowledge base.`
         );
+      }
+
+      if (targetPenyakit) {
+        const prospectiveRules = targetPenyakit.aturan.some(
+          (rule) => rule.gejala_id === payload.gejalaId
+        )
+          ? targetPenyakit.aturan.map((rule) =>
+              rule.gejala_id === payload.gejalaId
+                ? { ...rule, cf: payload.cf, ket: payload.ket }
+                : rule
+            )
+          : [
+              ...targetPenyakit.aturan,
+              {
+                gejala_id: payload.gejalaId,
+                cf: payload.cf,
+                ket: payload.ket,
+              },
+            ];
+
+        if (
+          !penyakitHasStrongSymptomSupport({
+            ...targetPenyakit,
+            aturan: prospectiveRules,
+          })
+        ) {
+          errors.push(
+            `Usulan revisi aturan ${payload.penyakitId} membuat penyakit tidak lagi memiliki gejala kuat (CF >= 0.7).`
+          );
+        }
       }
       break;
     case "revise_solusi":
@@ -548,11 +602,107 @@ async function ensureChangeRequestsFile() {
   }
 }
 
+interface ExpertChangeRequestRow {
+  id: string;
+  submitted_at: string;
+  updated_at: string;
+  reviewed_at: string | null;
+  applied_at: string | null;
+  status: ChangeRequestStatus;
+  title: string;
+  request_type: ChangeRequestType;
+  target_penyakit_id: string;
+  target_gejala_id: string;
+  description: string;
+  proposed_change: string;
+  reviewer_notes: string;
+  application_summary: string;
+  submitted_by_username: string;
+  submitted_by_role: DashboardUserRole;
+  reviewed_by_username: string | null;
+  applied_by_username: string | null;
+  structured_payload: ChangeRequestStructuredPayload | null;
+}
+
+function mapRowToChangeRequest(
+  row: ExpertChangeRequestRow
+): ExpertChangeRequestEntry {
+  return {
+    id: row.id,
+    submittedAt: row.submitted_at,
+    updatedAt: row.updated_at,
+    reviewedAt: row.reviewed_at,
+    appliedAt: row.applied_at,
+    status: row.status,
+    title: row.title,
+    requestType: row.request_type,
+    targetPenyakitId: row.target_penyakit_id,
+    targetGejalaId: row.target_gejala_id,
+    description: row.description,
+    proposedChange: row.proposed_change,
+    reviewerNotes: row.reviewer_notes,
+    applicationSummary: row.application_summary,
+    submittedByUsername: row.submitted_by_username,
+    submittedByRole: row.submitted_by_role,
+    reviewedByUsername: row.reviewed_by_username,
+    appliedByUsername: row.applied_by_username,
+    structuredPayload: row.structured_payload,
+  };
+}
+
+function mapChangeRequestToRow(
+  entry: ExpertChangeRequestEntry
+): ExpertChangeRequestRow {
+  return {
+    id: entry.id,
+    submitted_at: entry.submittedAt,
+    updated_at: entry.updatedAt,
+    reviewed_at: entry.reviewedAt,
+    applied_at: entry.appliedAt,
+    status: entry.status,
+    title: entry.title,
+    request_type: entry.requestType,
+    target_penyakit_id: entry.targetPenyakitId,
+    target_gejala_id: entry.targetGejalaId,
+    description: entry.description,
+    proposed_change: entry.proposedChange,
+    reviewer_notes: entry.reviewerNotes,
+    application_summary: entry.applicationSummary,
+    submitted_by_username: entry.submittedByUsername,
+    submitted_by_role: entry.submittedByRole,
+    reviewed_by_username: entry.reviewedByUsername,
+    applied_by_username: entry.appliedByUsername,
+    structured_payload: entry.structuredPayload,
+  };
+}
+
 async function writeChangeRequestsFile(data: ExpertChangeRequestFileData) {
   await writeFile(changeRequestsPath, `${JSON.stringify(data, null, 2)}\n`, "utf8");
 }
 
 export async function readExpertChangeRequestsFile() {
+  const supabase = getSupabaseAdminClient();
+
+  if (supabase) {
+    const { data, error } = await supabase
+      .from(changeRequestsTable)
+      .select(
+        "id, submitted_at, updated_at, reviewed_at, applied_at, status, title, request_type, target_penyakit_id, target_gejala_id, description, proposed_change, reviewer_notes, application_summary, submitted_by_username, submitted_by_role, reviewed_by_username, applied_by_username, structured_payload"
+      )
+      .order("submitted_at", { ascending: false });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return {
+      _meta: defaultChangeRequestData._meta,
+      requests: (data ?? []).map((entry) =>
+        mapRowToChangeRequest(entry as ExpertChangeRequestRow)
+      ),
+    } satisfies ExpertChangeRequestFileData;
+  }
+
   await ensureChangeRequestsFile();
   const raw = await readFile(changeRequestsPath, "utf8");
   const parsed = JSON.parse(raw) as Partial<ExpertChangeRequestFileData>;
@@ -617,6 +767,23 @@ export async function saveExpertChangeRequest(
     requests: [nextEntry, ...currentData.requests],
   };
 
+  const supabase = getSupabaseAdminClient();
+
+  if (supabase) {
+    const { error } = await supabase
+      .from(changeRequestsTable)
+      .insert(mapChangeRequestToRow(nextEntry));
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return {
+      success: true as const,
+      data: nextEntry,
+    };
+  }
+
   await writeChangeRequestsFile(nextData);
 
   return {
@@ -671,6 +838,30 @@ export async function reviewExpertChangeRequest(
 
   const nextRequests = [...currentData.requests];
   nextRequests[requestIndex] = updatedEntry;
+
+  const supabase = getSupabaseAdminClient();
+
+  if (supabase) {
+    const { error } = await supabase
+      .from(changeRequestsTable)
+      .update({
+        status: updatedEntry.status,
+        reviewer_notes: updatedEntry.reviewerNotes,
+        reviewed_at: updatedEntry.reviewedAt,
+        reviewed_by_username: updatedEntry.reviewedByUsername,
+        updated_at: updatedEntry.updatedAt,
+      })
+      .eq("id", updatedEntry.id);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return {
+      success: true as const,
+      data: updatedEntry,
+    };
+  }
 
   await writeChangeRequestsFile({
     ...currentData,
@@ -849,7 +1040,9 @@ export async function applyApprovedExpertChangeRequest(
     return appliedResult;
   }
 
-  const saveResult = await saveKnowledgeBaseFile(appliedResult.data);
+  const saveResult = await saveKnowledgeBaseFile(appliedResult.data, {
+    updatedByUsername: appliedByUsername,
+  });
 
   if (!saveResult.success) {
     return saveResult;
@@ -867,6 +1060,32 @@ export async function applyApprovedExpertChangeRequest(
 
   const nextRequests = [...currentData.requests];
   nextRequests[requestIndex] = updatedEntry;
+
+  const supabase = getSupabaseAdminClient();
+
+  if (supabase) {
+    const { error } = await supabase
+      .from(changeRequestsTable)
+      .update({
+        status: updatedEntry.status,
+        applied_at: updatedEntry.appliedAt,
+        applied_by_username: updatedEntry.appliedByUsername,
+        updated_at: updatedEntry.updatedAt,
+        application_summary: updatedEntry.applicationSummary,
+      })
+      .eq("id", updatedEntry.id);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return {
+      success: true as const,
+      data: updatedEntry,
+      knowledgeBaseData: saveResult.data,
+      applicationSummary: appliedResult.applicationSummary,
+    };
+  }
 
   await writeChangeRequestsFile({
     ...currentData,

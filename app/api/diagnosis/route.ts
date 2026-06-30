@@ -1,21 +1,26 @@
-import { diagnose, getCFLabel } from "@/lib/diagnosis";
+import { diagnoseWithKnowledgeBaseData, getCFLabel } from "@/lib/diagnosis";
+import { readKnowledgeBaseFile } from "@/lib/expert-kb";
 import {
-  getKelompokByGejalaIds,
+  getKelompokByGejalaIdsFromData,
   getKelompokLabel,
-  getTreatment,
-  validateSelectedGejala,
+  getTreatmentFromData,
+  validateSelectedGejalaWithData,
 } from "@/lib/knowledge-base";
-import { getHydratedRecommendationByPenyakitId } from "@/lib/supplemental-content";
+import { getHydratedRecommendationByPenyakitIdAsync } from "@/lib/supplemental-content";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
+    const knowledgeBaseData = await readKnowledgeBaseFile();
     const payload = (await request.json()) as {
       selectedGejala?: unknown;
     };
 
-    const validated = validateSelectedGejala(payload.selectedGejala);
+    const validated = validateSelectedGejalaWithData(
+      knowledgeBaseData,
+      payload.selectedGejala
+    );
 
     if (validated.errors.length > 0) {
       return Response.json(
@@ -28,9 +33,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const results = diagnose(validated.data);
+    const results = diagnoseWithKnowledgeBaseData(knowledgeBaseData, validated.data);
     const topResult = results[0] ?? null;
-    const selectedKelompok = getKelompokByGejalaIds(
+    const selectedKelompok = getKelompokByGejalaIdsFromData(
+      knowledgeBaseData,
       validated.data.map((item) => item.id)
     );
 
@@ -45,9 +51,11 @@ export async function POST(request: Request) {
       results,
       topResult,
       topResultLabel: topResult ? getCFLabel(topResult.cfFinal) : null,
-      treatment: topResult ? getTreatment(topResult.penyakitId) : null,
+      treatment: topResult
+        ? getTreatmentFromData(knowledgeBaseData, topResult.penyakitId)
+        : null,
       supplementalRecommendation: topResult
-        ? getHydratedRecommendationByPenyakitId(topResult.penyakitId)
+        ? await getHydratedRecommendationByPenyakitIdAsync(topResult.penyakitId)
         : null,
       generatedAt: new Date().toISOString(),
     });

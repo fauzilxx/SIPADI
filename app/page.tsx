@@ -8,6 +8,7 @@ import PublicLoginMenu from "@/components/PublicLoginMenu";
 
 interface PublicFeedbackCard {
   id: string;
+  submitterName: string;
   diagnosisNama: string;
   isAccurate: boolean;
   rating: number;
@@ -495,6 +496,10 @@ export default function Home() {
                         {card.rating}/5
                       </span>
                     </div>
+
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                      {card.submitterName}
+                    </p>
 
                     <p className="text-sm leading-relaxed text-[#3a4435]">
                       {card.comment || "Feedback disetujui tanpa catatan tambahan."}

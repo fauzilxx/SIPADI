@@ -34,7 +34,7 @@ const baseKnowledgeBase: KnowledgeBaseData = {
       aturan: [
         {
           gejala_id: "G01",
-          cf: 0.6,
+          cf: 0.8,
           ket: "Aturan awal",
         },
       ],
@@ -238,5 +238,57 @@ describe("expert change requests", () => {
     expect(result.errors).toContain(
       "Hanya usulan berstatus approved yang dapat diterapkan."
     );
+  });
+
+  it("menolak apply revisi aturan jika membuat penyakit kehilangan gejala kuat", () => {
+    const result = applyChangeRequestToKnowledgeBaseData(
+      structuredClone(baseKnowledgeBase),
+      createApprovedRequest({
+        requestType: "revise_aturan",
+        targetPenyakitId: "P01",
+        targetGejalaId: "G01",
+        structuredPayload: {
+          type: "revise_aturan",
+          penyakitId: "P01",
+          gejalaId: "G01",
+          cf: 0.4,
+          ket: "Diturunkan terlalu rendah.",
+        },
+      })
+    );
+
+    expect(result.success).toBe(false);
+    if (result.success) {
+      return;
+    }
+
+    expect(
+      result.errors.some((error) => error.includes("tidak lagi memiliki gejala kuat"))
+    ).toBe(true);
+  });
+
+  it("menolak apply tambah gejala dengan label yang terlalu mirip", () => {
+    const result = applyChangeRequestToKnowledgeBaseData(
+      structuredClone(baseKnowledgeBase),
+      createApprovedRequest({
+        requestType: "add_gejala",
+        targetGejalaId: "G03",
+        structuredPayload: {
+          type: "add_gejala",
+          gejalaId: "G03",
+          gejalaLabel: "gejala 1",
+          kelompok: "C",
+        },
+      })
+    );
+
+    expect(result.success).toBe(false);
+    if (result.success) {
+      return;
+    }
+
+    expect(
+      result.errors.some((error) => error.includes("duplikat atau terlalu mirip"))
+    ).toBe(true);
   });
 });

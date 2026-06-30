@@ -1,7 +1,9 @@
 import {
-  getGejalaMap,
-  getPenyakitList,
-  getThreshold,
+  getGejalaMapFromData,
+  getKnowledgeBaseData,
+  getPenyakitListFromData,
+  getThresholdFromData,
+  type KnowledgeBaseData,
   type SelectedGejalaInput,
 } from "@/lib/knowledge-base";
 
@@ -43,10 +45,13 @@ export function combineCF(cf1: number, cf2: number): number {
   return (cf1 + cf2) / denominator;
 }
 
-export function diagnose(selectedGejala: SelectedGejalaInput[]): DiagnosisResult[] {
-  const threshold = getThreshold();
-  const penyakitList = getPenyakitList();
-  const gejalaMap = getGejalaMap();
+export function diagnoseWithKnowledgeBaseData(
+  knowledgeBaseData: KnowledgeBaseData,
+  selectedGejala: SelectedGejalaInput[]
+): DiagnosisResult[] {
+  const threshold = getThresholdFromData(knowledgeBaseData);
+  const penyakitList = getPenyakitListFromData(knowledgeBaseData);
+  const gejalaMap = getGejalaMapFromData(knowledgeBaseData);
 
   const selectedMap = new Map<string, number>();
   for (const selected of selectedGejala) {
@@ -119,6 +124,10 @@ export function diagnose(selectedGejala: SelectedGejalaInput[]): DiagnosisResult
   });
 
   return results;
+}
+
+export function diagnose(selectedGejala: SelectedGejalaInput[]): DiagnosisResult[] {
+  return diagnoseWithKnowledgeBaseData(getKnowledgeBaseData(), selectedGejala);
 }
 
 export function getCFLabel(cf: number): string {

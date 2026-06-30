@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import type { SelectedGejalaInput } from "@/lib/knowledge-base";
+import { getSupabaseAdminClient } from "@/lib/supabase-server";
 
 export type DiagnosisFeedbackReviewStatus =
   | "pending"
@@ -12,6 +13,7 @@ export interface DiagnosisFeedbackEntry {
   id: string;
   submittedAt: string;
   reviewedAt: string | null;
+  submitterName: string;
   diagnosisPenyakitId: string;
   diagnosisNama: string;
   diagnosisConfidence: number;
@@ -42,6 +44,7 @@ export interface DiagnosisFeedbackSummary {
 }
 
 export interface DiagnosisFeedbackInput {
+  submitterName?: unknown;
   diagnosisPenyakitId?: unknown;
   diagnosisNama?: unknown;
   diagnosisConfidence?: unknown;
@@ -59,6 +62,7 @@ export interface DiagnosisFeedbackReviewInput {
 }
 
 const feedbackPath = path.join(process.cwd(), "data", "diagnosis_feedback.json");
+const feedbackTable = "diagnosis_feedback";
 
 const defaultFeedbackData: DiagnosisFeedbackFileData = {
   _meta: {
@@ -114,6 +118,8 @@ export function validateDiagnosisFeedback(input: DiagnosisFeedbackInput): {
 } {
   const errors: string[] = [];
 
+  const submitterName =
+    typeof input.submitterName === "string" ? input.submitterName.trim() : "";
   const diagnosisPenyakitId =
     typeof input.diagnosisPenyakitId === "string"
       ? input.diagnosisPenyakitId.trim()
@@ -129,6 +135,14 @@ export function validateDiagnosisFeedback(input: DiagnosisFeedbackInput): {
   const comment =
     typeof input.comment === "string" ? input.comment.trim() : "";
   const selectedGejala = input.selectedGejala;
+
+  if (!submitterName) {
+    errors.push("Nama pengirim feedback wajib diisi.");
+  }
+
+  if (submitterName.length > 100) {
+    errors.push("Nama pengirim feedback maksimal 100 karakter.");
+  }
 
   if (!diagnosisPenyakitId) {
     errors.push("ID diagnosis wajib dikirim.");
@@ -175,6 +189,7 @@ export function validateDiagnosisFeedback(input: DiagnosisFeedbackInput): {
 
   return {
     data: {
+      submitterName,
       diagnosisPenyakitId,
       diagnosisNama,
       diagnosisConfidence: roundToTwoDecimals(diagnosisConfidence),
@@ -253,10 +268,99 @@ async function ensureFeedbackFile() {
   }
 }
 
+interface DiagnosisFeedbackRow {
+  id: string;
+  submitted_at: string;
+  reviewed_at: string | null;
+  submitter_name: string | null;
+  diagnosis_penyakit_id: string;
+  diagnosis_nama: string;
+  diagnosis_confidence: number;
+  is_accurate: boolean;
+  rating: number;
+  comment: string;
+  review_status: DiagnosisFeedbackReviewStatus;
+  show_as_public_card: boolean;
+  reviewer_notes: string;
+  selected_gejala: SelectedGejalaInput[];
+}
+
+function mapRowToEntry(row: DiagnosisFeedbackRow): DiagnosisFeedbackEntry {
+  return {
+    id: row.id,
+    submittedAt: row.submitted_at,
+    reviewedAt: row.reviewed_at,
+    submitterName: row.submitter_name?.trim() || "Pengguna SIPADI",
+    diagnosisPenyakitId: row.diagnosis_penyakit_id,
+    diagnosisNama: row.diagnosis_nama,
+    diagnosisConfidence: row.diagnosis_confidence,
+    isAccurate: row.is_accurate,
+    rating: row.rating,
+    comment: row.comment,
+    reviewStatus: row.review_status,
+    showAsPublicCard: row.show_as_public_card,
+    reviewerNotes: row.reviewer_notes,
+    selectedGejala: row.selected_gejala,
+  };
+}
+
+function mapEntryToRow(entry: DiagnosisFeedbackEntry): DiagnosisFeedbackRow {
+  return {
+    id: entry.id,
+    submitted_at: entry.submittedAt,
+    reviewed_at: entry.reviewedAt,
+    submitter_name: entry.submitterName,
+    diagnosis_penyakit_id: entry.diagnosisPenyakitId,
+    diagnosis_nama: entry.diagnosisNama,
+    diagnosis_confidence: entry.diagnosisConfidence,
+    is_accurate: entry.isAccurate,
+    rating: entry.rating,
+    comment: entry.comment,
+    review_status: entry.reviewStatus,
+    show_as_public_card: entry.showAsPublicCard,
+    reviewer_notes: entry.reviewerNotes,
+    selected_gejala: entry.selectedGejala,
+  };
+}
+
+function normalizeFeedbackEntry(
+  entry: DiagnosisFeedbackEntry | (Partial<DiagnosisFeedbackEntry> & { id: string })
+): DiagnosisFeedbackEntry {
+  return {
+    ...entry,
+    submitterName: entry.submitterName?.trim() || "Pengguna SIPADI",
+  } as DiagnosisFeedbackEntry;
+}
+
 export async function readDiagnosisFeedbackFile() {
+  const supabase = getSupabaseAdminClient();
+
+  if (supabase) {
+    const { data, error } = await supabase
+      .from(feedbackTable)
+      .select(
+        "id, submitted_at, reviewed_at, submitter_name, diagnosis_penyakit_id, diagnosis_nama, diagnosis_confidence, is_accurate, rating, comment, review_status, show_as_public_card, reviewer_notes, selected_gejala"
+      )
+      .order("submitted_at", { ascending: false });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return {
+      ...defaultFeedbackData,
+      feedback: (data ?? []).map((row) => mapRowToEntry(row as DiagnosisFeedbackRow)),
+    };
+  }
+
   await ensureFeedbackFile();
   const raw = await readFile(feedbackPath, "utf8");
-  return JSON.parse(raw) as DiagnosisFeedbackFileData;
+  const parsed = JSON.parse(raw) as DiagnosisFeedbackFileData;
+
+  return {
+    ...parsed,
+    feedback: parsed.feedback.map((entry) => normalizeFeedbackEntry(entry)),
+  };
 }
 
 export async function readDiagnosisFeedbackSummary() {
@@ -286,7 +390,6 @@ export async function saveDiagnosisFeedback(input: DiagnosisFeedbackInput) {
     };
   }
 
-  const currentData = await readDiagnosisFeedbackFile();
   const nextEntry: DiagnosisFeedbackEntry = {
     id: `FDB-${Date.now()}`,
     submittedAt: new Date().toISOString(),
@@ -296,6 +399,27 @@ export async function saveDiagnosisFeedback(input: DiagnosisFeedbackInput) {
     reviewerNotes: "",
     ...validated.data,
   };
+
+  const supabase = getSupabaseAdminClient();
+
+  if (supabase) {
+    const { error } = await supabase
+      .from(feedbackTable)
+      .insert(mapEntryToRow(nextEntry));
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    const refreshed = await readDiagnosisFeedbackFile();
+    return {
+      success: true as const,
+      data: nextEntry,
+      summary: createFeedbackSummary(refreshed.feedback),
+    };
+  }
+
+  const currentData = await readDiagnosisFeedbackFile();
 
   const nextData: DiagnosisFeedbackFileData = {
     ...currentData,
@@ -349,6 +473,30 @@ export async function reviewDiagnosisFeedback(input: DiagnosisFeedbackReviewInpu
 
   const nextFeedback = [...currentData.feedback];
   nextFeedback[feedbackIndex] = updatedEntry;
+
+  const supabase = getSupabaseAdminClient();
+
+  if (supabase) {
+    const { error } = await supabase
+      .from(feedbackTable)
+      .update({
+        review_status: updatedEntry.reviewStatus,
+        show_as_public_card: updatedEntry.showAsPublicCard,
+        reviewer_notes: updatedEntry.reviewerNotes,
+        reviewed_at: updatedEntry.reviewedAt,
+      })
+      .eq("id", updatedEntry.id);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return {
+      success: true as const,
+      data: updatedEntry,
+      summary: createFeedbackSummary(nextFeedback),
+    };
+  }
 
   await writeFile(
     feedbackPath,

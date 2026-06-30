@@ -2,6 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import {
+  canDirectEditDashboardField,
+  getDirectEditRestrictionReason,
+} from "@/lib/dashboard-edit-policy";
 import type { DashboardUserRole } from "@/lib/expert-auth";
 import {
   validateKnowledgeBaseData,
@@ -16,9 +20,22 @@ type TabKey =
   | "penyakit"
   | "cf";
 
+type SaveErrorCategoryKey =
+  | "knowledgeBase"
+  | "supplementalSync"
+  | "displayReadiness";
+
+interface SaveErrorCategories {
+  knowledgeBase: string[];
+  supplementalSync: string[];
+  displayReadiness: string[];
+}
+
 interface SaveState {
   type: "idle" | "success" | "error";
   message: string;
+  errors?: string[];
+  errorCategories?: SaveErrorCategories | null;
 }
 
 interface FeedbackSummary {
@@ -31,6 +48,7 @@ interface FeedbackSummary {
 
 interface FeedbackEntry {
   id: string;
+  submitterName: string;
   submittedAt: string;
   reviewedAt: string | null;
   diagnosisPenyakitId: string;
@@ -105,6 +123,37 @@ const tabs: { id: TabKey; label: string }[] = [
   { id: "cf", label: "Matriks CF" },
 ];
 
+const saveErrorCategoryMeta: Record<
+  SaveErrorCategoryKey,
+  {
+    title: string;
+    description: string;
+    actionHint: string;
+  }
+> = {
+  knowledgeBase: {
+    title: "Knowledge Base",
+    description:
+      "Struktur atau isi basis pengetahuan utama belum lolos validasi.",
+    actionHint:
+      "Periksa gejala, penyakit, aturan, atau field inti yang sedang Anda edit di dashboard.",
+  },
+  supplementalSync: {
+    title: "Sinkronisasi Supplemental",
+    description:
+      "Data supplemental belum selaras dengan penyakit aktif atau referensi productIds di knowledge base.",
+    actionHint:
+      "Cocokkan ID penyakit aktif dengan dataset rekomendasi, produk marketplace, dan pengendali non-kimia terkait.",
+  },
+  displayReadiness: {
+    title: "Kelayakan Hasil /hasil",
+    description:
+      "Konten hasil diagnosis belum cukup siap untuk ditampilkan dengan aman di halaman hasil.",
+    actionHint:
+      "Lengkapi solusi atau pencegahan yang dibutuhkan agar diagnosis tetap layak ditampilkan ke pengguna akhir.",
+  },
+};
+
 function formatDateLabel(value: string | null) {
   if (!value) {
     return "-";
@@ -126,6 +175,48 @@ function splitLines(value: string) {
     .map((item) => item.trim())
     .filter(Boolean);
 }
+
+function normalizeSaveErrorCategories(
+  value: unknown
+): SaveErrorCategories | null {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
+  const candidate = value as Partial<Record<SaveErrorCategoryKey, unknown>>;
+  const knowledgeBase = Array.isArray(candidate.knowledgeBase)
+    ? candidate.knowledgeBase.filter(
+        (item): item is string => typeof item === "string"
+      )
+    : [];
+  const supplementalSync = Array.isArray(candidate.supplementalSync)
+    ? candidate.supplementalSync.filter(
+        (item): item is string => typeof item === "string"
+      )
+    : [];
+  const displayReadiness = Array.isArray(candidate.displayReadiness)
+    ? candidate.displayReadiness.filter(
+        (item): item is string => typeof item === "string"
+      )
+    : [];
+
+  if (
+    knowledgeBase.length === 0 &&
+    supplementalSync.length === 0 &&
+    displayReadiness.length === 0
+  ) {
+    return null;
+  }
+
+  return {
+    knowledgeBase,
+    supplementalSync,
+    displayReadiness,
+  };
+}
+
+const structureRestrictionMessage = getDirectEditRestrictionReason("gejalaId");
+const cfRestrictionMessage = getDirectEditRestrictionReason("cfRule");
 
 export default function PakarDashboard({
   initialData,
@@ -199,6 +290,16 @@ export default function PakarDashboard({
     string | null
   >(null);
   const isAdmin = currentUserRole === "admin";
+  const canCreateGejalaDirectly = canDirectEditDashboardField("createGejala");
+  const canCreatePenyakitDirectly =
+    canDirectEditDashboardField("createPenyakit");
+  const canEditCfDirectly = canDirectEditDashboardField("cfRule");
+  const loadedRevision =
+    typeof initialData._meta.revision === "number" &&
+    Number.isInteger(initialData._meta.revision) &&
+    initialData._meta.revision >= 0
+      ? initialData._meta.revision
+      : 0;
 
   const dirty = JSON.stringify(workingData) !== JSON.stringify(initialData);
   const validation = useMemo(
@@ -228,6 +329,30 @@ export default function PakarDashboard({
       }),
     [isAdmin]
   );
+  const categorizedSaveErrors = useMemo(() => {
+    if (!saveState.errorCategories) {
+      return [];
+    }
+
+    return (Object.keys(saveErrorCategoryMeta) as SaveErrorCategoryKey[])
+      .map((key) => ({
+        key,
+        ...saveErrorCategoryMeta[key],
+        errors: saveState.errorCategories?.[key] ?? [],
+      }))
+      .filter((category) => category.errors.length > 0);
+  }, [saveState.errorCategories]);
+  const uncategorizedSaveErrors = useMemo(() => {
+    if (!saveState.errors || !saveState.errorCategories) {
+      return saveState.errors ?? [];
+    }
+
+    const categorized = new Set(
+      Object.values(saveState.errorCategories).flatMap((items) => items)
+    );
+
+    return saveState.errors.filter((error) => !categorized.has(error));
+  }, [saveState.errorCategories, saveState.errors]);
 
   useEffect(() => {
     async function loadFeedback() {
@@ -537,12 +662,14 @@ export default function PakarDashboard({
       setSaveState({
         type: "error",
         message: "Hanya admin yang dapat menyimpan knowledge base.",
+        errors: [],
+        errorCategories: null,
       });
       return;
     }
 
     setSaving(true);
-    setSaveState({ type: "idle", message: "" });
+    setSaveState({ type: "idle", message: "", errors: [], errorCategories: null });
 
     try {
       const response = await fetch("/api/pakar/save", {
@@ -550,22 +677,37 @@ export default function PakarDashboard({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ data: workingData }),
+        body: JSON.stringify({
+          data: workingData,
+          expectedRevision: loadedRevision,
+        }),
       });
 
       const payload = (await response.json()) as {
         success: boolean;
         message?: string;
         errors?: string[];
+        currentRevision?: number | null;
+        errorCategories?: unknown;
       };
 
       if (!response.ok || !payload.success) {
+        const normalizedCategories = normalizeSaveErrorCategories(
+          payload.errorCategories
+        );
+        const fallbackMessage =
+          response.status === 409
+            ? payload.currentRevision !== null &&
+              typeof payload.currentRevision === "number"
+              ? `Conflict revisi terdeteksi. Revision terbaru saat ini adalah ${payload.currentRevision}.`
+              : "Conflict revisi terdeteksi. Muat ulang dashboard lalu ulangi penyimpanan."
+            : "Gagal menyimpan perubahan.";
+
         setSaveState({
           type: "error",
-          message:
-            payload.errors?.join(" ") ??
-            payload.message ??
-            "Gagal menyimpan perubahan.",
+          message: payload.message ?? fallbackMessage,
+          errors: payload.errors ?? [],
+          errorCategories: normalizedCategories,
         });
         setSaving(false);
         return;
@@ -574,6 +716,8 @@ export default function PakarDashboard({
       setSaveState({
         type: "success",
         message: payload.message ?? "Perubahan berhasil disimpan.",
+        errors: [],
+        errorCategories: null,
       });
       setSaving(false);
       window.location.reload();
@@ -581,6 +725,8 @@ export default function PakarDashboard({
       setSaveState({
         type: "error",
         message: "Tidak dapat terhubung ke API simpan.",
+        errors: [],
+        errorCategories: null,
       });
       setSaving(false);
     }
@@ -908,17 +1054,61 @@ export default function PakarDashboard({
           </div>
         </div>
 
-        {saveState.message && (
-          <div
-            className={`mt-5 rounded-2xl px-4 py-3 text-sm font-medium ${
-              saveState.type === "success"
-                ? "border border-green-200 bg-green-50 text-green-700"
-                : "border border-red-200 bg-red-50 text-red-600"
-            }`}
-          >
-            {saveState.message}
-          </div>
-        )}
+        {saveState.message &&
+          (saveState.type === "success" ? (
+            <div className="mt-5 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700">
+              {saveState.message}
+            </div>
+          ) : (
+            <div className="mt-5 space-y-4 rounded-[24px] border border-red-200 bg-red-50/80 px-4 py-4 text-sm text-red-700">
+              <div>
+                <p className="font-bold text-red-800">Penyimpanan belum berhasil</p>
+                <p className="mt-1 leading-relaxed">{saveState.message}</p>
+              </div>
+
+              {categorizedSaveErrors.length > 0 && (
+                <div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
+                  {categorizedSaveErrors.map((category) => (
+                    <div
+                      key={category.key}
+                      className="rounded-2xl border border-red-100 bg-white/70 p-4"
+                    >
+                      <h3 className="text-sm font-bold text-red-800">
+                        {category.title}
+                      </h3>
+                      <p className="mt-1 text-xs leading-relaxed text-red-700/90">
+                        {category.description}
+                      </p>
+                      <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-red-800">
+                        Tindakan
+                      </p>
+                      <p className="mt-1 text-xs leading-relaxed text-red-700/90">
+                        {category.actionHint}
+                      </p>
+                      <ul className="mt-3 space-y-2 text-sm leading-relaxed text-red-700">
+                        {category.errors.map((error) => (
+                          <li key={`${category.key}-${error}`}>- {error}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {uncategorizedSaveErrors.length > 0 && (
+                <div className="rounded-2xl border border-red-100 bg-white/70 p-4">
+                  <p className="text-sm font-bold text-red-800">
+                    Detail Tambahan
+                  </p>
+                  <ul className="mt-3 space-y-2 text-sm leading-relaxed text-red-700">
+                    {uncategorizedSaveErrors.map((error) => (
+                      <li key={error}>- {error}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          ))}
 
         {isAdmin && validation.errors.length > 0 && (
           <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-800">
@@ -1225,6 +1415,9 @@ export default function PakarDashboard({
                       <h3 className="text-lg font-bold text-[#154212]">
                         Feedback #{feedback.id}
                       </h3>
+                      <p className="mt-1 text-sm font-semibold text-[#154212]">
+                        Oleh {feedback.submitterName}
+                      </p>
                       <p className="mt-1 text-sm text-gray-600">
                         Dikirim {formatDateLabel(feedback.submittedAt)} •
                         Confidence hasil {feedback.diagnosisConfidence}%
@@ -1360,6 +1553,9 @@ export default function PakarDashboard({
                         {card.rating}/5
                       </span>
                     </div>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                      {card.submitterName}
+                    </p>
                     <p className="text-sm leading-relaxed text-[#3a4435]">
                       {card.comment || "Feedback publik tanpa catatan tambahan."}
                     </p>
@@ -1770,16 +1966,22 @@ export default function PakarDashboard({
             <div>
               <h2 className="text-xl font-bold text-[#154212]">Kelola Gejala</h2>
               <p className="text-sm text-gray-600">
-                Edit label, ID, dan kelompok gejala. Tambahan gejala baru juga
-                bisa dilakukan dari sini.
+                Edit label gejala yang sudah ada. Perubahan struktur seperti ID,
+                kelompok, atau penambahan gejala baru diarahkan lewat tab usulan.
               </p>
             </div>
             <button
               onClick={addGejala}
-              className="rounded-2xl bg-[#BAD36F] px-4 py-2.5 text-sm font-bold text-[#154212] transition hover:bg-[#a9c55c]"
+              disabled={!canCreateGejalaDirectly}
+              title={structureRestrictionMessage}
+              className="rounded-2xl bg-[#BAD36F] px-4 py-2.5 text-sm font-bold text-[#154212] transition hover:bg-[#a9c55c] disabled:cursor-not-allowed disabled:opacity-50"
             >
               + Tambah Gejala Baru
             </button>
+          </div>
+
+          <div className="mb-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-800">
+            {structureRestrictionMessage}
           </div>
 
           <div className="space-y-4">
@@ -1790,8 +1992,10 @@ export default function PakarDashboard({
               >
                 <input
                   value={gejala.id}
-                  onChange={(event) => updateGejala(index, "id", event.target.value)}
-                  className="rounded-xl border border-[#d9e5d1] px-3 py-2.5 text-sm outline-none focus:border-[#7a9a28]"
+                  readOnly
+                  aria-readonly="true"
+                  title={structureRestrictionMessage}
+                  className="cursor-not-allowed rounded-xl border border-[#d9e5d1] bg-gray-100 px-3 py-2.5 text-sm text-gray-500 outline-none"
                 />
                 <input
                   value={gejala.label}
@@ -1802,10 +2006,9 @@ export default function PakarDashboard({
                 />
                 <select
                   value={gejala.kelompok}
-                  onChange={(event) =>
-                    updateGejala(index, "kelompok", event.target.value)
-                  }
-                  className="rounded-xl border border-[#d9e5d1] px-3 py-2.5 text-sm outline-none focus:border-[#7a9a28]"
+                  disabled
+                  title={structureRestrictionMessage}
+                  className="cursor-not-allowed rounded-xl border border-[#d9e5d1] bg-gray-100 px-3 py-2.5 text-sm text-gray-500 outline-none"
                 >
                   <option value="A">A</option>
                   <option value="B">B</option>
@@ -1824,10 +2027,15 @@ export default function PakarDashboard({
           <div className="flex justify-end">
             <button
               onClick={addPenyakit}
-              className="rounded-2xl bg-[#BAD36F] px-4 py-2.5 text-sm font-bold text-[#154212] transition hover:bg-[#a9c55c]"
+              disabled={!canCreatePenyakitDirectly}
+              title={structureRestrictionMessage}
+              className="rounded-2xl bg-[#BAD36F] px-4 py-2.5 text-sm font-bold text-[#154212] transition hover:bg-[#a9c55c] disabled:cursor-not-allowed disabled:opacity-50"
             >
               + Tambah Penyakit/Hama
             </button>
+          </div>
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-800">
+            {structureRestrictionMessage}
           </div>
           {workingData.penyakit.map((penyakit, index) => (
             <div
@@ -1837,10 +2045,10 @@ export default function PakarDashboard({
               <div className="mb-5 grid grid-cols-1 gap-3 lg:grid-cols-4">
                 <input
                   value={penyakit.id}
-                  onChange={(event) =>
-                    updatePenyakitField(index, "id", event.target.value)
-                  }
-                  className="rounded-xl border border-[#d9e5d1] px-3 py-2.5 text-sm outline-none focus:border-[#7a9a28]"
+                  readOnly
+                  aria-readonly="true"
+                  title={structureRestrictionMessage}
+                  className="cursor-not-allowed rounded-xl border border-[#d9e5d1] bg-gray-100 px-3 py-2.5 text-sm text-gray-500 outline-none"
                 />
                 <input
                   value={penyakit.nama}
@@ -1851,10 +2059,9 @@ export default function PakarDashboard({
                 />
                 <select
                   value={penyakit.jenis}
-                  onChange={(event) =>
-                    updatePenyakitField(index, "jenis", event.target.value)
-                  }
-                  className="rounded-xl border border-[#d9e5d1] px-3 py-2.5 text-sm outline-none focus:border-[#7a9a28]"
+                  disabled
+                  title={structureRestrictionMessage}
+                  className="cursor-not-allowed rounded-xl border border-[#d9e5d1] bg-gray-100 px-3 py-2.5 text-sm text-gray-500 outline-none"
                 >
                   <option value="hama">Hama</option>
                   <option value="penyakit">Penyakit</option>
@@ -1939,6 +2146,9 @@ export default function PakarDashboard({
 
       {isAdmin && activeTab === "cf" && (
         <section className="space-y-6">
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-800">
+            {cfRestrictionMessage}
+          </div>
           {workingData.penyakit.map((penyakit, penyakitIndex) => (
             <div
               key={`${penyakit.id}-cf`}
@@ -1974,27 +2184,15 @@ export default function PakarDashboard({
                       max="1"
                       step="0.05"
                       value={rule.cf}
-                      onChange={(event) =>
-                        updateRule(
-                          penyakitIndex,
-                          ruleIndex,
-                          "cf",
-                          event.target.value
-                        )
-                      }
-                      className="rounded-xl border border-[#d9e5d1] px-3 py-2.5 text-sm outline-none focus:border-[#7a9a28]"
+                      disabled={!canEditCfDirectly}
+                      title={cfRestrictionMessage}
+                      className="cursor-not-allowed rounded-xl border border-[#d9e5d1] bg-gray-100 px-3 py-2.5 text-sm text-gray-500 outline-none"
                     />
                     <textarea
                       value={rule.ket}
-                      onChange={(event) =>
-                        updateRule(
-                          penyakitIndex,
-                          ruleIndex,
-                          "ket",
-                          event.target.value
-                        )
-                      }
-                      className="min-h-20 rounded-xl border border-[#d9e5d1] px-3 py-2.5 text-sm outline-none focus:border-[#7a9a28]"
+                      disabled={!canEditCfDirectly}
+                      title={cfRestrictionMessage}
+                      className="min-h-20 cursor-not-allowed rounded-xl border border-[#d9e5d1] bg-gray-100 px-3 py-2.5 text-sm text-gray-500 outline-none"
                     />
                   </div>
                 ))}

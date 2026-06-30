@@ -32,6 +32,9 @@ export interface KnowledgeBaseMeta {
   nama_proyek?: string;
   metode?: string;
   versi?: string;
+  revision?: number;
+  updatedAt?: string;
+  updatedBy?: string | null;
   [key: string]: unknown;
 }
 
@@ -64,6 +67,8 @@ export interface PenyakitImageAsset {
   alt: string;
 }
 
+const MIN_STRONG_SUPPORT_CF = 0.7;
+
 const kelompokLabels: Record<string, string> = {
   A: "Gejala pada Daun",
   B: "Gejala pada Batang & Anakan",
@@ -92,19 +97,42 @@ export function getKnowledgeBaseData(): KnowledgeBaseData {
   return knowledgeBase as KnowledgeBaseData;
 }
 
+export function getThresholdFromData(data: KnowledgeBaseData) {
+  return (data.cf_formula as { threshold_tampil?: number }).threshold_tampil ?? 0.2;
+}
+
 export function getThreshold() {
-  return (
-    (getKnowledgeBaseData().cf_formula as { threshold_tampil?: number })
-      .threshold_tampil ?? 0.2
-  );
+  return getThresholdFromData(getKnowledgeBaseData());
+}
+
+export function getKnowledgeBaseRevisionFromData(data: KnowledgeBaseData) {
+  const revision = data._meta?.revision;
+
+  if (
+    typeof revision === "number" &&
+    Number.isInteger(revision) &&
+    revision >= 0
+  ) {
+    return revision;
+  }
+
+  return 0;
+}
+
+export function getGejalaListFromData(data: KnowledgeBaseData): Gejala[] {
+  return data.gejala;
 }
 
 export function getGejalaList(): Gejala[] {
-  return getKnowledgeBaseData().gejala;
+  return getGejalaListFromData(getKnowledgeBaseData());
+}
+
+export function getPenyakitListFromData(data: KnowledgeBaseData): Penyakit[] {
+  return data.penyakit;
 }
 
 export function getPenyakitList(): Penyakit[] {
-  return getKnowledgeBaseData().penyakit;
+  return getPenyakitListFromData(getKnowledgeBaseData());
 }
 
 export function getPenyakitImageAsset(
@@ -124,17 +152,53 @@ export function getPenyakitImageAsset(
 }
 
 export function getGejalaMap() {
-  return new Map(getGejalaList().map((gejala) => [gejala.id, gejala]));
+  return getGejalaMapFromData(getKnowledgeBaseData());
+}
+
+export function getGejalaMapFromData(data: KnowledgeBaseData) {
+  return new Map(getGejalaListFromData(data).map((gejala) => [gejala.id, gejala]));
+}
+
+function normalizeGejalaLabelForComparison(label: string) {
+  return label
+    .toLocaleLowerCase("id-ID")
+    .replace(/[^a-z0-9\s]/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function collectDuplicateLikeGejalaLabels(gejalaList: Gejala[]) {
+  const normalizedMap = new Map<string, string[]>();
+
+  for (const gejala of gejalaList) {
+    const normalizedLabel = normalizeGejalaLabelForComparison(gejala.label);
+
+    if (!normalizedLabel) {
+      continue;
+    }
+
+    const current = normalizedMap.get(normalizedLabel) ?? [];
+    current.push(`${gejala.id} (${gejala.label})`);
+    normalizedMap.set(normalizedLabel, current);
+  }
+
+  return Array.from(normalizedMap.values()).filter((items) => items.length > 1);
+}
+
+export function penyakitHasStrongSymptomSupport(penyakit: Penyakit) {
+  return penyakit.aturan.some((rule) => rule.cf >= MIN_STRONG_SUPPORT_CF);
 }
 
 export function getKelompokLabel(kelompokId: string) {
   return kelompokLabels[kelompokId] ?? `Kelompok ${kelompokId}`;
 }
 
-export function getKelompokOptions(): KelompokOption[] {
+export function getKelompokOptionsFromData(
+  data: KnowledgeBaseData
+): KelompokOption[] {
   const grouped = new Map<string, number>();
 
-  for (const gejala of getGejalaList()) {
+  for (const gejala of getGejalaListFromData(data)) {
     grouped.set(gejala.kelompok, (grouped.get(gejala.kelompok) ?? 0) + 1);
   }
 
@@ -145,17 +209,33 @@ export function getKelompokOptions(): KelompokOption[] {
   }));
 }
 
-export function getGejalaByKelompok(kelompokIds?: string[]) {
+export function getKelompokOptions(): KelompokOption[] {
+  return getKelompokOptionsFromData(getKnowledgeBaseData());
+}
+
+export function getGejalaByKelompokFromData(
+  data: KnowledgeBaseData,
+  kelompokIds?: string[]
+) {
   if (!kelompokIds || kelompokIds.length === 0) {
-    return getGejalaList();
+    return getGejalaListFromData(data);
   }
 
   const kelompokSet = new Set(kelompokIds);
-  return getGejalaList().filter((gejala) => kelompokSet.has(gejala.kelompok));
+  return getGejalaListFromData(data).filter((gejala) =>
+    kelompokSet.has(gejala.kelompok)
+  );
 }
 
-export function getKelompokByGejalaIds(gejalaIds: string[]) {
-  const gejalaMap = getGejalaMap();
+export function getGejalaByKelompok(kelompokIds?: string[]) {
+  return getGejalaByKelompokFromData(getKnowledgeBaseData(), kelompokIds);
+}
+
+export function getKelompokByGejalaIdsFromData(
+  data: KnowledgeBaseData,
+  gejalaIds: string[]
+) {
+  const gejalaMap = getGejalaMapFromData(data);
   const selectedKelompok = new Set<string>();
 
   for (const gejalaId of gejalaIds) {
@@ -168,8 +248,17 @@ export function getKelompokByGejalaIds(gejalaIds: string[]) {
   return Array.from(selectedKelompok);
 }
 
-export function getTreatment(penyakitId: string): Treatment {
-  const penyakit = getPenyakitList().find((item) => item.id === penyakitId);
+export function getKelompokByGejalaIds(gejalaIds: string[]) {
+  return getKelompokByGejalaIdsFromData(getKnowledgeBaseData(), gejalaIds);
+}
+
+export function getTreatmentFromData(
+  data: KnowledgeBaseData,
+  penyakitId: string
+): Treatment {
+  const penyakit = getPenyakitListFromData(data).find(
+    (item) => item.id === penyakitId
+  );
 
   return (
     penyakit?.solusi ?? {
@@ -183,7 +272,14 @@ export function getTreatment(penyakitId: string): Treatment {
   );
 }
 
-export function validateSelectedGejala(input: unknown): {
+export function getTreatment(penyakitId: string): Treatment {
+  return getTreatmentFromData(getKnowledgeBaseData(), penyakitId);
+}
+
+export function validateSelectedGejalaWithData(
+  knowledgeBaseData: KnowledgeBaseData,
+  input: unknown
+): {
   data: SelectedGejalaInput[];
   errors: string[];
 } {
@@ -194,9 +290,9 @@ export function validateSelectedGejala(input: unknown): {
     };
   }
 
-  const gejalaMap = getGejalaMap();
+  const gejalaMap = getGejalaMapFromData(knowledgeBaseData);
   const seenIds = new Set<string>();
-  const data: SelectedGejalaInput[] = [];
+  const normalizedData: SelectedGejalaInput[] = [];
   const errors: string[] = [];
 
   for (const item of input) {
@@ -235,17 +331,24 @@ export function validateSelectedGejala(input: unknown): {
     }
 
     seenIds.add(id);
-    data.push({
+    normalizedData.push({
       id,
       cfUser: Math.round(cfUser * 100) / 100,
     });
   }
 
-  if (data.length === 0 && errors.length === 0) {
+  if (normalizedData.length === 0 && errors.length === 0) {
     errors.push("Pilih minimal satu gejala untuk melakukan diagnosis.");
   }
 
-  return { data, errors };
+  return { data: normalizedData, errors };
+}
+
+export function validateSelectedGejala(input: unknown): {
+  data: SelectedGejalaInput[];
+  errors: string[];
+} {
+  return validateSelectedGejalaWithData(getKnowledgeBaseData(), input);
 }
 
 function isStringArray(value: unknown): value is string[] {
@@ -296,6 +399,34 @@ export function validateKnowledgeBaseData(input: unknown): {
   }
 
   const gejalaIds = new Set<string>();
+  const revision = candidate._meta?.revision;
+  if (
+    typeof revision !== "undefined" &&
+    (typeof revision !== "number" ||
+      Number.isNaN(revision) ||
+      !Number.isInteger(revision) ||
+      revision < 0)
+  ) {
+    errors.push("Meta revision harus berupa bilangan bulat 0 atau lebih.");
+  }
+
+  const updatedAt = candidate._meta?.updatedAt;
+  if (
+    typeof updatedAt !== "undefined" &&
+    (typeof updatedAt !== "string" || updatedAt.trim().length === 0)
+  ) {
+    errors.push("Meta updatedAt harus berupa string ISO timestamp.");
+  }
+
+  const updatedBy = candidate._meta?.updatedBy;
+  if (
+    typeof updatedBy !== "undefined" &&
+    updatedBy !== null &&
+    (typeof updatedBy !== "string" || updatedBy.trim().length === 0)
+  ) {
+    errors.push("Meta updatedBy harus berupa string atau null.");
+  }
+
   for (const gejala of candidate.gejala!) {
     if (!gejala?.id || !gejala.label || !gejala.kelompok) {
       errors.push("Setiap gejala harus memiliki id, label, dan kelompok.");
@@ -358,6 +489,18 @@ export function validateKnowledgeBaseData(input: unknown): {
         );
       }
     }
+
+    if (!penyakitHasStrongSymptomSupport(penyakit)) {
+      errors.push(
+        `Penyakit ${penyakit.id} harus memiliki minimal satu gejala kuat dengan CF >= ${MIN_STRONG_SUPPORT_CF}.`
+      );
+    }
+  }
+
+  for (const duplicates of collectDuplicateLikeGejalaLabels(candidate.gejala!)) {
+    errors.push(
+      `Label gejala duplikat atau terlalu mirip ditemukan: ${duplicates.join(", ")}.`
+    );
   }
 
   const threshold = candidate.cf_formula?.threshold_tampil;

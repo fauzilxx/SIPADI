@@ -4,6 +4,8 @@ import path from "node:path";
 import marketplaceData from "@/data/marketplace_produk.json";
 import nonChemicalData from "@/data/pengendali_non_kimia.json";
 import recommendationData from "@/data/rekomendasi_pencegahan.json";
+import { readSupplementalContentFiles } from "@/lib/expert-supplemental";
+import type { KnowledgeBaseData } from "@/lib/knowledge-base";
 
 export interface RecommendationSource {
   judul: string;
@@ -77,6 +79,12 @@ export interface SupplementalContentValidationReport {
   warnings: string[];
 }
 
+export interface SupplementalContentKnowledgeBaseImpactReport {
+  supplementalSyncErrors: string[];
+  displayReadinessErrors: string[];
+  warnings: string[];
+}
+
 const recommendationList = (
   recommendationData as { rekomendasi: RecommendationEntry[] }
 ).rekomendasi;
@@ -104,6 +112,22 @@ const nonChemicalImageDirectory = path.join(
   "images",
   "pengendali-non-kimia"
 );
+
+function createHydratedRecommendationMaps(bundle: {
+  rekomendasi: RecommendationEntry[];
+  marketplaceProducts: MarketplaceProduct[];
+  nonChemicalControls: NonChemicalControlItem[];
+}) {
+  return {
+    recommendationList: bundle.rekomendasi,
+    marketplaceProductMap: new Map(
+      bundle.marketplaceProducts.map((item) => [item.id, item])
+    ),
+    nonChemicalItemMap: new Map(
+      bundle.nonChemicalControls.map((item) => [item.id, item])
+    ),
+  };
+}
 
 function resolveIds<T>(ids: string[], sourceMap: Map<string, T>) {
   return ids.flatMap((id) => {
@@ -139,31 +163,53 @@ function findDuplicateIds(ids: string[]) {
   return Array.from(duplicates);
 }
 
+function hasDisplayableRecommendationContent(entry: RecommendationEntry) {
+  const totalSolusiItems =
+    entry.solusi.kimia.length +
+    entry.solusi.mekanis.length +
+    entry.solusi.biologis.length;
+  const totalPencegahanItems =
+    entry.pencegahan_jangka_pendek.length + entry.pencegahan_jangka_panjang.length;
+
+  return totalSolusiItems > 0 || totalPencegahanItems > 0;
+}
+
 export function getHydratedRecommendationByPenyakitId(
   penyakitId: string
 ): HydratedRecommendationEntry | null {
-  const entry =
-    recommendationList.find((item) => item.penyakit_id === penyakitId) ?? null;
+  const entry = recommendationList.find((item) => item.penyakit_id === penyakitId) ?? null;
 
   if (!entry) {
     return null;
   }
 
+  return hydrateRecommendationEntry(
+    entry,
+    marketplaceProductMap,
+    nonChemicalItemMap
+  );
+}
+
+function hydrateRecommendationEntry(
+  entry: RecommendationEntry,
+  marketplaceMap: Map<string, MarketplaceProduct>,
+  nonChemicalMap: Map<string, NonChemicalControlItem>
+) {
   const unresolvedMarketplaceProductIds = findMissingIds(
     entry.productIds.marketplace,
-    marketplaceProductMap
+    marketplaceMap
   );
   const unresolvedNonChemicalControlIds = findMissingIds(
     entry.productIds.nonKimia,
-    nonChemicalItemMap
+    nonChemicalMap
   );
   const resolvedMarketplaceProducts = resolveIds(
     entry.productIds.marketplace,
-    marketplaceProductMap
+    marketplaceMap
   );
   const resolvedNonChemicalControls = resolveIds(
     entry.productIds.nonKimia,
-    nonChemicalItemMap
+    nonChemicalMap
   );
 
   return {
@@ -183,6 +229,124 @@ export function getHydratedRecommendationByPenyakitId(
       )
       .map((item) => item.id),
   };
+}
+
+export async function getHydratedRecommendationByPenyakitIdAsync(
+  penyakitId: string
+): Promise<HydratedRecommendationEntry | null> {
+  const bundle = await readSupplementalContentFiles();
+  const { recommendationList, marketplaceProductMap, nonChemicalItemMap } =
+    createHydratedRecommendationMaps(bundle);
+  const entry = recommendationList.find((item) => item.penyakit_id === penyakitId);
+
+  if (!entry) {
+    return null;
+  }
+
+  return hydrateRecommendationEntry(
+    entry,
+    marketplaceProductMap,
+    nonChemicalItemMap
+  );
+}
+
+export function validateSupplementalContentAgainstKnowledgeBaseData(
+  knowledgeBaseData: KnowledgeBaseData,
+  bundle?: {
+    rekomendasi: RecommendationEntry[];
+    marketplaceProducts: MarketplaceProduct[];
+    nonChemicalControls: NonChemicalControlItem[];
+  }
+): SupplementalContentKnowledgeBaseImpactReport {
+  const sourceBundle = bundle ?? {
+    rekomendasi: recommendationList,
+    marketplaceProducts,
+    nonChemicalControls: nonChemicalItems,
+  };
+  const {
+    recommendationList: activeRecommendationList,
+    marketplaceProductMap,
+    nonChemicalItemMap,
+  } =
+    createHydratedRecommendationMaps(sourceBundle);
+  const kbPenyakitMap = new Map(
+    knowledgeBaseData.penyakit.map((penyakit) => [penyakit.id, penyakit])
+  );
+  const supplementalSyncErrors: string[] = [];
+  const displayReadinessErrors: string[] = [];
+  const warnings: string[] = [];
+
+  for (const penyakit of knowledgeBaseData.penyakit) {
+    const recommendation =
+      activeRecommendationList.find((item) => item.penyakit_id === penyakit.id) ??
+      null;
+
+    if (!recommendation) {
+      supplementalSyncErrors.push(
+        `Penyakit ${penyakit.id} (${penyakit.nama}) belum memiliki entri rekomendasi supplemental.`
+      );
+      continue;
+    }
+
+    if (!hasDisplayableRecommendationContent(recommendation)) {
+      displayReadinessErrors.push(
+        `Rekomendasi ${penyakit.id} (${penyakit.nama}) belum memiliki solusi atau pencegahan yang layak ditampilkan di halaman hasil.`
+      );
+    }
+
+    const unresolvedMarketplace = findMissingIds(
+      recommendation.productIds.marketplace,
+      marketplaceProductMap
+    );
+    if (unresolvedMarketplace.length > 0) {
+      supplementalSyncErrors.push(
+        `Rekomendasi ${penyakit.id} merujuk produk marketplace yang tidak ada: ${unresolvedMarketplace.join(", ")}.`
+      );
+    }
+
+    const unresolvedNonChemical = findMissingIds(
+      recommendation.productIds.nonKimia,
+      nonChemicalItemMap
+    );
+    if (unresolvedNonChemical.length > 0) {
+      supplementalSyncErrors.push(
+        `Rekomendasi ${penyakit.id} merujuk pengendali non-kimia yang tidak ada: ${unresolvedNonChemical.join(", ")}.`
+      );
+    }
+
+    if (
+      recommendation.productIds.marketplace.length === 0 &&
+      recommendation.productIds.nonKimia.length === 0
+    ) {
+      warnings.push(
+        `Rekomendasi ${penyakit.id} belum memiliki tautan produk atau pengendali non-kimia terkait.`
+      );
+    }
+  }
+
+  for (const recommendation of activeRecommendationList) {
+    if (!kbPenyakitMap.has(recommendation.penyakit_id)) {
+      supplementalSyncErrors.push(
+        `Rekomendasi supplemental ${recommendation.penyakit_id} tidak punya pasangan penyakit aktif di knowledge base.`
+      );
+    }
+  }
+
+  return {
+    supplementalSyncErrors,
+    displayReadinessErrors,
+    warnings,
+  };
+}
+
+export async function validateSupplementalContentAgainstKnowledgeBaseDataAsync(
+  knowledgeBaseData: KnowledgeBaseData
+) {
+  const bundle = await readSupplementalContentFiles();
+  return validateSupplementalContentAgainstKnowledgeBaseData(
+    knowledgeBaseData,
+    bundle
+  );
 }
 
 export function validateSupplementalContentIntegrity(): SupplementalContentValidationReport {
