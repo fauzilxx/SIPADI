@@ -65,7 +65,7 @@ export default function HeroSection() {
           <div className="relative animate-fade-in-up animation-delay-200">
             <div className="relative overflow-hidden rounded-[32px] border border-gray-100 bg-white p-3 shadow-xl">
               <Image
-                src="/images/padi.png"
+                src="/images/foto-padi2.png"
                 alt="Tanaman padi sehat di sawah"
                 width={640}
                 height={480}
