@@ -1,6 +1,6 @@
 import type { KnowledgeBaseData } from "@/lib/knowledge-base";
 
-import type { GejalaProposalDraft } from "@/components/pakar-dashboard/types";
+import type { GejalaProposalDraft, SaveState } from "@/components/pakar-dashboard/types";
 
 export default function GejalaTab({
   isAdmin,
@@ -18,6 +18,7 @@ export default function GejalaTab({
   onUpdateNewGejalaDraft,
   onUpdateNewGejalaRelationRule,
   onSubmitGejalaProposal,
+  changeRequestState,
 }: {
   isAdmin: boolean;
   workingData: KnowledgeBaseData;
@@ -49,9 +50,21 @@ export default function GejalaTab({
     value: string
   ) => void;
   onSubmitGejalaProposal: (mode: "create" | "update", gejalaId: string) => void;
+  changeRequestState: SaveState;
 }) {
   return (
     <section className="rounded-[28px] border border-gray-100 bg-white p-6 shadow-sm">
+      {changeRequestState.message && (
+        <div
+          className={`mb-6 rounded-2xl px-4 py-3 text-sm font-medium ${
+            changeRequestState.type === "success"
+              ? "border border-green-200 bg-green-50 text-green-700"
+              : "border border-red-200 bg-red-50 text-red-600"
+          }`}
+        >
+          {changeRequestState.message}
+        </div>
+      )}
       <KelompokInfo />
       {isAdmin ? (
         <AdminGejalaEditor

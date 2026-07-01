@@ -6,9 +6,9 @@
   },
   "requests": [
     {
-      "id": "CRQ-1782852288046",
-      "submittedAt": "2026-06-30T20:44:48.046Z",
-      "updatedAt": "2026-06-30T20:44:48.046Z",
+      "id": "CRQ-1782883531152",
+      "submittedAt": "2026-07-01T05:25:31.152Z",
+      "updatedAt": "2026-07-01T05:25:31.152Z",
       "reviewedAt": null,
       "appliedAt": null,
       "status": "pending",
@@ -18,12 +18,130 @@
       "submittedByRole": "pakar",
       "reviewedByUsername": null,
       "appliedByUsername": null,
+      "title": "Usulan gejala baru G36",
+      "requestType": "upsert_gejala",
+      "targetPenyakitId": "P01",
+      "targetGejalaId": "G36",
+      "description": "Pakar menambahkan gejala baru dengan format final knowledge base sekaligus matriks relasi ke beberapa penyakit/hama target.",
+      "proposedChange": "Tambahkan gejala G36 dengan label \"PPPP\" pada kelompok A. Relasi non-zero diajukan ke 0 penyakit/hama dan penyakit yang tidak diisi akan disimpan dengan CF 0. ID final akan diamankan ulang saat admin menerapkan usulan.",
+      "structuredPayload": {
+        "type": "upsert_gejala",
+        "mode": "create",
+        "gejala": {
+          "id": "G36",
+          "label": "PPPP",
+          "kelompok": "A"
+        },
+        "relationRules": [
+          {
+            "penyakitId": "P01",
+            "cf": 0,
+            "ket": ""
+          },
+          {
+            "penyakitId": "P02",
+            "cf": 0,
+            "ket": ""
+          },
+          {
+            "penyakitId": "P03",
+            "cf": 0,
+            "ket": ""
+          },
+          {
+            "penyakitId": "P04",
+            "cf": 0,
+            "ket": ""
+          },
+          {
+            "penyakitId": "P05",
+            "cf": 0,
+            "ket": ""
+          },
+          {
+            "penyakitId": "P06",
+            "cf": 0,
+            "ket": ""
+          },
+          {
+            "penyakitId": "P07",
+            "cf": 0,
+            "ket": ""
+          },
+          {
+            "penyakitId": "P08",
+            "cf": 0,
+            "ket": ""
+          },
+          {
+            "penyakitId": "P09",
+            "cf": 0,
+            "ket": ""
+          },
+          {
+            "penyakitId": "P10",
+            "cf": 0,
+            "ket": ""
+          },
+          {
+            "penyakitId": "P11",
+            "cf": 0,
+            "ket": ""
+          },
+          {
+            "penyakitId": "P12",
+            "cf": 0,
+            "ket": ""
+          },
+          {
+            "penyakitId": "P13",
+            "cf": 0,
+            "ket": ""
+          }
+        ],
+        "previousValue": null
+      }
+    },
+    {
+      "id": "CRQ-1782883508472",
+      "submittedAt": "2026-07-01T05:25:08.472Z",
+      "updatedAt": "2026-07-01T05:25:08.472Z",
+      "reviewedAt": null,
+      "appliedAt": null,
+      "status": "pending",
+      "title": "Mangga",
+      "requestType": "general",
+      "targetPenyakitId": "P03",
+      "targetGejalaId": "G15",
+      "description": "PPPP APA",
+      "proposedChange": "ANJAY",
+      "reviewerNotes": "",
+      "applicationSummary": "",
+      "submittedByUsername": "pakar",
+      "submittedByRole": "pakar",
+      "reviewedByUsername": null,
+      "appliedByUsername": null,
+      "structuredPayload": null
+    },
+    {
+      "id": "CRQ-1782852288046",
+      "submittedAt": "2026-06-30T20:44:48.046Z",
+      "updatedAt": "2026-06-30T20:44:48.046Z",
+      "reviewedAt": null,
+      "appliedAt": null,
+      "status": "pending",
       "title": "Usulan gejala baru G35",
       "requestType": "upsert_gejala",
       "targetPenyakitId": "",
       "targetGejalaId": "G35",
       "description": "Pakar menambahkan gejala baru dengan format final knowledge base.",
       "proposedChange": "Tambahkan gejala G35 dengan label \"Daun Merah\" pada kelompok A.",
+      "reviewerNotes": "",
+      "applicationSummary": "",
+      "submittedByUsername": "pakar",
+      "submittedByRole": "pakar",
+      "reviewedByUsername": null,
+      "appliedByUsername": null,
       "structuredPayload": {
         "type": "upsert_gejala",
         "mode": "create",

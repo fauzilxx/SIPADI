@@ -6,6 +6,7 @@ import type {
   ChangeRequestFormState,
   SaveState,
 } from "@/components/pakar-dashboard/types";
+import type { Gejala, Penyakit } from "@/lib/knowledge-base";
 
 export default function ChangeRequestsTab({
   isAdmin,
@@ -25,6 +26,8 @@ export default function ChangeRequestsTab({
   onSubmitChangeRequest,
   onReviewChangeRequest,
   onApplyChangeRequest,
+  penyakitList = [],
+  gejalaList = [],
 }: {
   isAdmin: boolean;
   dirty: boolean;
@@ -49,7 +52,52 @@ export default function ChangeRequestsTab({
   onSubmitChangeRequest: (event: FormEvent<HTMLFormElement>) => void;
   onReviewChangeRequest: (requestId: string) => void;
   onApplyChangeRequest: (requestId: string) => void;
+  penyakitList?: Penyakit[];
+  gejalaList?: Gejala[];
 }) {
+  const selectedPenyakit = penyakitList.find(
+    (p) => p.id === changeRequestForm.targetPenyakitId
+  );
+  const selectedGejala = gejalaList.find(
+    (g) => g.id === changeRequestForm.targetGejalaId
+  );
+
+  const existingRule =
+    selectedPenyakit && selectedGejala
+      ? selectedPenyakit.aturan.find((r) => r.gejala_id === selectedGejala.id)
+      : null;
+
+  const handleCopyCurrentRule = () => {
+    if (existingRule) {
+      onChangeRequestFormChange("proposedCf", String(existingRule.cf));
+      onChangeRequestFormChange("proposedKet", existingRule.ket);
+    } else {
+      onChangeRequestFormChange("proposedCf", "0");
+      onChangeRequestFormChange(
+        "proposedKet",
+        `Relasi netral antara ${selectedPenyakit?.id || ""} dan ${selectedGejala?.id || ""}.`
+      );
+    }
+  };
+
+  const handleCopyCurrentSolusi = () => {
+    if (selectedPenyakit?.solusi?.penanganan) {
+      onChangeRequestFormChange(
+        "proposedPenanganan",
+        selectedPenyakit.solusi.penanganan.join("\n")
+      );
+    }
+  };
+
+  const handleCopyCurrentPencegahan = () => {
+    if (selectedPenyakit?.solusi?.pencegahan) {
+      onChangeRequestFormChange(
+        "proposedPencegahan",
+        selectedPenyakit.solusi.pencegahan.join("\n")
+      );
+    }
+  };
+
   return (
     <section className="space-y-6">
       {changeRequestState.message && (
@@ -101,22 +149,170 @@ export default function ChangeRequestsTab({
               <option value="revise_solusi">Revisi Solusi</option>
               <option value="revise_pencegahan">Revisi Pencegahan</option>
             </select>
-            <input
+            <select
               value={changeRequestForm.targetPenyakitId}
               onChange={(event) =>
                 onChangeRequestFormChange("targetPenyakitId", event.target.value)
               }
-              placeholder="Target penyakit/hama (opsional)"
-              className="rounded-2xl border border-[#d9e5d1] px-4 py-3 text-sm outline-none focus:border-[#7a9a28]"
-            />
-            <input
+              className="rounded-2xl border border-[#d9e5d1] px-4 py-3 text-sm outline-none focus:border-[#7a9a28] bg-white cursor-pointer"
+            >
+              <option value="">-- Pilih Target Penyakit/Hama (Opsional) --</option>
+              {penyakitList.map((penyakit) => (
+                <option key={penyakit.id} value={penyakit.id}>
+                  {penyakit.id} - {penyakit.nama}
+                </option>
+              ))}
+            </select>
+            <select
               value={changeRequestForm.targetGejalaId}
               onChange={(event) =>
                 onChangeRequestFormChange("targetGejalaId", event.target.value)
               }
-              placeholder="Target gejala (opsional)"
-              className="rounded-2xl border border-[#d9e5d1] px-4 py-3 text-sm outline-none focus:border-[#7a9a28]"
-            />
+              className="rounded-2xl border border-[#d9e5d1] px-4 py-3 text-sm outline-none focus:border-[#7a9a28] bg-white cursor-pointer"
+            >
+              <option value="">-- Pilih Target Gejala (Opsional) --</option>
+              {gejalaList.map((gejala) => (
+                <option key={gejala.id} value={gejala.id}>
+                  {gejala.id} - {gejala.label.length > 70 ? `${gejala.label.substring(0, 70)}...` : gejala.label}
+                </option>
+              ))}
+            </select>
+
+            {(selectedPenyakit || selectedGejala) && (
+              <div className="lg:col-span-2 rounded-2xl border border-[#d9e5d1] bg-[#fcfdfa] p-5 space-y-4 shadow-sm">
+                <h4 className="text-sm font-bold text-[#154212] flex items-center gap-2">
+                  <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#7a9a28] animate-pulse" />
+                  Informasi Knowledge Base Saat Ini
+                </h4>
+
+                {changeRequestForm.requestType === "revise_aturan" && (
+                  <div className="text-sm space-y-3">
+                    <p className="text-gray-600">
+                      Menghubungkan penyakit/hama <strong className="text-[#154212]">{selectedPenyakit?.nama || "(Pilih Penyakit)"}</strong> dengan gejala <strong className="text-[#154212]">{selectedGejala?.label || "(Pilih Gejala)"}</strong>.
+                    </p>
+                    {selectedPenyakit && selectedGejala ? (
+                      <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm space-y-2">
+                        <div className="flex justify-between items-center text-xs text-gray-500 border-b border-gray-50 pb-2">
+                          <span>ATURAN AKTIF</span>
+                          <span className="font-mono">{selectedPenyakit.id} &larr; {selectedGejala.id}</span>
+                        </div>
+                        {existingRule ? (
+                          <div className="space-y-1">
+                            <p className="text-sm text-gray-700">
+                              Nilai CF: <strong className="text-[#154212]">{existingRule.cf}</strong> (Skala -1.0 s.d 1.0)
+                            </p>
+                            <p className="text-sm text-gray-700">
+                              Keterangan: <span className="italic text-gray-600">"{existingRule.ket}"</span>
+                            </p>
+                          </div>
+                        ) : (
+                          <p className="text-sm text-amber-600 italic">
+                            Belum ada aturan relasi untuk kombinasi ini di knowledge base (nilai CF default = 0).
+                          </p>
+                        )}
+                        <button
+                          type="button"
+                          onClick={handleCopyCurrentRule}
+                          className="mt-2 w-full sm:w-auto rounded-xl border border-[#154212] px-3.5 py-1.5 text-xs font-bold text-[#154212] transition hover:bg-[#eef5e8] cursor-pointer"
+                        >
+                          {existingRule ? "Salin CF & Keterangan Saat Ini ke Form" : "Gunakan Nilai Default (CF 0) ke Form"}
+                        </button>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-gray-500 italic">
+                        Pilih kedua target penyakit/hama dan target gejala untuk melihat relasi CF saat ini.
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {changeRequestForm.requestType === "revise_solusi" && (
+                  <div className="text-sm space-y-3">
+                    <p className="text-gray-600">
+                      Penanganan (Solusi) untuk <strong className="text-[#154212]">{selectedPenyakit?.nama || "(Pilih Penyakit)"}</strong>:
+                    </p>
+                    {selectedPenyakit ? (
+                      <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm space-y-3">
+                        {selectedPenyakit.solusi?.penanganan && selectedPenyakit.solusi.penanganan.length > 0 && selectedPenyakit.solusi.penanganan[0] !== "" ? (
+                          <ol className="list-decimal pl-5 space-y-1 text-xs text-gray-700">
+                            {selectedPenyakit.solusi.penanganan.map((p, idx) => (
+                              <li key={idx}>{p}</li>
+                            ))}
+                          </ol>
+                        ) : (
+                          <p className="text-xs text-amber-600 italic">Belum ada data penanganan.</p>
+                        )}
+                        {selectedPenyakit.solusi?.penanganan && (
+                          <button
+                            type="button"
+                            onClick={handleCopyCurrentSolusi}
+                            className="w-full sm:w-auto rounded-xl border border-[#154212] px-3.5 py-1.5 text-xs font-bold text-[#154212] transition hover:bg-[#eef5e8] cursor-pointer"
+                          >
+                            Salin Penanganan Saat Ini ke Form
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-gray-500 italic">Pilih target penyakit/hama untuk melihat solusi penanganan.</p>
+                    )}
+                  </div>
+                )}
+
+                {changeRequestForm.requestType === "revise_pencegahan" && (
+                  <div className="text-sm space-y-3">
+                    <p className="text-gray-600">
+                      Pencegahan untuk <strong className="text-[#154212]">{selectedPenyakit?.nama || "(Pilih Penyakit)"}</strong>:
+                    </p>
+                    {selectedPenyakit ? (
+                      <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm space-y-3">
+                        {selectedPenyakit.solusi?.pencegahan && selectedPenyakit.solusi.pencegahan.length > 0 && selectedPenyakit.solusi.pencegahan[0] !== "" ? (
+                          <ol className="list-decimal pl-5 space-y-1 text-xs text-gray-700">
+                            {selectedPenyakit.solusi.pencegahan.map((p, idx) => (
+                              <li key={idx}>{p}</li>
+                            ))}
+                          </ol>
+                        ) : (
+                          <p className="text-xs text-amber-600 italic">Belum ada data pencegahan.</p>
+                        )}
+                        {selectedPenyakit.solusi?.pencegahan && (
+                          <button
+                            type="button"
+                            onClick={handleCopyCurrentPencegahan}
+                            className="w-full sm:w-auto rounded-xl border border-[#154212] px-3.5 py-1.5 text-xs font-bold text-[#154212] transition hover:bg-[#eef5e8] cursor-pointer"
+                          >
+                            Salin Pencegahan Saat Ini ke Form
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-gray-500 italic">Pilih target penyakit/hama untuk melihat pencegahan.</p>
+                    )}
+                  </div>
+                )}
+
+                {changeRequestForm.requestType === "general" && (
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 text-xs text-gray-700">
+                    {selectedPenyakit && (
+                      <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+                        <p className="font-bold text-[#154212] mb-1">Target Penyakit/Hama Terpilih</p>
+                        <p>ID: {selectedPenyakit.id}</p>
+                        <p>Nama: {selectedPenyakit.nama}</p>
+                        <p className="capitalize">Jenis: {selectedPenyakit.jenis}</p>
+                        {selectedPenyakit.organisme && <p>Organisme: {selectedPenyakit.organisme}</p>}
+                      </div>
+                    )}
+                    {selectedGejala && (
+                      <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+                        <p className="font-bold text-[#154212] mb-1">Target Gejala Terpilih</p>
+                        <p>ID: {selectedGejala.id}</p>
+                        <p className="font-semibold">Label: {selectedGejala.label}</p>
+                        <p>Kelompok: {selectedGejala.kelompok}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
             {changeRequestForm.requestType === "revise_aturan" && (
               <>

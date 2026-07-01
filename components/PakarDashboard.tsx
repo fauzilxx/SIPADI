@@ -1316,6 +1316,8 @@ export default function PakarDashboard({
           onSubmitChangeRequest={handleSubmitChangeRequest}
           onReviewChangeRequest={handleReviewChangeRequest}
           onApplyChangeRequest={handleApplyChangeRequest}
+          penyakitList={workingData.penyakit}
+          gejalaList={workingData.gejala}
         />
       )}
 
@@ -1336,6 +1338,7 @@ export default function PakarDashboard({
           onUpdateNewGejalaDraft={updateNewGejalaDraft}
           onUpdateNewGejalaRelationRule={updateNewGejalaRelationRule}
           onSubmitGejalaProposal={handleSubmitGejalaProposal}
+          changeRequestState={changeRequestState}
         />
       )}
 
