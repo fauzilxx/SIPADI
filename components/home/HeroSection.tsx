@@ -91,10 +91,6 @@ export default function HeroSection() {
                 </svg>
               </div>
               <div>
-                <p className="text-xs font-medium text-text-muted">
-                  Akurasi Diagnosa
-                </p>
-                <p className="text-xl font-bold text-green-dark">98.4%</p>
               </div>
             </div>
           </div>
