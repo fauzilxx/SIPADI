@@ -73,26 +73,6 @@ export default function HeroSection() {
                 preload
               />
             </div>
-
-            <div className="absolute -bottom-6 -left-6 flex animate-float items-center gap-3.5 rounded-[var(--radius-xl)] border border-gray-100 bg-white p-4 shadow-2xl sm:p-5">
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-[#c2f363] shadow-sm">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#154212"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                  <polyline points="22 4 12 14.01 9 11.01" />
-                </svg>
-              </div>
-              <div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
