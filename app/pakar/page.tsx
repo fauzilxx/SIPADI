@@ -34,7 +34,7 @@ export default async function PakarPage({
           />
         ) : (
           <div className="mx-auto max-w-2xl pt-12">
-            <LoginForm preferredRole={preferredRole} />
+            <LoginForm key={preferredRole} preferredRole={preferredRole} />
           </div>
         )}
       </div>

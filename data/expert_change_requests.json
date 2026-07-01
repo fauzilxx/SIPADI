@@ -4,5 +4,36 @@
     "versi": "1.0.0",
     "deskripsi": "Antrean usulan perubahan dari pakar sebelum diterapkan ke knowledge base."
   },
-  "requests": []
+  "requests": [
+    {
+      "id": "CRQ-1782852288046",
+      "submittedAt": "2026-06-30T20:44:48.046Z",
+      "updatedAt": "2026-06-30T20:44:48.046Z",
+      "reviewedAt": null,
+      "appliedAt": null,
+      "status": "pending",
+      "reviewerNotes": "",
+      "applicationSummary": "",
+      "submittedByUsername": "pakar",
+      "submittedByRole": "pakar",
+      "reviewedByUsername": null,
+      "appliedByUsername": null,
+      "title": "Usulan gejala baru G35",
+      "requestType": "upsert_gejala",
+      "targetPenyakitId": "",
+      "targetGejalaId": "G35",
+      "description": "Pakar menambahkan gejala baru dengan format final knowledge base.",
+      "proposedChange": "Tambahkan gejala G35 dengan label \"Daun Merah\" pada kelompok A.",
+      "structuredPayload": {
+        "type": "upsert_gejala",
+        "mode": "create",
+        "gejala": {
+          "id": "G35",
+          "label": "Daun Merah",
+          "kelompok": "A"
+        },
+        "previousValue": null
+      }
+    }
+  ]
 }

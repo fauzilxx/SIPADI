@@ -20,20 +20,19 @@ export function canDirectEditDashboardField(
   switch (field) {
     case "knowledgeBaseMeta":
     case "threshold":
-    case "gejalaLabel":
-    case "penyakitNama":
-    case "penyakitOrganisme":
-    case "solusi":
-    case "pencegahan":
-      return true;
     case "gejalaId":
+    case "gejalaLabel":
     case "gejalaKelompok":
     case "createGejala":
     case "penyakitId":
+    case "penyakitNama":
     case "penyakitJenis":
+    case "penyakitOrganisme":
     case "createPenyakit":
     case "cfRule":
-      return false;
+    case "solusi":
+    case "pencegahan":
+      return true;
   }
 }
 

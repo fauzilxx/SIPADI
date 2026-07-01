@@ -17,11 +17,32 @@ import { getSupabaseAdminClient } from "@/lib/supabase-server";
 export type ChangeRequestStatus = "pending" | "approved" | "rejected" | "applied";
 
 export type ChangeRequestType =
+  | "upsert_gejala"
   | "add_gejala"
   | "revise_aturan"
   | "revise_solusi"
   | "revise_pencegahan"
   | "general";
+
+export interface UpsertGejalaPayload {
+  type: "upsert_gejala";
+  mode: "create" | "update";
+  gejala: {
+    id: string;
+    label: string;
+    kelompok: string;
+  };
+  relationRules?: {
+    penyakitId: string;
+    cf: number;
+    ket: string;
+  }[] | null;
+  previousValue?: {
+    id: string;
+    label: string;
+    kelompok: string;
+  } | null;
+}
 
 export interface AddGejalaPayload {
   type: "add_gejala";
@@ -51,6 +72,7 @@ export interface RevisePencegahanPayload {
 }
 
 export type ChangeRequestStructuredPayload =
+  | UpsertGejalaPayload
   | AddGejalaPayload
   | ReviseAturanPayload
   | ReviseSolusiPayload
@@ -158,8 +180,45 @@ function normalizeGejalaLabelForDomainCheck(label: string) {
     .trim();
 }
 
-function buildApplicationSummary(payload: ChangeRequestStructuredPayload) {
+function extractGejalaSequence(id: string) {
+  const match = /^G(\d+)$/i.exec(id.trim());
+  return match ? Number(match[1]) : null;
+}
+
+function formatGejalaId(sequence: number) {
+  return `G${String(sequence).padStart(2, "0")}`;
+}
+
+function buildDefaultRelationDescription(penyakitId: string, cf: number) {
+  if (cf > 0) {
+    return `Gejala ini mendukung ${penyakitId}.`;
+  }
+
+  if (cf < 0) {
+    return `Gejala ini mengurangi keyakinan terhadap ${penyakitId}.`;
+  }
+
+  return `Belum ada pengaruh langsung gejala ini terhadap ${penyakitId}.`;
+}
+
+export function getNextGejalaIdFromKnowledgeBase(data: KnowledgeBaseData) {
+  const maxSequence = data.gejala.reduce((currentMax, gejala) => {
+    const sequence = extractGejalaSequence(gejala.id);
+    return sequence && sequence > currentMax ? sequence : currentMax;
+  }, 0);
+
+  return formatGejalaId(maxSequence + 1);
+}
+
+function buildApplicationSummary(
+  payload: ChangeRequestStructuredPayload,
+  resolvedGejalaId?: string
+) {
   switch (payload.type) {
+    case "upsert_gejala":
+      return payload.mode === "create"
+        ? `Menambahkan gejala ${resolvedGejalaId ?? payload.gejala.id} (${payload.gejala.label}) pada kelompok ${payload.gejala.kelompok} dan menyimpan relasi ke ${payload.relationRules?.length ?? 0} penyakit/hama. Nilai yang tidak diisi diset default 0.`
+        : `Memperbarui gejala ${resolvedGejalaId ?? payload.gejala.id} menjadi "${payload.gejala.label}" pada kelompok ${payload.gejala.kelompok}.`;
     case "add_gejala":
       return `Menambahkan gejala ${payload.gejalaId} (${payload.gejalaLabel}) pada kelompok ${payload.kelompok}.`;
     case "revise_aturan":
@@ -193,6 +252,121 @@ function parseStructuredPayload(
   }
 
   const payload = rawPayload as Record<string, unknown>;
+
+  if (requestType === "upsert_gejala") {
+    const mode =
+      payload.mode === "create" || payload.mode === "update"
+        ? payload.mode
+        : null;
+    const gejalaCandidate =
+      payload.gejala && typeof payload.gejala === "object"
+        ? (payload.gejala as Record<string, unknown>)
+        : null;
+    const previousCandidate =
+      payload.previousValue &&
+      typeof payload.previousValue === "object" &&
+      !Array.isArray(payload.previousValue)
+        ? (payload.previousValue as Record<string, unknown>)
+        : null;
+    const gejalaId = normalizeString(gejalaCandidate?.id);
+    const gejalaLabel = normalizeString(gejalaCandidate?.label);
+    const kelompok = normalizeString(gejalaCandidate?.kelompok);
+    const previousValue = previousCandidate
+      ? {
+          id: normalizeString(previousCandidate.id),
+          label: normalizeString(previousCandidate.label),
+          kelompok: normalizeString(previousCandidate.kelompok),
+        }
+      : null;
+    const relationRulesCandidate = Array.isArray(payload.relationRules)
+      ? payload.relationRules
+      : [];
+    const relationRules = relationRulesCandidate
+      .filter((item): item is Record<string, unknown> => !!item && typeof item === "object")
+      .map((item) => ({
+        penyakitId: normalizeString(item.penyakitId),
+        cf: roundToTwoDecimals(
+          typeof item.cf === "number" ? item.cf : Number(item.cf ?? 0)
+        ),
+        ket: normalizeString(item.ket),
+      }));
+    const errors: string[] = [];
+
+    if (!mode) {
+      errors.push("Mode usulan gejala harus create atau update.");
+    }
+
+    if (!gejalaId) {
+      errors.push("ID gejala wajib diisi.");
+    }
+
+    if (!gejalaLabel) {
+      errors.push("Label gejala wajib diisi.");
+    }
+
+    if (!["A", "B", "C", "D", "E"].includes(kelompok)) {
+      errors.push("Kelompok gejala harus salah satu dari A sampai E.");
+    }
+
+    if (
+      previousValue?.kelompok &&
+      !["A", "B", "C", "D", "E"].includes(previousValue.kelompok)
+    ) {
+      errors.push("Kelompok gejala sebelumnya tidak valid.");
+    }
+
+    if (mode === "create") {
+      if (relationRules.length === 0) {
+        errors.push("Minimal satu data relasi penyakit/hama wajib dikirim untuk gejala baru.");
+      }
+
+      const seenPenyakitIds = new Set<string>();
+
+      for (const relationRule of relationRules) {
+        if (!relationRule.penyakitId) {
+          errors.push("Setiap relasi gejala baru harus memiliki target penyakit/hama.");
+        }
+
+        if (seenPenyakitIds.has(relationRule.penyakitId)) {
+          errors.push(
+            `Relasi penyakit/hama ${relationRule.penyakitId} dikirim lebih dari sekali pada gejala baru.`
+          );
+        } else if (relationRule.penyakitId) {
+          seenPenyakitIds.add(relationRule.penyakitId);
+        }
+
+        if (
+          Number.isNaN(relationRule.cf) ||
+          relationRule.cf < -1 ||
+          relationRule.cf > 1
+        ) {
+          errors.push(
+            `Nilai CF relasi gejala baru untuk ${relationRule.penyakitId || "penyakit/hama"} harus di antara -1 dan 1.`
+          );
+        }
+      }
+    }
+
+    const data: ChangeRequestStructuredPayload | null =
+      errors.length === 0 && mode
+        ? {
+            type: "upsert_gejala",
+            mode,
+            gejala: {
+              id: gejalaId,
+              label: gejalaLabel,
+              kelompok,
+            },
+            relationRules: mode === "create" ? relationRules : null,
+            previousValue,
+          }
+        : null;
+
+    return {
+      data,
+      errors,
+    };
+  }
 
   if (requestType === "add_gejala") {
     const gejalaId = normalizeString(payload.gejalaId);
@@ -327,6 +501,90 @@ function validateStructuredPayloadAgainstKnowledgeBase(
   }
 
   switch (payload.type) {
+    case "upsert_gejala": {
+      const existingGejala = findGejalaById(knowledgeBaseData, payload.gejala.id);
+      const normalizedIncomingLabel = normalizeGejalaLabelForDomainCheck(
+        payload.gejala.label
+      );
+
+      if (payload.mode === "update" && !existingGejala) {
+        errors.push(
+          `Gejala ${payload.gejala.id} tidak ditemukan di knowledge base untuk diperbarui.`
+        );
+      }
+
+      const duplicateLikeLabel = knowledgeBaseData.gejala.find((gejala) => {
+        if (payload.mode === "update" && gejala.id === payload.gejala.id) {
+          return false;
+        }
+
+        return (
+          normalizeGejalaLabelForDomainCheck(gejala.label) === normalizedIncomingLabel
+        );
+      });
+
+      if (duplicateLikeLabel) {
+        errors.push(
+          `Label gejala "${payload.gejala.label}" duplikat atau terlalu mirip dengan gejala ${duplicateLikeLabel.id}.`
+        );
+      }
+
+      if (
+        payload.mode === "update" &&
+        existingGejala &&
+        payload.previousValue &&
+        (existingGejala.label !== payload.previousValue.label ||
+          existingGejala.kelompok !== payload.previousValue.kelompok)
+      ) {
+        errors.push(
+          `Gejala ${payload.gejala.id} sudah berubah sejak usulan dibuat. Muat ulang data terbaru sebelum mengajukan ulang.`
+        );
+      }
+
+      if (payload.mode === "create") {
+        const relationMap = new Map(
+          (payload.relationRules ?? []).map((relationRule) => [
+            relationRule.penyakitId,
+            relationRule,
+          ])
+        );
+
+        for (const relationRule of payload.relationRules ?? []) {
+          if (!findPenyakitById(knowledgeBaseData, relationRule.penyakitId)) {
+            errors.push(
+              `Target penyakit/hama ${relationRule.penyakitId} tidak ditemukan di knowledge base.`
+            );
+          }
+        }
+
+        for (const targetPenyakit of knowledgeBaseData.penyakit) {
+          const relationRule = relationMap.get(targetPenyakit.id);
+          const prospectiveRules = [
+            ...targetPenyakit.aturan,
+            {
+              gejala_id: payload.gejala.id,
+              cf: relationRule?.cf ?? 0,
+              ket: relationRule?.ket || buildDefaultRelationDescription(
+                targetPenyakit.id,
+                relationRule?.cf ?? 0
+              ),
+            },
+          ];
+
+          if (
+            !penyakitHasStrongSymptomSupport({
+              ...targetPenyakit,
+              aturan: prospectiveRules,
+            })
+          ) {
+            errors.push(
+              `Relasi baru untuk ${targetPenyakit.id} membuat penyakit tidak memiliki gejala kuat (CF >= 0.7).`
+            );
+          }
+        }
+      }
+      break;
+    }
     case "add_gejala":
       if (findGejalaById(knowledgeBaseData, payload.gejalaId)) {
         errors.push(`Gejala ${payload.gejalaId} sudah ada di knowledge base.`);
@@ -424,6 +682,7 @@ function normalizeEntry(
         : "pending",
     title: normalizeString(entry.title),
     requestType:
+      entry.requestType === "upsert_gejala" ||
       entry.requestType === "add_gejala" ||
       entry.requestType === "revise_aturan" ||
       entry.requestType === "revise_solusi" ||
@@ -478,6 +737,7 @@ export function validateExpertChangeRequest(input: ExpertChangeRequestInput): {
   }
 
   if (
+    requestType !== "upsert_gejala" &&
     requestType !== "add_gejala" &&
     requestType !== "revise_aturan" &&
     requestType !== "revise_solusi" &&
@@ -520,7 +780,9 @@ export function validateExpertChangeRequest(input: ExpertChangeRequestInput): {
           ? parsedPayload.data.penyakitId
           : targetPenyakitId,
       targetGejalaId:
-        parsedPayload.data?.type === "add_gejala"
+        parsedPayload.data?.type === "upsert_gejala"
+          ? parsedPayload.data.gejala.id
+          : parsedPayload.data?.type === "add_gejala"
           ? parsedPayload.data.gejalaId
           : parsedPayload.data?.type === "revise_aturan"
             ? parsedPayload.data.gejalaId
@@ -933,8 +1195,68 @@ export function applyChangeRequestToKnowledgeBaseData(
 
   const nextData = structuredClone(knowledgeBaseData);
   const payload = request.structuredPayload;
+  let resolvedGejalaId: string | undefined;
+  let normalizedRequest = request;
 
   switch (payload.type) {
+    case "upsert_gejala": {
+      const existingIndex = nextData.gejala.findIndex(
+        (gejala) => gejala.id === payload.gejala.id
+      );
+
+      if (payload.mode === "create") {
+        resolvedGejalaId = getNextGejalaIdFromKnowledgeBase(nextData);
+        nextData.gejala.push({
+          id: resolvedGejalaId,
+          label: payload.gejala.label,
+          kelompok: payload.gejala.kelompok,
+        });
+
+        const relationMap = new Map(
+          (payload.relationRules ?? []).map((relationRule) => [
+            relationRule.penyakitId,
+            relationRule,
+          ])
+        );
+
+        for (const penyakit of nextData.penyakit) {
+          const relationRule = relationMap.get(penyakit.id);
+          const cf = relationRule?.cf ?? 0;
+          penyakit.aturan.push({
+            gejala_id: resolvedGejalaId,
+            cf,
+            ket:
+              relationRule?.ket ||
+              buildDefaultRelationDescription(penyakit.id, cf),
+          });
+        }
+
+        normalizedRequest = {
+          ...request,
+          targetGejalaId: resolvedGejalaId,
+          structuredPayload: {
+            ...payload,
+            gejala: {
+              ...payload.gejala,
+              id: resolvedGejalaId,
+            },
+          },
+        };
+      } else if (existingIndex >= 0) {
+        nextData.gejala[existingIndex] = {
+          ...nextData.gejala[existingIndex],
+          id: payload.gejala.id,
+          label: payload.gejala.label,
+          kelompok: payload.gejala.kelompok,
+        };
+      } else {
+        return {
+          success: false as const,
+          errors: [`Gejala ${payload.gejala.id} tidak ditemukan.`],
+        };
+      }
+      break;
+    }
     case "add_gejala":
       nextData.gejala.push({
         id: payload.gejalaId,
@@ -1017,7 +1339,8 @@ export function applyChangeRequestToKnowledgeBaseData(
   return {
     success: true as const,
     data: validated.data,
-    applicationSummary: buildApplicationSummary(payload),
+    applicationSummary: buildApplicationSummary(payload, resolvedGejalaId),
+    normalizedRequest,
   };
 }
 
@@ -1077,7 +1400,7 @@ export async function applyApprovedExpertChangeRequest(
 
   const now = new Date().toISOString();
   const updatedEntry: ExpertChangeRequestEntry = {
-    ...currentEntry,
+    ...(appliedResult.normalizedRequest ?? currentEntry),
     status: "applied",
     appliedAt: now,
     appliedByUsername,
@@ -1099,6 +1422,8 @@ export async function applyApprovedExpertChangeRequest(
         applied_by_username: updatedEntry.appliedByUsername,
         updated_at: updatedEntry.updatedAt,
         application_summary: updatedEntry.applicationSummary,
+        target_gejala_id: updatedEntry.targetGejalaId,
+        structured_payload: updatedEntry.structuredPayload,
       })
       .eq("id", updatedEntry.id);
 

@@ -20,6 +20,11 @@ export const metadata: Metadata = {
     "AI pertanian",
     "SIPADI",
   ],
+  icons: {
+    icon: "/icons/Icon.svg",
+    shortcut: "/icons/Icon.svg",
+    apple: "/icons/Icon.svg",
+  },
 };
 
 export default function RootLayout({

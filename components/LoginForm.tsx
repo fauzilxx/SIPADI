@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import Link from "next/link";
 import { useState } from "react";
 
 type PreferredDashboardRole = "pakar" | "admin";
@@ -14,12 +14,6 @@ export default function LoginForm({
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  useEffect(() => {
-    setUsername("");
-    setPassword("");
-    setErrorMessage(null);
-  }, [preferredRole]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -53,12 +47,37 @@ export default function LoginForm({
     }
   }
 
+  function handleBack() {
+    if (window.history.length > 1) {
+      window.history.back();
+      return;
+    }
+
+    window.location.href = "/";
+  }
+
   return (
     <div className="relative overflow-hidden rounded-[32px] border border-white/30 bg-white/55 p-8 shadow-[0_24px_60px_rgba(21,66,18,0.12)] backdrop-blur-xl sm:p-10">
       <div className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-[#BAD36F]/35 blur-2xl" />
       <div className="absolute -bottom-12 -left-8 h-40 w-40 rounded-full bg-[#154212]/10 blur-3xl" />
 
       <div className="relative">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={handleBack}
+            className="inline-flex items-center gap-2 rounded-full border border-[#d9e5d1] bg-white/80 px-4 py-2 text-sm font-semibold text-[#154212] transition hover:bg-[#f4f8ef]"
+          >
+            Kembali
+          </button>
+          <Link
+            href="/"
+            className="text-sm font-semibold text-[#7a9a28] transition hover:text-[#154212]"
+          >
+            Kembali ke Beranda
+          </Link>
+        </div>
+
         <div className="mb-8">
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.28em] text-[#7a9a28]">
             Dashboard Access
@@ -66,6 +85,9 @@ export default function LoginForm({
           <h1 className="mb-3 text-3xl font-extrabold tracking-tight text-[#154212]">
             Dashboard Pakar dan Admin SIPADI
           </h1>
+          <p className="mb-3 inline-flex rounded-full bg-[#eef5e8] px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-[#154212]">
+            Mode Login {preferredRole}
+          </p>
           <p className="max-w-xl text-sm leading-relaxed text-gray-600">
             Masuk sesuai peran Anda. Pakar mengajukan usulan perubahan knowledge
             base, sedangkan admin mereview feedback petani, menyetujui usulan
@@ -95,7 +117,6 @@ export default function LoginForm({
               Username
             </label>
             <input
-              key={preferredRole}
               name="sipadi-login-id"
               value={username}
               onChange={(event) => setUsername(event.target.value)}
