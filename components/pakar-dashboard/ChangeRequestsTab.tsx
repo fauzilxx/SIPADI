@@ -202,7 +202,7 @@ export default function ChangeRequestsTab({
                               Nilai CF: <strong className="text-[#154212]">{existingRule.cf}</strong> (Skala -1.0 s.d 1.0)
                             </p>
                             <p className="text-sm text-gray-700">
-                              Keterangan: <span className="italic text-gray-600">"{existingRule.ket}"</span>
+                              Keterangan: <span className="italic text-gray-600">&quot;{existingRule.ket}&quot;</span>
                             </p>
                           </div>
                         ) : (

@@ -10,6 +10,7 @@ import {
 import { readAppDocument, writeAppDocument } from "@/lib/app-documents";
 import { readSupplementalContentFiles, syncSupplementalContentToSupabase } from "@/lib/expert-supplemental";
 import { validateSupplementalContentAgainstKnowledgeBaseData } from "@/lib/supplemental-content";
+import { hasSupabaseAdminConfig } from "@/lib/supabase-server";
 
 const knowledgeBasePath = path.join(
   process.cwd(),
@@ -75,9 +76,19 @@ export async function saveKnowledgeBaseFile(
     return prepared;
   }
 
-  const currentRaw = await readFile(knowledgeBasePath, "utf8");
-  await mkdir(path.dirname(backupPath), { recursive: true });
-  await writeTextFileAtomically(backupPath, currentRaw);
+  try {
+    const currentRaw = await readFile(knowledgeBasePath, "utf8");
+    await mkdir(path.dirname(backupPath), { recursive: true });
+    await writeTextFileAtomically(backupPath, currentRaw);
+  } catch (err) {
+    console.warn(
+      "[expert-kb] Failed to write backup file (possibly read-only filesystem):",
+      err
+    );
+    if (!hasSupabaseAdminConfig()) {
+      throw err;
+    }
+  }
 
   await writeAppDocument(
     knowledgeBaseDocumentKey,
@@ -85,10 +96,20 @@ export async function saveKnowledgeBaseFile(
     options?.updatedByUsername
   );
 
-  await writeTextFileAtomically(
-    knowledgeBasePath,
-    `${JSON.stringify(prepared.data, null, 2)}\n`
-  );
+  try {
+    await writeTextFileAtomically(
+      knowledgeBasePath,
+      `${JSON.stringify(prepared.data, null, 2)}\n`
+    );
+  } catch (err) {
+    console.warn(
+      "[expert-kb] Failed to write knowledge base file (possibly read-only filesystem):",
+      err
+    );
+    if (!hasSupabaseAdminConfig()) {
+      throw err;
+    }
+  }
 
   const supplementalBundle = await readSupplementalContentFiles();
   await syncSupplementalContentToSupabase(

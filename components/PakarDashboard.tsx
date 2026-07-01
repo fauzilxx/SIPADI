@@ -563,8 +563,9 @@ export default function PakarDashboard({
       resolvedNewGejalaDraft.label.trim().length > 0 &&
       resolvedNewGejalaDraft.kelompok.trim().length > 0 &&
       workingData.penyakit.every((penyakit) => {
-        const cfValue =
-          resolvedNewGejalaDraft.relationRules[penyakit.id]?.cf.trim() ?? "0";
+        const cfValue = String(
+          resolvedNewGejalaDraft.relationRules[penyakit.id]?.cf ?? "0"
+        ).trim();
         const parsedCf = cfValue ? Number(cfValue) : 0;
 
         return !Number.isNaN(parsedCf) && parsedCf >= -1 && parsedCf <= 1;
