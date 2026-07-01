@@ -7,6 +7,7 @@ import GejalaSection from "@/components/pertanyaan/GejalaSection";
 import KelompokSection from "@/components/pertanyaan/KelompokSection";
 import PertanyaanHeader from "@/components/pertanyaan/PertanyaanHeader";
 import type { PublicKnowledgeBaseResponse } from "@/components/pertanyaan/types";
+import PublicSiteFooter from "@/components/public/PublicSiteFooter";
 import PublicSiteNavbar from "@/components/public/PublicSiteNavbar";
 import {
   getGejalaByKelompokFromData,
@@ -195,6 +196,7 @@ export default function PertanyaanPage() {
           />
         </div>
       </main>
+      <PublicSiteFooter />
     </div>
   );
 }

@@ -16,6 +16,7 @@ import type {
   FeedbackSummary,
   PublicFeedbackCard,
 } from "@/components/hasil/types";
+import PublicSiteFooter from "@/components/public/PublicSiteFooter";
 import PublicSiteNavbar from "@/components/public/PublicSiteNavbar";
 import { getPenyakitImageAsset, type SelectedGejalaInput } from "@/lib/knowledge-base";
 
@@ -298,6 +299,7 @@ export default function HasilPage() {
           )}
         </div>
       </main>
+      <PublicSiteFooter />
     </div>
   );
 }

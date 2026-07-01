@@ -74,20 +74,13 @@ export default function LoginForm({
             href="/"
             className="text-sm font-semibold text-[#7a9a28] transition hover:text-[#154212]"
           >
-            Kembali ke Beranda
           </Link>
         </div>
 
         <div className="mb-8">
-          <p className="mb-3 text-xs font-bold uppercase tracking-[0.28em] text-[#7a9a28]">
-            Dashboard Access
-          </p>
           <h1 className="mb-3 text-3xl font-extrabold tracking-tight text-[#154212]">
             Dashboard Pakar dan Admin SIPADI
           </h1>
-          <p className="mb-3 inline-flex rounded-full bg-[#eef5e8] px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-[#154212]">
-            Mode Login {preferredRole}
-          </p>
           <p className="max-w-xl text-sm leading-relaxed text-gray-600">
             Masuk sesuai peran Anda. Pakar mengajukan usulan perubahan knowledge
             base, sedangkan admin mereview feedback petani, menyetujui usulan
@@ -139,11 +132,10 @@ export default function LoginForm({
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               autoComplete="new-password"
-              className={`w-full rounded-2xl border bg-white/80 px-4 py-3 text-sm text-[#154212] outline-none transition focus:ring-2 ${
-                errorMessage
-                  ? "border-red-300 focus:border-red-400 focus:ring-red-100"
-                  : "border-[#d9e5d1] focus:border-[#7a9a28] focus:ring-[#BAD36F]/40"
-              }`}
+              className={`w-full rounded-2xl border bg-white/80 px-4 py-3 text-sm text-[#154212] outline-none transition focus:ring-2 ${errorMessage
+                ? "border-red-300 focus:border-red-400 focus:ring-red-100"
+                : "border-[#d9e5d1] focus:border-[#7a9a28] focus:ring-[#BAD36F]/40"
+                }`}
               placeholder="Masukkan password sesuai peran"
             />
           </div>

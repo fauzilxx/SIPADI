@@ -7,6 +7,7 @@ import FeaturesSection from "@/components/home/FeaturesSection";
 import HeroSection from "@/components/home/HeroSection";
 import type { HomeFeedbackResponse } from "@/components/home/types";
 import PublicFeedbackMarquee from "@/components/public/PublicFeedbackMarquee";
+import PublicSiteFooter from "@/components/public/PublicSiteFooter";
 import PublicSiteNavbar from "@/components/public/PublicSiteNavbar";
 
 export default function Home() {
@@ -51,6 +52,7 @@ export default function Home() {
         title="Pengalaman Petani Bersama SIPADI"
         description="Beberapa petani membagikan pengalaman mereka setelah menggunakan SIPADI untuk membantu mengenali kondisi padi dan menentukan langkah penanganan awal di lapangan."
       />
+      <PublicSiteFooter />
     </div>
   );
 }
